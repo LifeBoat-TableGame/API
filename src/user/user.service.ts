@@ -10,7 +10,6 @@ export class UserService {
 
     async getByToken(token: string) {
         const user: User | null = await this.userRepository.findOne({
-            select: ['token'], 
             where: { token }
         });
         return user;

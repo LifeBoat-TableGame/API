@@ -5,6 +5,7 @@ import { ChatController } from './chat/chat.controller';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { CardsModule } from './cards/cards.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { AuthenticationModule } from './authentication/authentication.module';
       database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
-    })
+    }),
+    CardsModule
   ],
   controllers: [ChatController],
   providers: [AppService, ChatGateway],
