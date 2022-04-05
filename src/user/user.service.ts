@@ -16,6 +16,11 @@ export class UserService {
         return user;
     }
 
+    async renameUser(user: User, name: string) {
+        const result = await this.userRepository.update({token: user.token}, {username: name});
+        return result.affected == 1;
+    }
+
     async create(userData: CreateUserDto) {
         const newUser = await this.userRepository.create(userData);
         await this.userRepository.save(newUser);

@@ -12,6 +12,10 @@
     <div id="v-app">
         <h1>{{ title }}</h1>
         <form>
+            <input v-model="namet" type="text"/>
+            <button type="submit" @click.prevent="renameUser()">Rename</button>
+        </form>
+        <form>
             <input v-model="text" type="text"/>
             <button type="submit" @click.prevent="sendMessage()">Send</button>
         </form>
@@ -20,6 +24,7 @@
                 <li v-for="msg of messages">{{ msg }}</li>
             </ul>
         </p>
+        
         <button @click.prevent="register()">Tokenize</button>
     </div>
     <script>
@@ -28,6 +33,7 @@
             data: {
                 title: 'Websockets Tester',
                 text: '',
+                namet: 'noname',
                 messages: ['Some message', 'Another message'],
                 socket: {chat: null, alerts: null},
                 token: '111'
@@ -37,6 +43,10 @@
                     console.log(`send: ${this.text}`);
                     this.socket.chat.emit('msgToServer', this.text);
                     this.text = "";
+                },
+                renameUser() {
+                    console.log(`rename: ${this.namet}`);
+                    this.socket.chat.emit('rename', this.namet);
                 },
                 register() {
                     this.socket.chat.emit('register');
@@ -65,7 +75,7 @@
                     transportOptions: {
                       polling: {
                         extraHeaders: {
-                          Authorization: '12d', //'Bearer h93t4293t49jt34j9rferek...'
+                          Authorization: '12d',
                         }
                       }
                     }
@@ -76,6 +86,9 @@
                 });
                 this.socket.chat.on('registered', (token) => {
                     this.useToken(token);
+                });
+                this.socket.chat.on('UserUpdated', () => {
+                    console.log('name changed');
                 });
             }
         });

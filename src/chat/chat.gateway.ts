@@ -1,4 +1,4 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger, UseFilters, UseGuards, WsExceptionFilter } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import {Socket, Server} from 'socket.io';
@@ -23,6 +23,16 @@ export class ChatGateway implements OnGatewayInit {
     return {event: 'registered', data: user.token};
   }
 
+  @UseGuards(WsGuard)
+  @SubscribeMessage('rename')
+  async handleRename(client: Socket, newName: string) {
+    const token = client.handshake.headers.authorization;
+    const succeed = await this.authService.rename(token, newName);
+    if(succeed)
+      return {event: 'UserUpdated'};
+    else return {event: 'Error'};
+  }
+  
   @UseGuards(WsGuard)
   @SubscribeMessage('msgToServer')
   handleMessage(client: Socket, text: string): void {
