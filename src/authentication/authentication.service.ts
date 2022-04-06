@@ -10,7 +10,7 @@ export class AuthenticationService {
     
     async register() {
         const uuid = uuidv4();
-        return await this.userService.create({token: uuid});
+        return await this.userService.createUser({token: uuid});
     }
     async validate(token: string) {
         const user =  await this.userService.getByToken(token);

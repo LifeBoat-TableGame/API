@@ -24,7 +24,7 @@
                 <li v-for="msg of messages">{{ msg }}</li>
             </ul>
         </p>
-        
+        <button @click.prevent="getSupply()">Water</button>
         <button @click.prevent="register()">Tokenize</button>
     </div>
     <script>
@@ -54,6 +54,9 @@
                 receiveMessage(msg) {
                     console.log(`recv: ${msg}`);
                     this.messages.push(msg);
+                },
+                getSupply() {
+                    this.socket.chat.emit('getSupply', 'Water');
                 },
                 useToken(token) {
                     console.log(`useToken: ${token}`);
@@ -89,6 +92,9 @@
                 });
                 this.socket.chat.on('UserUpdated', () => {
                     console.log('name changed');
+                });
+                this.socket.chat.on('supplyInfo', (supply) => {
+                    console.log(supply);
                 });
             }
         });

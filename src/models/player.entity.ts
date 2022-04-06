@@ -8,7 +8,7 @@ export class Player {
     @PrimaryGeneratedColumn()
     id?: number;
 
-    @OneToOne(() => User)
+    @OneToOne(() => User, (user) => user.player)
     @JoinColumn()
     user: User;
 
@@ -24,16 +24,16 @@ export class Player {
     @JoinColumn()
     enemy: Character;
 
-    @Column()
+    @Column({default: 0})
     damage: number;
 
-    @Column()
+    @Column({default: false})
     rowed: boolean;
 
-    @Column()
+    @Column({default: false})
     fought: boolean;
 
-    @Column()
+    @Column({default: false})
     Thirst: boolean;
 
 }

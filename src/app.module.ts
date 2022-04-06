@@ -10,6 +10,7 @@ import { CardsModule } from './cards/cards.module';
 @Module({
   imports: [
     AuthenticationModule,
+    CardsModule,
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -21,7 +22,6 @@ import { CardsModule } from './cards/cards.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    CardsModule
   ],
   controllers: [ChatController],
   providers: [AppService, ChatGateway],

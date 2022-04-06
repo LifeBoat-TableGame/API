@@ -1,14 +1,15 @@
 import { Logger, UseFilters, UseGuards, WsExceptionFilter } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import {Socket, Server} from 'socket.io';
+import { CardsService } from '../cards/cards.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { WsGuard } from '../authentication/wsguard';
 
 @WebSocketGateway({namespace: '/chat'})
 export class ChatGateway implements OnGatewayInit {
 
-  constructor(private authService: AuthenticationService) {}
+  constructor(private authService: AuthenticationService, private cardsService: CardsService) {}
 
   @WebSocketServer() wss: Server;
 
@@ -51,5 +52,11 @@ export class ChatGateway implements OnGatewayInit {
   handleLeaveRoom(client: Socket, room: string): void {
     client.leave(room);
     client.emit('leftRoom', room);
+  }
+  
+  @SubscribeMessage('getSupply')
+  async handleGetSupply(@ConnectedSocket() client: Socket, @MessageBody() name: string) {
+    const supply = await this.cardsService.getSupply(name);
+    return {event: 'supplyInfo', data: JSON.stringify(supply)};
   }
 }
