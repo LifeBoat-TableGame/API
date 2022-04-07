@@ -6,11 +6,16 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { CardsModule } from './cards/cards.module';
+import { MenuGateway } from './menu/menu.gateway';
+import { LobbyModule } from './lobby/lobby.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     AuthenticationModule,
     CardsModule,
+    LobbyModule,
+    UserModule,
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -24,6 +29,6 @@ import { CardsModule } from './cards/cards.module';
     }),
   ],
   controllers: [ChatController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService, ChatGateway, MenuGateway],
 })
 export class AppModule {}
