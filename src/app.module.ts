@@ -9,6 +9,8 @@ import { CardsModule } from './cards/cards.module';
 import { MenuGateway } from './menu/menu.gateway';
 import { LobbyModule } from './lobby/lobby.module';
 import { UserModule } from './user/user.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -16,6 +18,9 @@ import { UserModule } from './user/user.module';
     CardsModule,
     LobbyModule,
     UserModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../..', 'client/dist')
+    }),
     ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRoot({
       type: 'postgres',
