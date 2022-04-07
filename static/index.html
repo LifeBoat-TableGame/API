@@ -35,28 +35,28 @@
                 text: '',
                 namet: 'noname',
                 messages: ['Some message', 'Another message'],
-                socket: {chat: null, alerts: null},
+                socket: null,
                 token: '111'
             },
             methods: {
                 sendMessage() {
                     console.log(`send: ${this.text}`);
-                    this.socket.chat.emit('msgToServer', this.text);
+                    this.socket.emit('msgToServer', this.text);
                     this.text = "";
                 },
                 renameUser() {
                     console.log(`rename: ${this.namet}`);
-                    this.socket.chat.emit('rename', this.namet);
+                    this.socket.emit('rename', this.namet);
                 },
                 register() {
-                    this.socket.chat.emit('register');
+                    this.socket.emit('register');
                 },
                 receiveMessage(msg) {
                     console.log(`recv: ${msg}`);
                     this.messages.push(msg);
                 },
                 getSupply() {
-                    this.socket.chat.emit('getSupply', 'Water');
+                    this.socket.emit('getSupply', 'Water');
                 },
                 useToken(token) {
                     console.log(`useToken: ${token}`);
@@ -69,11 +69,28 @@
                           }
                         }
                      };
-                     this.socket.chat = io('http://localhost:3000/chat', socketOptions);
+                    this.socket = io('http://localhost:3000/chat', socketOptions);
+                    this.initListeners();
+                },
+                initListeners() {
+                    this.socket.on('msgToClient', (msg) => {
+                        this.receiveMessage(msg);
+                    });
+                    this.socket.on('registered', (token) => {
+                        this.useToken(token);
+                    });
+                    this.socket.on('UserUpdated', () => {
+                        console.log('name changed');
+                    });
+                    this.socket.on('supplyInfo', (supply) => {
+                        console.log(supply);
+                    });
+                    this.socket.onAny((event, ...args) => {
+                        console.log(`Raised ${event}`)
+                    });
                 }
             },
             created() {
-
                 const socketOptions = {
                     transportOptions: {
                       polling: {
@@ -83,19 +100,8 @@
                       }
                     }
                  };
-                this.socket.chat = io('http://localhost:3000/chat', socketOptions);
-                this.socket.chat.on('msgToClient', (msg) => {
-                    this.receiveMessage(msg);
-                });
-                this.socket.chat.on('registered', (token) => {
-                    this.useToken(token);
-                });
-                this.socket.chat.on('UserUpdated', () => {
-                    console.log('name changed');
-                });
-                this.socket.chat.on('supplyInfo', (supply) => {
-                    console.log(supply);
-                });
+                this.socket = io('http://localhost:3000/chat', socketOptions);
+                this.initListeners();
             }
         });
     
