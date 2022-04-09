@@ -3,10 +3,10 @@ import { defineComponent, ref } from 'vue';
 import {io} from 'socket.io-client';
 
 export default defineComponent({
-  name: 'HelloWorld',
+  name: 'WebsocketsTester',
   data() {
     return {
-      title: 'Websockets Tester2',
+      title: 'Websockets Tester',
       text: '',
       namet: 'noname',
       messages: ['Some message', 'Another message'],
@@ -90,7 +90,11 @@ export default defineComponent({
             <button type="submit" @click="sendMessage">Send</button>
         <p>
             <ul>
-                <li v-for="msg of messages">{{ msg }}</li>
+                <li 
+                  v-for="msg of messages"
+                >
+                {{ msg }}
+                </li>
             </ul>
         </p>
         <button @click="getSupply">Water</button>

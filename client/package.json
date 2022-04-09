@@ -8,8 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "pug": "^3.0.2",
     "socket.io-client": "^4.4.1",
-    "vue": "^3.2.25"
+    "vite-plugin-pug": "^0.3.1",
+    "vue": "^3.2.25",
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.3.0",
