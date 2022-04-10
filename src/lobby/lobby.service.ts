@@ -64,8 +64,9 @@ export class LobbyService {
             throw new WsException('You are already in Lobby');
         if(lobby.users && lobby.users.length == lobby.limit)
             throw new WsException('No empty slots');
-        lobby.users.push(user);
-        return await this.lobbyRepository.save(lobby);
+        user.lobby = lobby;
+        await this.userRepository.save(user);
+        return lobby.id;
     }
 
     async leaveLobby(user: User, lobbyId: number) {
