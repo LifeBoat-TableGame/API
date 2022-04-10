@@ -71,11 +71,11 @@ export class LobbyService {
 
     async leaveLobby(user: User, lobbyId: number) {
         const lobby = await this.getWithRelations(lobbyId);
-        if(user.lobby.id != lobby.id)
+        if(!user.lobby || user.lobby.id != lobby.id)
             throw new WsException('You are not in that lobby');
-        if(lobby.creator.id == user.id) 
-            return await this.lobbyRepository.remove(lobby);
-        lobby.users.filter(usr => usr.id != user.id);
-        return await this.lobbyRepository.save(lobby);
+        user.lobby = null;
+        await this.userRepository.save(user);
+        if(lobby.creator.id == user.id)
+            await this.lobbyRepository.remove(lobby);
     }
 }
