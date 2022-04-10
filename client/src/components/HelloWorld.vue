@@ -11,7 +11,7 @@ export default defineComponent({
       namet: 'noname',
       messages: ['Some message', 'Another message'],
       token: '111',
-      socket: io('http://localhost:3000/chat',  {
+      socket: io('http://localhost:3000/menu',  {
         transportOptions: {
           polling: {
             extraHeaders: {
@@ -26,11 +26,6 @@ export default defineComponent({
     this.initListeners();
   },
   methods: {
-      sendMessage() {
-          console.log(`send: ${this.text}`);
-          this.socket.emit('msgToServer', this.text);
-          this.text = "";
-      },
       renameUser() {
           console.log(`rename: ${this.namet}`);
           this.socket.emit('rename', this.namet);
@@ -39,9 +34,14 @@ export default defineComponent({
         console.log(`register: ${this.namet}`);
           this.socket.emit('register');
       },
-      receiveMessage(msg: string) {
-          console.log(`recv: ${msg}`);
-          this.messages.push(msg);
+      createRoom() {
+        this.socket.emit('createRoom', 'My room!');
+      },
+      joinRoom() {
+        this.socket.emit('')
+      },
+      getRooms() {
+        this.socket.emit('getRooms');
       },
       getSupply() {
           this.socket.emit('getSupply', 'Water');
@@ -57,13 +57,10 @@ export default defineComponent({
                 }
               }
            };
-          this.socket = io('http://localhost:3000/chat', socketOptions);
+          this.socket = io('http://localhost:3000/menu', socketOptions);
           this.initListeners();
       },
       initListeners() {
-          this.socket.on('msgToClient', (msg) => {
-              this.receiveMessage(msg);
-          });
           this.socket.on('registered', (token) => {
               this.useToken(token);
           });
@@ -76,6 +73,9 @@ export default defineComponent({
           this.socket.onAny((event, ...args) => {
               console.log(`Raised ${event}`)
           });
+          this.socket.on('updateRooms', (res) => {
+            console.log(JSON.parse(res));
+          });
       }
   }
 })
@@ -87,7 +87,6 @@ export default defineComponent({
             <button type="submit" @click="renameUser">Rename</button>
 
             <input v-model="text" type="text"/>
-            <button type="submit" @click="sendMessage">Send</button>
         <p>
             <ul>
                 <li v-for="msg of messages">{{ msg }}</li>
@@ -95,4 +94,5 @@ export default defineComponent({
         </p>
         <button @click="getSupply">Water</button>
         <button @click="register">Tokenize</button>
+        <button @click="createRoom">CreateRoom</button>
 </template>

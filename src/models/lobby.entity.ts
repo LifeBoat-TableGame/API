@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { AfterLoad, Column, Entity, JoinColumn, JoinTable, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
@@ -11,9 +11,11 @@ export class Lobby {
     name?: string;
 
     @OneToMany(() => User, (user) => user.lobby, {
-        cascade: ['insert', 'remove']
+        cascade: ['insert', 'update', 'remove']
     })
     users?: User[];
+    
+    usersCount: number;
 
     @Column({default: 4})
     limit: number;
@@ -26,4 +28,10 @@ export class Lobby {
     })
     @JoinColumn()
     creator: User;
+
+    @AfterLoad()
+    getUsersCount() {
+        this.usersCount = this.users.length;
+    }
+
 }

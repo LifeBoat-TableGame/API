@@ -1,14 +1,19 @@
 import { Logger, UseGuards } from '@nestjs/common';
-import { OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsResponse } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { LobbyService } from '../lobby/lobby.service';
 import { WsGuard } from '../authentication/wsguard';
 import { UserService } from '../user/user.service';
+import { AuthenticationService } from '../authentication/authentication.service';
 
 @WebSocketGateway({namespace: '/menu'})
 export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
 
-  constructor(private lobbyService: LobbyService, private userService: UserService) {}
+  constructor(
+    private lobbyService: LobbyService, 
+    private userService: UserService, 
+    private authService: AuthenticationService
+  ) {}
 
   @WebSocketServer() wss: Server;
 
@@ -20,6 +25,22 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   handleDisconnect(client: any) {
     this.logger.log('Client disconnected');
+  }
+
+  @SubscribeMessage('register')
+  async handleRegister(client: Socket): Promise<WsResponse<string>> {
+    const user = await this.authService.register();
+    return {event: 'registered', data: user.token};
+  }
+
+  @UseGuards(WsGuard)
+  @SubscribeMessage('rename')
+  async handleRename(client: Socket, newName: string) {
+    const token = client.handshake.headers.authorization;
+    const succeed = await this.authService.rename(token, newName);
+    if(succeed)
+      return {event: 'UserUpdated'};
+    else return {event: 'Error'};
   }
 
   @UseGuards(WsGuard)

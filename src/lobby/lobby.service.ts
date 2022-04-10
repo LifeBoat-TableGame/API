@@ -10,8 +10,10 @@ import { CreateLobbyPwdDto, CreateLobbyDto } from './dto/createLobbyDto';
 export class LobbyService {
     constructor( @InjectRepository(Lobby) private lobbyRepository: Repository<Lobby>) {}
 
-    async getLobbies() {
-        return await this.lobbyRepository.find();
+    async getLobbies(includeUsers: boolean = false) {
+        const lobbies =  await this.lobbyRepository.find({relations: {users: true} });
+        if(!includeUsers) lobbies.map(lobby => delete lobby.users);
+        return lobbies;
     }
 
     async getById(id: number) {
@@ -22,12 +24,13 @@ export class LobbyService {
 
     async getWithRelations(id: number) {
         const lobby = await this.lobbyRepository
-            .createQueryBuilder()
-            .select("lobby")
-            .where("lobby.id = :id", {id: id})
-            .leftJoinAndSelect("lobby.creator", "user")
-            .leftJoinAndSelect("lobby.users", "user")
-            .getOne();
+            .findOne({
+                where: { id },
+                relations: {
+                    users: true,
+                    creator: true
+                }
+            });
         return lobby;
     }
 
@@ -35,18 +38,18 @@ export class LobbyService {
         if(lobbyDto.creator.lobby) 
             throw new WsException('You are already in the lobby');
         const lobby = this.lobbyRepository.create(lobbyDto);
+        lobby.users = [lobbyDto.creator];
         return await this.lobbyRepository.save(lobby);
     }
 
     async joinLobby(user: User, lobbyId: number, password?: string) {
-        const lobby = await this.lobbyRepository.findOne({
-            where: { id: lobbyId }
-        });
+        console.log('joining');
+        const lobby = await this.getWithRelations(lobbyId);
         if(lobby.password != password) 
             throw new WsException('Incorrect password');
         if(user.lobby)
             throw new WsException('You are already in Lobby');
-        if(lobby.users.length == lobby.limit)
+        if(lobby.users && lobby.users.length == lobby.limit)
             throw new WsException('No empty slots');
         lobby.users.push(user);
         return await this.lobbyRepository.save(lobby);
