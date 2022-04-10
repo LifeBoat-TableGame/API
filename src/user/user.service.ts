@@ -27,6 +27,7 @@ export class UserService {
         .createQueryBuilder("user")
         .where("user.token = :token", {token: token})
         .leftJoinAndSelect("user.player", "player")
+        .leftJoinAndSelect("user.lobby", "lobby")
         .getOne();
         return user;
     }

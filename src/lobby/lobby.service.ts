@@ -8,12 +8,22 @@ import { CreateLobbyPwdDto, CreateLobbyDto } from './dto/createLobbyDto';
 
 @Injectable()
 export class LobbyService {
-    constructor( @InjectRepository(Lobby) private lobbyRepository: Repository<Lobby>) {}
+    constructor( 
+        @InjectRepository(Lobby) private lobbyRepository: Repository<Lobby>,
+        @InjectRepository(User) private userRepository: Repository<User>,
+        ) {}
 
     async getLobbies(includeUsers: boolean = false) {
-        const lobbies =  await this.lobbyRepository.find({relations: {users: true} });
-        if(!includeUsers) lobbies.map(lobby => delete lobby.users);
-        return lobbies;
+        const lobbies =  await this.lobbyRepository
+            .createQueryBuilder("lobby")
+            .leftJoinAndSelect("lobby.users", "user")
+            .getMany();
+        return lobbies.map(lobby => { 
+            lobby.usersCount = lobby.users.length;  
+            if(!includeUsers)  
+                delete lobby.users; 
+            return lobby
+        });
     }
 
     async getById(id: number) {
@@ -38,8 +48,11 @@ export class LobbyService {
         if(lobbyDto.creator.lobby) 
             throw new WsException('You are already in the lobby');
         const lobby = this.lobbyRepository.create(lobbyDto);
-        lobby.users = [lobbyDto.creator];
-        return await this.lobbyRepository.save(lobby);
+        const newLobby = await this.lobbyRepository.save(lobby);
+        const user = lobbyDto.creator;
+        user.lobby = newLobby;
+        await this.userRepository.save(user);
+        return newLobby.id;
     }
 
     async joinLobby(user: User, lobbyId: number, password?: string) {

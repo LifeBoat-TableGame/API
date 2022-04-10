@@ -38,7 +38,10 @@ export default defineComponent({
         this.socket.emit('createRoom', 'My room!');
       },
       joinRoom() {
-        this.socket.emit('')
+        this.socket.emit('joinRoom', +this.text);
+      },
+      leaveRoom() {
+        this.socket.emit('leaveRoom', +this.text);
       },
       getRooms() {
         this.socket.emit('getRooms');
@@ -95,4 +98,6 @@ export default defineComponent({
         <button @click="getSupply">Water</button>
         <button @click="register">Tokenize</button>
         <button @click="createRoom">CreateRoom</button>
+        <button @click="joinRoom">JoinRoom</button>
+        <button @click="leaveRoom">LeaveRoom</button>
 </template>

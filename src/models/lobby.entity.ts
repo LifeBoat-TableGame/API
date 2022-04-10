@@ -10,28 +10,19 @@ export class Lobby {
     @Column()
     name?: string;
 
-    @OneToMany(() => User, (user) => user.lobby, {
-        cascade: ['insert', 'update', 'remove']
-    })
-    users?: User[];
-    
-    usersCount: number;
+    @OneToMany(() => User, (user) => user.lobby)
+    users: User[];
 
+    usersCount: number;
+    
     @Column({default: 4})
     limit: number;
 
     @Column({nullable: true})
     password: string;
 
-    @OneToOne(() => User, {
-        cascade: ['insert']
-    })
+    @OneToOne(() => User)
     @JoinColumn()
     creator: User;
-
-    @AfterLoad()
-    getUsersCount() {
-        this.usersCount = this.users.length;
-    }
 
 }

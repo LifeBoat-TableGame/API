@@ -2,7 +2,7 @@ import { Column, Entity, JoinTable, ManyToOne, OneToOne, PrimaryGeneratedColumn 
 import { Lobby } from "./lobby.entity";
 import { Player } from "./player.entity";
 
-@Entity('user')
+@Entity()
 export class User {
 
     @PrimaryGeneratedColumn()
