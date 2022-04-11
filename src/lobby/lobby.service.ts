@@ -8,10 +8,22 @@ import { CreateLobbyPwdDto, CreateLobbyDto } from './dto/createLobbyDto';
 
 @Injectable()
 export class LobbyService {
-    constructor( @InjectRepository(Lobby) private lobbyRepository: Repository<Lobby>) {}
+    constructor( 
+        @InjectRepository(Lobby) private lobbyRepository: Repository<Lobby>,
+        @InjectRepository(User) private userRepository: Repository<User>,
+        ) {}
 
-    async getLobbies() {
-        return await this.lobbyRepository.find();
+    async getLobbies(includeUsers: boolean = false) {
+        const lobbies =  await this.lobbyRepository
+            .createQueryBuilder("lobby")
+            .leftJoinAndSelect("lobby.users", "user")
+            .getMany();
+        return lobbies.map(lobby => { 
+            lobby.usersCount = lobby.users.length;  
+            if(!includeUsers)  
+                delete lobby.users; 
+            return lobby
+        });
     }
 
     async getById(id: number) {
@@ -22,12 +34,13 @@ export class LobbyService {
 
     async getWithRelations(id: number) {
         const lobby = await this.lobbyRepository
-            .createQueryBuilder()
-            .select("lobby")
-            .where("lobby.id = :id", {id: id})
-            .leftJoinAndSelect("lobby.creator", "user")
-            .leftJoinAndSelect("lobby.users", "user")
-            .getOne();
+            .findOne({
+                where: { id },
+                relations: {
+                    users: true,
+                    creator: true
+                }
+            });
         return lobby;
     }
 
@@ -35,30 +48,34 @@ export class LobbyService {
         if(lobbyDto.creator.lobby) 
             throw new WsException('You are already in the lobby');
         const lobby = this.lobbyRepository.create(lobbyDto);
-        return await this.lobbyRepository.save(lobby);
+        const newLobby = await this.lobbyRepository.save(lobby);
+        const user = lobbyDto.creator;
+        user.lobby = newLobby;
+        await this.userRepository.save(user);
+        return newLobby.id;
     }
 
     async joinLobby(user: User, lobbyId: number, password?: string) {
-        const lobby = await this.lobbyRepository.findOne({
-            where: { id: lobbyId }
-        });
+        console.log('joining');
+        const lobby = await this.getWithRelations(lobbyId);
         if(lobby.password != password) 
             throw new WsException('Incorrect password');
         if(user.lobby)
             throw new WsException('You are already in Lobby');
-        if(lobby.users.length == lobby.limit)
+        if(lobby.users && lobby.users.length == lobby.limit)
             throw new WsException('No empty slots');
-        lobby.users.push(user);
-        return await this.lobbyRepository.save(lobby);
+        user.lobby = lobby;
+        await this.userRepository.save(user);
+        return lobby.id;
     }
 
     async leaveLobby(user: User, lobbyId: number) {
         const lobby = await this.getWithRelations(lobbyId);
-        if(user.lobby.id != lobby.id)
+        if(!user.lobby || user.lobby.id != lobby.id)
             throw new WsException('You are not in that lobby');
-        if(lobby.creator.id == user.id) 
-            return await this.lobbyRepository.remove(lobby);
-        lobby.users.filter(usr => usr.id != user.id);
-        return await this.lobbyRepository.save(lobby);
+        user.lobby = null;
+        await this.userRepository.save(user);
+        if(lobby.creator.id == user.id)
+            await this.lobbyRepository.remove(lobby);
     }
 }

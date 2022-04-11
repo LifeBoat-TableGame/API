@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { AfterLoad, Column, Entity, JoinColumn, JoinTable, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity()
@@ -10,20 +10,19 @@ export class Lobby {
     @Column()
     name?: string;
 
-    @OneToMany(() => User, (user) => user.lobby, {
-        cascade: ['insert', 'remove']
-    })
-    users?: User[];
+    @OneToMany(() => User, (user) => user.lobby)
+    users: User[];
 
+    usersCount: number;
+    
     @Column({default: 4})
     limit: number;
 
     @Column({nullable: true})
     password: string;
 
-    @OneToOne(() => User, {
-        cascade: ['insert']
-    })
+    @OneToOne(() => User)
     @JoinColumn()
     creator: User;
+
 }

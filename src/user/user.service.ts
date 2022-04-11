@@ -24,10 +24,10 @@ export class UserService {
 
     async getWithRelations(token: string) {
         const user = await this.userRepository
-        .createQueryBuilder()
-        .select("user")
+        .createQueryBuilder("user")
         .where("user.token = :token", {token: token})
         .leftJoinAndSelect("user.player", "player")
+        .leftJoinAndSelect("user.lobby", "lobby")
         .getOne();
         return user;
     }
