@@ -25,6 +25,7 @@ export default defineComponent({
   },
   created() {
     this.initListeners();
+    console.log(this.$store.state.userData)
   },
   methods: {
       createRoom() {

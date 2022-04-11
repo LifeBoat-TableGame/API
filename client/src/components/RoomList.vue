@@ -43,7 +43,9 @@ export default defineComponent({
           this.socket.emit('getSupply', 'Water');
       },
       connectToRoom(room:string){
+          this.$store.commit('CHANGE_USER')
           console.log(`connecting to ${room}`);
+          console.log(this.$store.state.userData)
       },
       useToken(token: string) {
           console.log(`useToken: ${token}`);
