@@ -3,12 +3,14 @@ import { defineComponent, ref } from 'vue';
 import {io} from 'socket.io-client';
 
 export default defineComponent({
-  name: 'LoginForm',
+  name: 'RoomCreator',
   data() {
     return {
-      title: 'Login',
-      text: '',
-      username: '',
+      title: 'RoomCreator',
+      roomData: {
+        password: '',
+        roomName: 'noname',
+      },
       token: '111',
       socket: io('http://localhost:3000/chat',  {
         transportOptions: {
@@ -25,17 +27,11 @@ export default defineComponent({
     this.initListeners();
   },
   methods: {
-      renameUser() {
-          console.log(`rename: ${this.username}`);
-          this.socket.emit('rename', this.username);
-      },
-      logIn() {
-        this.renameUser();
-        
-      },
-      register() {
-        console.log(`register: ${this.username}`);
-          this.socket.emit('register');
+      createRoom() {
+          console.log(`send: ${this.roomData}`);
+          this.socket.emit('msgToServer', this.roomData);
+          this.roomData.roomName='';
+          this.roomData.password='';
       },
       getSupply() {
           this.socket.emit('getSupply', 'Water');
@@ -74,7 +70,8 @@ export default defineComponent({
 
 <template> 
   <h1>{{ title }}</h1>
-  <input v-model="username" type="text"/>
-  <br>
-    <button type="submit" @click="renameUser">Rename</button>
+            <input v-model="roomData.roomName" type="text"/> <br>
+            <input v-model="roomData.password" type="text"/> <br>
+
+            <button type="submit" @click="createRoom">Create</button>
 </template>

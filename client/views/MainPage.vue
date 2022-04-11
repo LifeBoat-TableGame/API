@@ -1,14 +1,17 @@
 <template>
-      <websockets-tester></websockets-tester>
+  <room-creator/>
+  <room-list/>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-  import WebsocketsTester from '../src/components/WebsocketsTester.vue'
+  import RoomList from '../src/components/RoomList.vue'
+import RoomCreator from '../src/components/RoomCreator.vue'
   export default defineComponent({
   name: 'MainTemp',
   components: {
-    'websockets-tester': WebsocketsTester
-  },
+    "room-list": RoomList,
+    "room-creator": RoomCreator
+},
 })
 </script>

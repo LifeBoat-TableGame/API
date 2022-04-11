@@ -3,12 +3,13 @@ import { defineComponent, ref } from 'vue';
 import {io} from 'socket.io-client';
 
 export default defineComponent({
-  name: 'LoginForm',
+  name: 'RoomList',
   data() {
     return {
-      title: 'Login',
+      title: 'RoomList',
       text: '',
-      username: '',
+      namet: 'noname',
+      rooms: ['Some room', 'Another room', 'Third room'],
       token: '111',
       socket: io('http://localhost:3000/chat',  {
         transportOptions: {
@@ -25,20 +26,24 @@ export default defineComponent({
     this.initListeners();
   },
   methods: {
-      renameUser() {
-          console.log(`rename: ${this.username}`);
-          this.socket.emit('rename', this.username);
-      },
-      logIn() {
-        this.renameUser();
-        
+      sendMessage() {
+          console.log(`send: ${this.text}`);
+          this.socket.emit('msgToServer', this.text);
+          this.text = "";
       },
       register() {
-        console.log(`register: ${this.username}`);
+        console.log(`register: ${this.namet}`);
           this.socket.emit('register');
+      },
+      receiveMessage(msg: string) {
+          console.log(`recv: ${msg}`);
+          this.rooms.push(msg);
       },
       getSupply() {
           this.socket.emit('getSupply', 'Water');
+      },
+      connectToRoom(room:string){
+          console.log(`connecting to ${room}`);
       },
       useToken(token: string) {
           console.log(`useToken: ${token}`);
@@ -55,6 +60,9 @@ export default defineComponent({
           this.initListeners();
       },
       initListeners() {
+          this.socket.on('msgToClient', (msg) => {
+              this.receiveMessage(msg);
+          });
           this.socket.on('registered', (token) => {
               this.useToken(token);
           });
@@ -74,7 +82,15 @@ export default defineComponent({
 
 <template> 
   <h1>{{ title }}</h1>
-  <input v-model="username" type="text"/>
-  <br>
-    <button type="submit" @click="renameUser">Rename</button>
+        <p>
+            <ul>
+                <li 
+                  v-for="room of rooms"
+                  :key="room"
+                v-on:click="connectToRoom(room)"
+                >
+                {{ room }}
+                </li>
+            </ul>
+        </p>
 </template>

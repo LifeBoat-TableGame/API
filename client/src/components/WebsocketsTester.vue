@@ -92,6 +92,7 @@ export default defineComponent({
             <ul>
                 <li 
                   v-for="msg of messages"
+                  :key="msg"
                 >
                 {{ msg }}
                 </li>
