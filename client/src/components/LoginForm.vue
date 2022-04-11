@@ -1,80 +1,69 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import {io} from 'socket.io-client';
-
-export default defineComponent({
-  name: 'LoginForm',
-  data() {
-    return {
-      title: 'Login',
-      text: '',
-      username: '',
-      token: '111',
-      socket: io('http://localhost:3000/chat',  {
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              Authorization: '12d',
-            }
-          }
-        }
-     }),
-    }
-  },
-  created() {
-    this.initListeners();
-  },
-  methods: {
-      renameUser() {
-          console.log(`rename: ${this.username}`);
-          this.socket.emit('rename', this.username);
-      },
-      logIn() {
-        this.renameUser();
-        
-      },
-      register() {
-        console.log(`register: ${this.username}`);
-          this.socket.emit('register');
-      },
-      getSupply() {
-          this.socket.emit('getSupply', 'Water');
-      },
-      useToken(token: string) {
-          console.log(`useToken: ${token}`);
-          const socketOptions = {
-              transportOptions: {
-                polling: {
-                  extraHeaders: {
-                    Authorization: token,
-                  }
-                }
-              }
-           };
-          this.socket = io('http://localhost:3000/chat', socketOptions);
-          this.initListeners();
-      },
-      initListeners() {
-          this.socket.on('registered', (token) => {
-              this.useToken(token);
-          });
-          this.socket.on('UserUpdated', () => {
-              console.log('name changed');
-          });
-          this.socket.on('supplyInfo', (supply) => {
-              console.log(supply);
-          });
-          this.socket.onAny((event, ...args) => {
-              console.log(`Raised ${event}`)
-          });
-      }
-  }
-})
-</script>
-
-<template> 
+<template>
   <h1>{{ title }}</h1>
-  <input v-model="username" type="text"/>
+  <input v-model="username" type="text" />
   <br>
-    <button type="submit" @click="renameUser">Rename</button>
+  <button type="submit" @click="renameUser">Rename</button>
 </template>
+
+
+<script lang="ts" setup>
+
+import { io } from 'socket.io-client';
+import { onMounted } from 'vue';
+
+const name = 'LoginForm';
+const title = 'Login';
+const text = '';
+const username = '';
+const token = '111';
+let socket = io('http://localhost:3000/chat', {
+  transportOptions: {
+    polling: {
+      extraHeaders: {
+        Authorization: '12d',
+      }
+    }
+  }
+});
+
+const renameUser = () => {
+  console.log(`rename: ${username}`);
+  socket.emit('rename', username);
+};
+const logIn = () => {
+  renameUser();
+};
+const register = () => {
+  console.log(`register: ${username}`);
+  socket.emit('register');
+};
+const useToken = (token: string) => {
+  console.log(`useToken: ${token}`);
+  const socketOptions = {
+    transportOptions: {
+      polling: {
+        extraHeaders: {
+          Authorization: token,
+        }
+      }
+    }
+  };
+  socket = io('http://localhost:3000/chat', socketOptions);
+  initListeners();
+};
+const initListeners = () => {
+  socket.on('registered', (token) => {
+    useToken(token);
+  });
+  socket.on('UserUpdated', () => {
+    console.log('name changed');
+  });
+  socket.onAny((event, ...args) => {
+    console.log(`Raised ${event}`)
+  });
+  
+onMounted(() => {
+  initListeners();
+});
+}
+</script>
