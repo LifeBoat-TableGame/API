@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Character } from "./character.entity";
+import { Game } from "./game.entity";
 import { User } from "./user.entity";
 
 @Entity()
@@ -11,6 +12,9 @@ export class Player {
     @OneToOne(() => User, (user) => user.player)
     @JoinColumn()
     user: User;
+
+    @ManyToOne(() => Game, (game) => game.players)
+    game: Game;
 
     @OneToOne(() => Character)
     @JoinColumn()

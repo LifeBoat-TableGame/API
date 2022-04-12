@@ -11,6 +11,7 @@ import { LobbyModule } from './lobby/lobby.module';
 import { UserModule } from './user/user.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { join } from 'path';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    GameModule,
   ],
   controllers: [ChatController],
   providers: [AppService, ChatGateway, MenuGateway],

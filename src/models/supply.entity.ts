@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { GameSupply } from "./gameSupply.entity";
 
 @Entity('supply')
 export class Supply {
@@ -13,4 +14,7 @@ export class Supply {
 
     @Column()
     description: string;
+
+    @OneToMany(() => GameSupply, (gameSupply) => gameSupply.supply)
+    gameConnection: GameSupply;
 }
