@@ -54,7 +54,7 @@ const initListeners = () => {
   });
 };
 const connectToRoom = (room: string) => {
-  console.log(room);
+  console.log('connecting to', {room});
 }
 onMounted(() => {
   initListeners();

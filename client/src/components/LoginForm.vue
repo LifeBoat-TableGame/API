@@ -10,7 +10,6 @@
 
 import { io } from 'socket.io-client';
 import { onMounted } from 'vue';
-
 const name = 'LoginForm';
 const title = 'Login';
 const text = '';
@@ -61,9 +60,9 @@ const initListeners = () => {
   socket.onAny((event, ...args) => {
     console.log(`Raised ${event}`)
   });
-  
-onMounted(() => {
-  initListeners();
-});
+
+  onMounted(() => {
+    initListeners();
+  });
 }
 </script>

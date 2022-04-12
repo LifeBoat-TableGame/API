@@ -1,11 +1,9 @@
-<script setup lang="ts">
-import { defineComponent } from 'vue'
-
-</script>
-
 <template>
   <router-view/>
 </template>
+
+<script setup lang="ts">
+</script>
 
 <style>
 #app {
