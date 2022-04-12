@@ -1,9 +1,8 @@
 <template>
   <h1>{{ title }}</h1>
-  <h2>{{ useUserStore().token }}</h2>
   <p>
   <ul>
-    <li v-for="room of rooms" :key="room" v-on:click="useUserStore().addOne">
+    <li v-for="room of rooms" :key="room" v-on:click="connectToRoom(room)">
       {{ room }}
     </li>
   </ul>
@@ -14,9 +13,9 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { io } from 'socket.io-client';
-import { useUserStore } from '../stores/useUser';
+import { useUserStore } from '../stores/user';
 
-
+const userStore = useUserStore()
 const title = 'RoomList';
 
 let rooms = ['Some room', 'Another room', 'Third room'];
@@ -55,10 +54,11 @@ const initListeners = () => {
   });
 };
 const connectToRoom = (room: string) => {
-  console.log(`connecting to ${room}`);
-};
+  console.log(room);
+}
 onMounted(() => {
   initListeners();
+  
 });
 </script>
 
