@@ -1,5 +1,6 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Character } from "./character.entity";
+import { GameNavigation } from "./gameNavigation.entity";
 
 @Entity('navigation')
 export class Navigation{
@@ -23,4 +24,8 @@ export class Navigation{
 
     @Column()
     oar: boolean
+
+    @OneToMany(() => GameNavigation, (gameNavigation) => gameNavigation.navigation)
+    gameConnection: GameNavigation;
+
 }

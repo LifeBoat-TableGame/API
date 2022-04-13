@@ -3,10 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Supply } from '../models/supply.entity';
 import { Repository } from 'typeorm';
 import { Character } from '../models/character.entity';
+import { Navigation } from 'src/models/navigation.entity';
 
 @Injectable()
 export class CardsService {
-    constructor(@InjectRepository(Character) private characterRepository: Repository<Character>, @InjectRepository(Supply) private supplyRepository: Repository<Supply>) {}
+    constructor(
+        @InjectRepository(Character) private characterRepository: Repository<Character>, 
+        @InjectRepository(Supply) private supplyRepository: Repository<Supply>,
+        @InjectRepository(Navigation) private navigationRepository: Repository<Navigation>
+        ) {}
     
     async getCharacter(name: string) {
         const character = this.characterRepository.findOne({
@@ -24,5 +29,16 @@ export class CardsService {
 
     async getAllCharacters() {
         return this.characterRepository.find();
+    }
+
+    async getNavigation(id: number){
+        const nav = this.navigationRepository.findOne({
+            where: { id },
+            relations: {
+                charactersOverboard: true,
+                charactersThirst: true,
+            },
+        });
+        return nav;
     }
 }

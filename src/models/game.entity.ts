@@ -1,5 +1,7 @@
-import { Column, Entity, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { GameNavigation } from "./gameNavigation.entity";
 import { GameSupply } from "./gameSupply.entity";
+import { Navigation } from "./navigation.entity";
 import { Player } from "./player.entity";
 
 export enum GameState {
@@ -18,6 +20,13 @@ export class Game {
 
     @OneToMany(() => GameSupply, (gameSupply) => gameSupply.game)
     supplyDeck: GameSupply[];
+
+    @OneToMany(() => GameNavigation, (gameNavigation) => gameNavigation.game)
+    navigationDeck: GameNavigation[];
+
+    @ManyToMany(() => Navigation)
+    @JoinTable()
+    chosenNavigationDeck: Navigation[];
 
     @Column()
     state: GameState;
