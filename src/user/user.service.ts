@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Player } from '../models/player.entity';
 import { Repository } from 'typeorm';
 import { User } from '../models/user.entity';
-import CreatePlayerDto from './dto/createPlayerDto';
+import { CreatePlayerDto, CreatePlayerInGameDto } from './dto/createPlayerDto';
 import CreateUserDto from './dto/createUserDto';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class UserService {
         return user;
     }
 
-    async createPlayer(playerData: CreatePlayerDto) {
+    async createPlayer(playerData: CreatePlayerDto | CreatePlayerInGameDto) {
         const newPlayer = await this.playerRepository.create(playerData);
         await this.playerRepository.save(newPlayer);
         return newPlayer;
