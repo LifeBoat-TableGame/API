@@ -9,7 +9,7 @@ export class GameNavigation {
     gameId: number;
 
     @PrimaryColumn()
-    navigationName: string;
+    navigationId: number;
 
     @Generated('increment')
     @Column({unique: true})
@@ -20,6 +20,6 @@ export class GameNavigation {
     game: Game;
 
     @ManyToOne(() => Navigation, (navigation) => navigation.gameConnection)
-    @JoinColumn({name: "navigationName"})
+    @JoinColumn({name: "navigationId"})
     navigation: Navigation
 }
