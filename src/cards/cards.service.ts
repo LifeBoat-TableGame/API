@@ -11,8 +11,18 @@ export class CardsService {
         @InjectRepository(Character) private characterRepository: Repository<Character>, 
         @InjectRepository(Supply) private supplyRepository: Repository<Supply>,
         @InjectRepository(Navigation) private navigationRepository: Repository<Navigation>
-        ) {}
+    ) {}
     
+    shuffle<Type>(array: Type[]) {
+        let currentIndex = array.length,  randomIndex;
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
     async getCharacter(name: string) {
         const character = this.characterRepository.findOne({
             where: { name }
@@ -29,6 +39,13 @@ export class CardsService {
 
     async getAllCharacters() {
         return this.characterRepository.find();
+    }
+
+    async getRandomCharacters(amount?: number) {
+        const characters = await this.characterRepository.find();
+        const array = this.shuffle(characters);
+        if(amount) return array.slice(0, amount);
+        else return array;
     }
 
     async getNavigation(id: number){
