@@ -6,57 +6,16 @@
 </template>
 
 <script lang="ts" setup>
-import { io } from 'socket.io-client';
-import { onMounted } from 'vue'
+import { useMainStore } from '../stores/main';
 
-
+const mainStore=useMainStore();
 const title = 'RoomCreator';
 let roomData = {
   password: '',
   roomName: 'noname',
 };
-let socket = io('http://localhost:3000/chat', {
-  transportOptions: {
-    polling: {
-      extraHeaders: {
-        Authorization: '12d',
-      }
-    }
-  }
-});
 
 const createRoom = () => {
-  console.log(`send: ${roomData}`);
-  socket.emit('msgToServer', roomData);
-  roomData.roomName = '';
-  roomData.password = '';
+  mainStore.createRoom(roomData.roomName);
 };
-const useToken = (token: string) => {
-  console.log(`useToken: ${token}`);
-  const socketOptions = {
-    transportOptions: {
-      polling: {
-        extraHeaders: {
-          Authorization: token,
-        }
-      }
-    }
-  };
-  socket = io('http://localhost:3000/chat', socketOptions);
-  initListeners();
-};
-const initListeners = () => {
-  socket.on('registered', (token) => {
-    useToken(token);
-  });
-  socket.on('UserUpdated', () => {
-    console.log('name changed');
-  });
-  socket.onAny((event, ...args) => {
-    console.log(`Raised ${event}`)
-  });
-}
-onMounted(() => {
-  initListeners();
-});
 </script>
