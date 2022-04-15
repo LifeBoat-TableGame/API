@@ -31,6 +31,6 @@ export class Game {
     @Column()
     state: GameState;
 
-    @Column()
+    @Column({default: 0})
     seagulls: number;
 }

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Supply } from '../models/supply.entity';
 import { Repository } from 'typeorm';
 import { Character } from '../models/character.entity';
-import { Navigation } from 'src/models/navigation.entity';
+import { Navigation } from '../models/navigation.entity';
 
 @Injectable()
 export class CardsService {
@@ -36,6 +36,9 @@ export class CardsService {
         });
         return supply;
     }
+    async getAllSupplies() {
+        return this.supplyRepository.find();
+    }
 
     async getAllCharacters() {
         return this.characterRepository.find();
@@ -46,6 +49,10 @@ export class CardsService {
         const array = this.shuffle(characters);
         if(amount) return array.slice(0, amount);
         else return array;
+    }
+
+    async getAllNavigations() {
+        return this.navigationRepository.find();
     }
 
     async getNavigation(id: number){

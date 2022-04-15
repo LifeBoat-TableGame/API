@@ -12,12 +12,14 @@ import { UserModule } from './user/user.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { GameModule } from './game/game.module';
+import { GameGateway } from './game/game.gateway';
 
 @Module({
   imports: [
     AuthenticationModule,
     CardsModule,
     LobbyModule,
+    GameModule,
     UserModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client/dist')
@@ -33,9 +35,8 @@ import { GameModule } from './game/game.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    GameModule,
   ],
   controllers: [ChatController],
-  providers: [AppService, ChatGateway, MenuGateway],
+  providers: [AppService, ChatGateway, MenuGateway, GameGateway],
 })
 export class AppModule {}
