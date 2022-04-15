@@ -24,6 +24,11 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
   }
 
   handleDisconnect(client: any) {
+    const token = client.handshake.headers.authorization;
+    this.userService.getWithRelations(token).then(user => {
+      if(user && !user.hasOwnProperty('player'))
+        this.userService.removeUser(user);
+    });    
     this.logger.log('Client disconnected');
   }
 
