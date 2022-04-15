@@ -17,7 +17,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
     }
   },
   actions: {
-    disconect() {
+    logOut() {
       this.token = '';
       this.socket.disconnect();
       this.socket = io('http://localhost:3000/menu');
@@ -41,32 +41,36 @@ export const useMainStore : any = defineStore("mainStoreID", {
     },
     renameUser(name: string) {
       console.log(`rename: ${name}`);
-      this.name = name;
       this.socket.emit('rename', this.name);
+      this.name = name;
     },
+    //сделать async renameConfirmed как-нибудь
     register(userName: string) {
       console.log(`register: ${userName}`);
       this.socket.emit('register');
     },
     createRoom(roomName: string) {
+      console.log(`creating room: ${roomName}`);
       this.socket.emit('createRoom', roomName);
     },
     joinRoom(roomId: string) {
+      console.log(`joining room: ${roomId}`);
       this.socket.emit('joinRoom', roomId);
     },
     leaveRoom(roomId: string) {
+      console.log(`leaving room: ${roomId}`);
       this.socket.emit('leaveRoom', roomId);
     },
     getRooms() {
       this.socket.emit('getRooms');
     },
-    getSupply() {
-      this.socket.emit('getSupply', 'Water');
-    },
     initListeners() {
       console.log('listening to \'registered\'') 
       this.socket.on('registered', (token) => {
         this.useToken(token);
+      });      
+      this.socket.on('UserUpdated', () => {
+
       });
       console.log('listening to \'updateRooms\'') 
       this.socket.on('updateRooms', (res) => {
