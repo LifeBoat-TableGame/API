@@ -53,11 +53,11 @@ export const useMainStore : any = defineStore("mainStoreID", {
       console.log(`creating room: ${roomName}`);
       this.socket.emit('createRoom', roomName);
     },
-    joinRoom(roomId: string) {
+    joinRoom(roomId: number) {
       console.log(`joining room: ${roomId}`);
       this.socket.emit('joinRoom', roomId);
     },
-    leaveRoom(roomId: string) {
+    leaveRoom(roomId: number) {
       console.log(`leaving room: ${roomId}`);
       this.socket.emit('leaveRoom', roomId);
     },
@@ -67,7 +67,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
     },
     initListeners() {
       console.log('listening to \'registered\'') 
-      this.socket.on('registered', (token) => {
+      this.socket.on('registered', (token: string) => {
         this.useToken(token);
       });  
       console.log('listening to \'RoomCreated\'') 
