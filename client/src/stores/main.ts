@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { listeners } from 'process';
 import { io } from 'socket.io-client';
 import router from '../router';
 import { useRoomStore } from './rooms';
@@ -7,6 +6,7 @@ import { useRoomStore } from './rooms';
 const defaultSocket = io();
 export const useMainStore : any = defineStore("mainStoreID", {
   state: () => ({
+    activeRoomId: 0,
     token: '',
     name: 'noname',
     socket: io('http://localhost:3000/menu'),
@@ -18,6 +18,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
   },
   actions: {
     logOut() {
+      console.log('logging out...')
       this.token = '';
       this.socket.disconnect();
       this.socket = io('http://localhost:3000/menu');
@@ -42,7 +43,6 @@ export const useMainStore : any = defineStore("mainStoreID", {
     renameUser(name: string) {
       console.log(`rename: ${name}`);
       this.socket.emit('rename', this.name);
-      this.name = name;
     },
     //сделать async renameConfirmed как-нибудь
     register(userName: string) {
@@ -68,9 +68,16 @@ export const useMainStore : any = defineStore("mainStoreID", {
       console.log('listening to \'registered\'') 
       this.socket.on('registered', (token) => {
         this.useToken(token);
-      });      
-      this.socket.on('UserUpdated', () => {
-
+      });  
+      console.log('listening to \'registered\'') 
+      this.socket.on('roomCreated', (token) => {
+        this.useToken(token);
+      });     
+      this.socket.on('RoomCreated', (id: number) => {
+        this.activeRoomId = id;
+      });
+      this.socket.on('UserUpdated', (name: string) => {
+        this.name = name;
       });
       console.log('listening to \'updateRooms\'') 
       this.socket.on('updateRooms', (res) => {

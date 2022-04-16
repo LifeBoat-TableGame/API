@@ -1,4 +1,5 @@
 <template>
+<div>
   <h1>{{ title }}</h1>
   <p>
   <ul>
@@ -7,6 +8,7 @@
     </li>
   </ul>
   </p>
+</div>
 </template>
 
 

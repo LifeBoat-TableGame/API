@@ -1,12 +1,14 @@
 <template>
+<div>
   <h1>{{ title }}</h1>
   <input v-model="username" type="text" />
   <br>
   <button type="submit" @click="logIn">Rename</button>
+</div>
 </template>
 
 
-<script lang="ts" setup>
+<script lang="ts" setup >
 
 import { useMainStore } from '../stores/main';
 import router from '../router';

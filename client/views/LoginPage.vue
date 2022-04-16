@@ -2,7 +2,7 @@
   <login-form></login-form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useMainStore } from '../src/stores/main';
 import LoginForm from '../src/components/LoginForm.vue'
 import router from '../src/router';

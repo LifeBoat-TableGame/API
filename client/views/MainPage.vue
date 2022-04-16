@@ -1,13 +1,16 @@
 <template>
-  <room-creator />
   <room-list />
+  <room-creator v-if = (!activeRoomExists) @room:created="roomCreated" />
+  <active-room-menu v-if = activeRoomExists v-bind:activeRoomId=mainStore.activeRoomId @room:collapse="collapseRoom"/>
   <button @click="logOut">logout</button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import RoomList from '../src/components/RoomList.vue'
 import RoomCreator from '../src/components/RoomCreator.vue'
+import activeRoomMenu from '../src/components/activeRoomMenu.vue';
 import { useMainStore } from '../src/stores/main';
+import { computed } from '@vue/reactivity';
 import router from '../src/router';
 
 const mainStore = useMainStore()
@@ -16,10 +19,15 @@ const components = {
   "room-list": RoomList,
   "room-creator": RoomCreator
 };
-
+console.log(mainStore.activeRoomId);
+const activeRoomExists = computed(()=>mainStore.activeRoomId!=0)
 const logOut = () => {
-  console.log('logging out...')
-  mainStore.disconect();
+  mainStore.logOut();
+}
+const collapseRoom = () => {
+  
+}
+const roomCreated = (created) => {
 }
 
 console.log('loading ', name, ' with token \''+ mainStore.token+'\'')

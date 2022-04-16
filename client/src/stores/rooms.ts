@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { io } from 'socket.io-client';
 import { Room } from '../interfaces/room';
 
 export const useRoomStore = defineStore("roomStoreID", {
