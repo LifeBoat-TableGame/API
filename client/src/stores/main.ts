@@ -62,6 +62,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
       this.socket.emit('leaveRoom', roomId);
     },
     getRooms() {
+      console.log('trying to get rooms...')
       this.socket.emit('getRooms');
     },
     initListeners() {
@@ -69,13 +70,12 @@ export const useMainStore : any = defineStore("mainStoreID", {
       this.socket.on('registered', (token) => {
         this.useToken(token);
       });  
-      console.log('listening to \'registered\'') 
-      this.socket.on('roomCreated', (token) => {
-        this.useToken(token);
-      });     
+      console.log('listening to \'RoomCreated\'') 
       this.socket.on('RoomCreated', (id: number) => {
+        console.log(`room created with id: ${id}`);
         this.activeRoomId = id;
       });
+      console.log('listening to \'registered\'') 
       this.socket.on('UserUpdated', (name: string) => {
         this.name = name;
       });
