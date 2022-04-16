@@ -88,6 +88,6 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
   @SubscribeMessage('getRooms')
   async handleGetRooms(client: Socket) {
     const rooms = await this.lobbyService.getLobbies();
-    client.emit('Rooms', JSON.stringify(rooms));
+    client.emit('updateRooms', JSON.stringify(rooms));
   }
 }
