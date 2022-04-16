@@ -50,10 +50,14 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   @UseGuards(WsGuard)
   @SubscribeMessage('createRoom')
-  async handleMessage(client: Socket, name: string) {
+  async handleMessage(client: Socket, name: string, password?: string){
     const token = client.handshake.headers.authorization;
     const user = await this.userService.getWithRelations(token);
-    const lobbyId = await this.lobbyService.createLobby({creator: user, name: name});
+    let lobbyId: number;
+      if(password) 
+        lobbyId = await this.lobbyService.createLobby({creator: user, name: name, password: password});
+      else
+      lobbyId = await this.lobbyService.createLobby({creator: user, name: name});
     client.join(lobbyId.toString());
     client.emit('RoomCreated', lobbyId);
     const rooms = await this.lobbyService.getLobbies();

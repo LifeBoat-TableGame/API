@@ -20,6 +20,7 @@ export class LobbyService {
             .getMany();
         return lobbies.map(lobby => { 
             lobby.usersCount = lobby.users.length;  
+            delete lobby.password;
             if(!includeUsers)  
                 delete lobby.users; 
             return lobby
