@@ -44,7 +44,7 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     const token = client.handshake.headers.authorization;
     const succeed = await this.authService.rename(token, newName);
     if(succeed)
-      return {event: 'UserUpdated'};
+      return {event: 'UserUpdated', data: newName};
     else return {event: 'Error'};
   }
 
@@ -55,6 +55,7 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     const user = await this.userService.getWithRelations(token);
     const lobbyId = await this.lobbyService.createLobby({creator: user, name: name});
     client.join(lobbyId.toString());
+    client.emit('RoomCreated', lobbyId);
     const rooms = await this.lobbyService.getLobbies();
     this.wss.emit('updateRooms', JSON.stringify(rooms));
   }
