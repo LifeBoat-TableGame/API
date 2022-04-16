@@ -3,7 +3,7 @@
   <h1>{{ title }}</h1>
   <p>
   <ul>
-    <li v-for="room of rooms" :key="room.id" v-on:click="joinRoom(room.id)">
+    <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)">
       {{ room }}
     </li>
   </ul>
