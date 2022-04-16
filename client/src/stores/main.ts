@@ -39,6 +39,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
         }
       };
       this.socket = io('http://localhost:3000/menu', socketOptions);
+      this.initListeners();
     },
     renameUser(name: string) {
       console.log(`rename: ${name}`);

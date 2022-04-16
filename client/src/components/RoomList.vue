@@ -3,7 +3,7 @@
   <h1>{{ title }}</h1>
   <p>
   <ul>
-    <li v-for="room of rooms" :key="room.id" v-on:click="joinRoom(room.name)">
+    <li v-for="room of rooms" :key="room.id" v-on:click="joinRoom(room.id)">
       {{ room }}
     </li>
   </ul>
@@ -34,7 +34,7 @@ const rooms: Room[] = roomStore.rooms.sort((n1,n2) => {
 });
 
 
-const joinRoom = (room: string) => {
+const joinRoom = (room: number) => {
   console.log('connecting to ', {room});
   mainStore.joinRoom(room);
 }
