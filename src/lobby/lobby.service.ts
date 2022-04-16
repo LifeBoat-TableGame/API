@@ -59,6 +59,8 @@ export class LobbyService {
     async joinLobby(user: User, lobbyId: number, password?: string) {
         console.log('joining');
         const lobby = await this.getWithRelations(lobbyId);
+        if(!lobby)
+            throw new WsException('Lobby does not exist');
         if(lobby.password != password) 
             throw new WsException('Incorrect password');
         if(user.lobby)
