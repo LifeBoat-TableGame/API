@@ -1,9 +1,14 @@
 
 <template>
-<div>
-  <h1>{{ roomStore.rooms.find(x => x.id == mainStore.activeRoomId) }}</h1>
-  <button type="submit" @click="leaveRoom">leaveroom</button>
-</div>
+  <div class="blue">
+    <div>{{ roomStore.rooms.find(x => x.id == mainStore.activeRoomId)?.name }}</div>
+    <div>
+      {{ roomStore.rooms.find(x => x.id == mainStore.activeRoomId)?.usersCount }}
+      /
+      {{ roomStore.rooms.find(x => x.id == mainStore.activeRoomId)?.limit }}
+    </div>
+    <button type="submit" @click="leaveRoom">leaveroom</button>
+  </div>
 </template>
 
 

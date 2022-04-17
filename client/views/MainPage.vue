@@ -1,8 +1,10 @@
 <template>
-  <room-list />
-  <room-creator v-if = (!activeRoomExists) @room:created="roomCreated" />
-  <active-room-menu v-if = activeRoomExists v-bind:activeRoomId=mainStore.activeRoomId @room:collapse="collapseRoom"/>
-  <button @click="logOut">logout</button>
+  <div>
+    <room-list />
+    <room-creator v-if=(!activeRoomExists) @room:created="roomCreated" />
+    <active-room-menu v-if=activeRoomExists v-bind:activeRoomId=mainStore.activeRoomId @room:collapse="collapseRoom" />
+    <button @click="logOut">logout</button>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -20,20 +22,20 @@ const components = {
   "room-creator": RoomCreator
 };
 console.log(mainStore.activeRoomId);
-const activeRoomExists = computed(()=>mainStore.activeRoomId!=0)
+const activeRoomExists = computed(() => mainStore.activeRoomId != 0)
 const logOut = () => {
   mainStore.logOut();
 }
 const collapseRoom = () => {
-  
+
 }
 const roomCreated = (created) => {
 }
 
-console.log('loading ', name, ' with token \''+ mainStore.token+'\'')
+console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 
 if (mainStore.token == '') {
   console.log('token does not exists, redirecting to login');
-  router.push('/login');
+  //router.push('/login');
 }
 </script>

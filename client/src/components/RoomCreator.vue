@@ -1,10 +1,10 @@
 <template>
-<div>
-  <h1>{{ title }}</h1>
-  <input v-model="roomData.roomName" type="text" /> <br>
-  <input v-model="roomData.password" type="text" /> <br>
-  <button type="submit" @click="createRoom">Create</button>
-</div>
+  <div>
+    <h1>{{ title }}</h1>
+    <input v-model="roomData.roomName" type="text" /> <br>
+    <input v-model="roomData.password" type="text" /> <br>
+    <button type="submit" @click="createRoom">Create</button>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -14,8 +14,8 @@ import { useRoomStore } from '../stores/rooms';
 import activeRoomMenu from './activeRoomMenu.vue'
 
 let inTheRoom = false;
-const mainStore=useMainStore();
-const roomStore=useRoomStore();
+const mainStore = useMainStore();
+const roomStore = useRoomStore();
 const title = 'RoomCreator';
 let roomData = {
   password: '',

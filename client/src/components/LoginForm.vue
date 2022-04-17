@@ -1,10 +1,9 @@
 <template>
-<div>
-  <h1>{{ title }}</h1>
-  <input v-model="username" type="text" />
-  <br>
-  <button type="submit" @click="logIn">Rename</button>
-</div>
+  <div class="blue">
+    <h1>{{ title }}</h1>
+    <input v-model="username" type="text" />
+    <button type="submit" @click="logIn">Rename</button>
+  </div>
 </template>
 
 

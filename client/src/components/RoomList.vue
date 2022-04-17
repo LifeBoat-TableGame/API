@@ -2,9 +2,9 @@
 <div>
   <h1>{{ title }}</h1>
   <p>
-  <ul>
-    <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)">
-      {{ room }}
+  <ul class="blue">
+    <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)" class="stretched">
+      <div>{{ room.name}}</div> <div>{{room.usersCount}}/{{ room.limit }}</div>
     </li>
   </ul>
   </p>
