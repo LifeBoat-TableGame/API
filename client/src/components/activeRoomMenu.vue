@@ -20,7 +20,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['room:collapse'])
 const leaveRoom = () => {
-  mainStore.leaveRoom(roomStore.rooms.find(x => x.id == mainStore.activeRoomId)?.name);
+  mainStore.leaveRoom(mainStore.activeRoomId);
   emit('room:collapse');
 }
 </script>

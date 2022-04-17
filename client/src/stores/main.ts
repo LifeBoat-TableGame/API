@@ -43,7 +43,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
     },
     renameUser(name: string) {
       console.log(`rename: ${name}`);
-      this.socket.emit('rename', this.name);
+      this.socket.emit('rename', name);
     },
     //сделать async renameConfirmed как-нибудь
     register(userName: string) {
