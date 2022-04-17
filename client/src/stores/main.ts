@@ -8,6 +8,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
   state: () => ({
     activeRoomId: 0,
     token: '',
+    selfId: -1,
     name: 'noname',
     socket: io('http://localhost:3000/menu'),
   }),
@@ -43,7 +44,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
     },
     renameUser(name: string) {
       console.log(`rename: ${name}`);
-      this.socket.emit('rename', this.name);
+      this.socket.emit('rename', name);
     },
     //сделать async renameConfirmed как-нибудь
     register(userName: string) {
@@ -68,7 +69,8 @@ export const useMainStore : any = defineStore("mainStoreID", {
     },
     initListeners() {
       console.log('listening to \'registered\'') 
-      this.socket.on('registered', (token: string) => {
+      this.socket.on('registered', (token: string, id: number) => {
+        this.selfId = id;
         this.useToken(token);
       });  
       console.log('listening to \'RoomCreated\'') 
@@ -84,6 +86,11 @@ export const useMainStore : any = defineStore("mainStoreID", {
       this.socket.on('updateRooms', (res) => {
         console.log(JSON.parse(res));
         useRoomStore().updateRooms(res)
+      });
+      this.socket.on('userJoined', (id: number, username: string, lobby: number) => {
+        if(id == this.selfId)
+          this.activeRoomId = lobby;
+        console.log(`User ${username} has joined!`);
       });
     }
   },

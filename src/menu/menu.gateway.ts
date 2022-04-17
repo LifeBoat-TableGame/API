@@ -33,9 +33,9 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('register')
-  async handleRegister(client: Socket): Promise<WsResponse<string>> {
+  async handleRegister(client: Socket) {
     const user = await this.authService.register();
-    return {event: 'registered', data: user.token};
+    client.emit('registered', user.token, user.id);
   }
 
   @UseGuards(WsGuard)
@@ -71,7 +71,7 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     const user = await this.userService.getWithRelations(token);
     const lobbyId = await this.lobbyService.joinLobby(user, id, password);
     client.join(lobbyId.toString());
-    client.to(lobbyId.toString()).emit(`userJoined`, user.username);
+    this.wss.to(lobbyId.toString()).emit(`userJoined`, user.id, user.username, lobbyId);
     const rooms = await this.lobbyService.getLobbies();
     this.wss.emit('updateRooms', JSON.stringify(rooms));
   }
