@@ -61,7 +61,7 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     client.join(lobbyId.toString());
     client.emit('RoomCreated', lobbyId);
     const rooms = await this.lobbyService.getLobbies();
-    this.wss.emit('updateRooms', JSON.stringify(rooms));
+    this.wss.emit('updateRooms', rooms);
   }
 
   @UseGuards(WsGuard)
@@ -73,7 +73,7 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     client.join(lobbyId.toString());
     this.wss.to(lobbyId.toString()).emit(`userJoined`, user.id, user.username, lobbyId);
     const rooms = await this.lobbyService.getLobbies();
-    this.wss.emit('updateRooms', JSON.stringify(rooms));
+    this.wss.emit('updateRooms', rooms);
   }
 
   @UseGuards(WsGuard)
@@ -85,13 +85,13 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     client.leave(id.toString());
     client.to(id.toString()).emit('userLeft', user.username);
     const rooms = await this.lobbyService.getLobbies();
-    this.wss.emit('updateRooms', JSON.stringify(rooms));
+    this.wss.emit('updateRooms', rooms);
   }
 
   @UseGuards(WsGuard)
   @SubscribeMessage('getRooms')
   async handleGetRooms(client: Socket) {
     const rooms = await this.lobbyService.getLobbies();
-    client.emit('updateRooms', JSON.stringify(rooms));
+    client.emit('updateRooms', rooms);
   }
 }
