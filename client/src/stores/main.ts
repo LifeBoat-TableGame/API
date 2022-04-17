@@ -84,7 +84,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
       });
       console.log('listening to \'updateRooms\'') 
       this.socket.on('updateRooms', (res) => {
-        console.log(JSON.parse(res));
+        console.log(res);
         useRoomStore().updateRooms(res)
       });
       this.socket.on('userJoined', (id: number, username: string, lobby: number) => {

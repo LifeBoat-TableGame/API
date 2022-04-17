@@ -5,6 +5,7 @@ import { LobbyService } from '../lobby/lobby.service';
 import { WsGuard } from '../authentication/wsguard';
 import { UserService } from '../user/user.service';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { MenuService } from './menu.service';
 
 @WebSocketGateway({namespace: '/menu'})
 export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
@@ -12,7 +13,8 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
   constructor(
     private lobbyService: LobbyService, 
     private userService: UserService, 
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private menuService: MenuService,
   ) {}
 
   @WebSocketServer() wss: Server;
@@ -42,26 +44,19 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
   @SubscribeMessage('rename')
   async handleRename(client: Socket, newName: string) {
     const token = client.handshake.headers.authorization;
-    const succeed = await this.authService.rename(token, newName);
-    if(succeed)
-      return {event: 'UserUpdated', data: newName};
-    else return {event: 'Error'};
+    this.menuService.rename(token, newName);
+    return {event: 'UserUpdated', data: newName};
   }
 
   @UseGuards(WsGuard)
   @SubscribeMessage('createRoom')
   async handleMessage(client: Socket, name: string, password?: string){
     const token = client.handshake.headers.authorization;
-    const user = await this.userService.getWithRelations(token);
-    let lobbyId: number;
-      if(password) 
-        lobbyId = await this.lobbyService.createLobby({creator: user, name: name, password: password});
-      else
-      lobbyId = await this.lobbyService.createLobby({creator: user, name: name});
+    const lobbyId = await this.menuService.createRoom(token, name, password);
     client.join(lobbyId.toString());
     client.emit('RoomCreated', lobbyId);
     const rooms = await this.lobbyService.getLobbies();
-    this.wss.emit('updateRooms', JSON.stringify(rooms));
+    this.wss.emit('updateRooms', rooms);
   }
 
   @UseGuards(WsGuard)
@@ -73,7 +68,7 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     client.join(lobbyId.toString());
     this.wss.to(lobbyId.toString()).emit(`userJoined`, user.id, user.username, lobbyId);
     const rooms = await this.lobbyService.getLobbies();
-    this.wss.emit('updateRooms', JSON.stringify(rooms));
+    this.wss.emit('updateRooms', rooms);
   }
 
   @UseGuards(WsGuard)
@@ -85,13 +80,13 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     client.leave(id.toString());
     client.to(id.toString()).emit('userLeft', user.username);
     const rooms = await this.lobbyService.getLobbies();
-    this.wss.emit('updateRooms', JSON.stringify(rooms));
+    this.wss.emit('updateRooms', rooms);
   }
 
   @UseGuards(WsGuard)
   @SubscribeMessage('getRooms')
   async handleGetRooms(client: Socket) {
     const rooms = await this.lobbyService.getLobbies();
-    client.emit('updateRooms', JSON.stringify(rooms));
+    client.emit('updateRooms', rooms);
   }
 }

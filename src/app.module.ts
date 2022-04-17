@@ -13,6 +13,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { GameModule } from './game/game.module';
 import { GameGateway } from './game/game.gateway';
+import { MenuModule } from './menu/menu.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { GameGateway } from './game/game.gateway';
     LobbyModule,
     GameModule,
     UserModule,
+    MenuModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client/dist')
     }),

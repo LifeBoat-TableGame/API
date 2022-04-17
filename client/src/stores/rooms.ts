@@ -24,8 +24,8 @@ export const useRoomStore = defineStore("roomStoreID", {
   getters: {
   },
   actions: {
-    updateRooms(rooms: string) {
-      this.rooms = JSON.parse(rooms);
+    updateRooms(rooms: Room[]) {
+      this.rooms = rooms;
     }
   },
 })

@@ -21,6 +21,6 @@ export class GameGateway {
         const user = await this.userService.getWithRelations(token);
         const gameId = await this.gameService.startGame(user, user.lobby);
         const game = await this.gameService.getGameWithrelations(gameId);
-        this.wss.to(user.lobby.id.toString()).emit('Game started', JSON.stringify(game));
+        this.wss.to(user.lobby.id.toString()).emit('gameStarted', game);
     }
 }
