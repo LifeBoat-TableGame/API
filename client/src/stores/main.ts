@@ -6,7 +6,7 @@ import { useRoomStore } from './rooms';
 const defaultSocket = io();
 export const useMainStore : any = defineStore("mainStoreID", {
   state: () => ({
-    activeRoomId: 1,
+    activeRoomId: 0,
     token: '',
     selfId: -1,
     name: 'noname',
