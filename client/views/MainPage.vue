@@ -36,6 +36,6 @@ console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 
 if (mainStore.token == '') {
   console.log('token does not exists, redirecting to login');
-  //router.push('/login');
+  router.push('/login');
 }
 </script>
