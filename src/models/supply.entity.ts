@@ -6,10 +6,10 @@ export class Supply {
     @PrimaryColumn()
     name: string;
 
-    @Column()
+    @Column({nullable: true})
     strength: number;
 
-    @Column()
+    @Column({nullable: true})
     bonus: number;
 
     @Column()
