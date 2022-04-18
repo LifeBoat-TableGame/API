@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="bg-light-blue">
     <h1>{{ title }}</h1>
-    <input v-model="roomData.roomName" type="text" /> <br>
-    <input v-model="roomData.password" type="text" /> <br>
-    <button type="submit" @click="createRoom">Create</button>
+    <input v-model="roomData.roomName" type="text" class="small-field"/> <br>
+    <input v-model="roomData.password" type="text" class="small-field"/> <br>
+    <button type="submit" @click="createRoom" class="btn">Create</button>
   </div>
 </template>
 

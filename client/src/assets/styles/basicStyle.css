@@ -51,7 +51,7 @@ body {
 }
 
 .stretched {
-    background-color: var(--light-blue);
+    background-color: 'light-blue';
     flex: auto;
 }
 
@@ -90,8 +90,8 @@ div.footer {
 }
 
 button {
-    background-color: var(--light-blue);
-    color: var(--deep-blue);
+    background-color: 'light-blue';
+    color: 'deep-blue';
     font-size: 16pt;
     line-height: 24pt;
     text-align: center;

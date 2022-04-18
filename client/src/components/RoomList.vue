@@ -2,8 +2,8 @@
 <div>
   <h1>{{ title }}</h1>
   <p>
-  <ul class="blue">
-    <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)" class="stretched">
+  <ul class="bg-light-blue" >
+    <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)" class=" horisontal-container">
       <div>{{ room.name}}</div> <div>{{room.usersCount}}/{{ room.limit }}</div>
     </li>
   </ul>

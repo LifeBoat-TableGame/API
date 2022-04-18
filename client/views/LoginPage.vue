@@ -1,5 +1,7 @@
 <template>
-  <login-form />
+  <div class="vertical-container">
+    <login-form />
+  </div>
 </template>
 
 <script setup lang="ts">

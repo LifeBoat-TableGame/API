@@ -1,8 +1,8 @@
 <template>
-  <div class="blue">
-    <h1>{{ title }}</h1>
-    <input v-model="username" type="text" />
-    <button type="submit" @click="logIn">Rename</button>
+  <div class="bg-light-blue flex flex-col text-lg items-center rounded-md">
+    <p class="text-2xl">{{ title }}</p>
+    <input v-model="username" type="text" class="small-field"/>
+    <button type="submit" @click="logIn" class="btn">Rename</button>
   </div>
 </template>
 
