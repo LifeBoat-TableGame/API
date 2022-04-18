@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { CharacterQueue } from "./characterQueue.entity";
 
 @Entity('character')
 export class Character {
@@ -13,4 +14,7 @@ export class Character {
 
     @Column()
     description: string;
+
+    @OneToMany(() => CharacterQueue, (queue) => queue.character)
+    queue: CharacterQueue;
 }

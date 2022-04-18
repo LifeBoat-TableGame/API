@@ -10,6 +10,7 @@ import { Navigation } from '../models/navigation.entity';
 import { Hand } from '../models/hand.entity';
 import { UserModule } from '../user/user.module';
 import { CardsModule } from '../cards/cards.module';
+import { CharacterQueue } from '../models/characterQueue.entity';
 
 @Module({
     imports: [
@@ -20,7 +21,8 @@ import { CardsModule } from '../cards/cards.module';
             Player, 
             Hand, 
             GameNavigation, 
-            Navigation
+            Navigation,
+            CharacterQueue
         ]),
         UserModule,
         CardsModule

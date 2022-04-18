@@ -1,4 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CharacterQueue } from "./characterQueue.entity";
 import { GameNavigation } from "./gameNavigation.entity";
 import { GameSupply } from "./gameSupply.entity";
 import { Navigation } from "./navigation.entity";
@@ -30,6 +31,12 @@ export class Game {
 
     @Column()
     state: GameState;
+
+    @OneToMany(() => CharacterQueue, (queue) => queue.game)
+    queue: CharacterQueue[];
+
+    @Column({default: 0})
+    currentCharacterIndex: number;
 
     @Column({default: 0})
     seagulls: number;
