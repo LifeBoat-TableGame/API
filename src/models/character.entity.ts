@@ -15,6 +15,9 @@ export class Character {
     @Column()
     description: string;
 
+    @Column({unique: true})
+    defaultOrder: number;
+
     @OneToMany(() => CharacterQueue, (queue) => queue.character)
     queue: CharacterQueue;
 }
