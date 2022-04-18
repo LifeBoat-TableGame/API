@@ -30,16 +30,7 @@ export const useMainStore : any = defineStore("mainStoreID", {
       console.log(`using Token: ${token}`);
       this.token = token;
       this.socket.disconnect();
-      const socketOptions = {
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              Authorization: token,
-            }
-          }
-        }
-      };
-      this.socket = io('http://localhost:3000/menu', socketOptions);
+      this.socket = io('http://localhost:3000/menu', {extraHeaders: { Authorization: token }});
       this.initListeners();
     },
     renameUser(name: string) {
