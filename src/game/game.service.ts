@@ -7,12 +7,13 @@ import { Lobby } from '../models/lobby.entity';
 import { WsException } from '@nestjs/websockets';
 import { User } from '../models/user.entity';
 import { UserService } from '../user/user.service';
-import { Hand } from '../models/hand.entity';
 import { CardsService } from '../cards/cards.service';
 import CreateGameDto from './dto/createGameDto';
 import CreateGameSupplyDto from './dto/createGameSupplyDto';
 import CreateGameNavigationDto from './dto/createGameNavigationDto';
 import { GameNavigation } from '../models/gameNavigation.entity';
+import CreateCharacterQueueDto from './dto/createCharacterQueueDto';
+import { CharacterQueue } from '../models/characterQueue.entity';
 
 @Injectable()
 export class GameService {
@@ -22,7 +23,8 @@ export class GameService {
         @InjectRepository(GameSupply) private gameSupplyRepository: Repository<GameSupply>,
         @InjectRepository(Game) private gameRepository: Repository<Game>,
         @InjectRepository(GameNavigation) private gameNavigationRepository: Repository<GameNavigation>,
-    ) {}
+        @InjectRepository(CharacterQueue) private characterQueueRepository: Repository<CharacterQueue>
+        ) {}
 
     private readonly minimal: 4;
 
@@ -49,6 +51,11 @@ export class GameService {
         return await this.gameNavigationRepository.save(newItem);
     }
 
+    async createCharacterQueue(characterQueue: CreateCharacterQueueDto) {
+        const newItem = this.characterQueueRepository.create(characterQueue);
+        return await this.characterQueueRepository.save(newItem);
+    }
+
     async startGame(user: User, lobby: Lobby) {
         if(lobby.creator.id != user.id)
             throw new WsException('Permission denied');
@@ -69,6 +76,11 @@ export class GameService {
                 friendship: friendQueue[index], 
                 enemy: enemyQueue[index],
                 game: game
+            });
+            await this.createCharacterQueue({
+                gameId: game.id,
+                characterName: characters[index].name,
+                order: characters[index].defaultOrder
             });
         }));
         const supplyPromise = Promise.all(this.cardsService.shuffle(supplies).map( async (supply) => {
