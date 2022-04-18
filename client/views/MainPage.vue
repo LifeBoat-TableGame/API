@@ -31,7 +31,7 @@ const logOut = () => {
   mainStore.logOut();
 }
 const collapseRoom = () => {
-
+  mainStore.activeRoomId=0;
 }
 const roomCreated = (created) => {
 }
