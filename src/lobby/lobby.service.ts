@@ -14,12 +14,14 @@ export class LobbyService {
         ) {}
 
     async getLobbies(includeUsers: boolean = false) {
-        const lobbies =  await this.lobbyRepository
-            .createQueryBuilder("lobby")
-            .leftJoinAndSelect("lobby.users", "user")
-            .getMany();
+        const lobbies =  await this.lobbyRepository.find({relations: {
+            users: true,
+            creator: true
+        }});
         return lobbies.map(lobby => { 
-            lobby.usersCount = lobby.users.length;  
+            lobby.usersCount = lobby.users.length;
+            delete lobby.creator.token;
+            delete lobby.creator.player;  
             delete lobby.password;
             if(!includeUsers)  
                 delete lobby.users; 
