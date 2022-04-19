@@ -11,8 +11,7 @@ export const useMainStore: any = defineStore("mainStoreID", {
     isAdmin: false,
     selfId: -1,
     name: 'noname',
-    menuSocket: io('http://localhost:3000/menu'),
-    gameSocket: io('http://localhost:3000/menu'),
+    menuSocket: io('http://localhost:3000/'),
   }),
   getters: {
     getToken: (state) => {
@@ -28,7 +27,7 @@ export const useMainStore: any = defineStore("mainStoreID", {
       this.token = token;
       console.log('using token', token)
       this.menuSocket.disconnect();
-      this.menuSocket = io('http://localhost:3000/menu', { extraHeaders: { Authorization: token } });
+      this.menuSocket = io('http://localhost:3000/', { extraHeaders: { Authorization: token } });
       this.initListeners();
     },
     renameUser(name: string) {
@@ -51,7 +50,6 @@ export const useMainStore: any = defineStore("mainStoreID", {
     leaveRoom(roomId: number) {
       console.log(`leaving room: ${roomId}`);
       this.menuSocket.emit('leaveRoom', roomId);
-      this.destroyGameSocket()
       this.isAdmin=false;
       this.activeRoomId=0;
     },
@@ -59,23 +57,17 @@ export const useMainStore: any = defineStore("mainStoreID", {
       console.log('trying to get rooms...')
       this.menuSocket.emit('getRooms');
     },
-    initGameSocket() {
-      this.destroyGameSocket();
-      console.log('creating game socket with token', this.token)
-      this.gameSocket = io('http://localhost:3000/game', { extraHeaders: { Authorization: this.token } });
-      this.initGameListeners();
-    },
-    destroyGameSocket() {
+    destroymenuSocket() {
       console.log('destroying game socket');
-      this.gameSocket.disconnect();
+      this.menuSocket.disconnect();
     },
     startGame() {
       console.log('starting game', this.activeRoomId);
-      this.gameSocket.emit('create');
+      this.menuSocket.emit('create');
     },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
-      this.gameSocket.on('gameStarted', (game) => {
+      this.menuSocket.on('gameStarted', (game) => {
         router.push('/game')
       });
     },
@@ -88,12 +80,12 @@ export const useMainStore: any = defineStore("mainStoreID", {
       console.log('listening to \'RoomCreated\'')
       this.menuSocket.on('RoomCreated', (id: number) => {
         console.log(`room created with id: ${id}`);
-        this.initGameSocket();
+        //this.initmenuSocket();
         this.activeRoomId = id;
         this.isAdmin = true;
       });
       console.log('listening to \'gameStarted\'')
-      this.gameSocket.on('gameStarted', (game) => {
+      this.menuSocket.on('gameStarted', (game) => {
         router.push('/game')
       });
       console.log('listening to \'UserUpdated\'')
@@ -109,7 +101,6 @@ export const useMainStore: any = defineStore("mainStoreID", {
       this.menuSocket.on('userJoined', (id: number, username: string, lobby: number) => {
         if (id == this.selfId) {
           this.activeRoomId = lobby;
-          this.initGameSocket();
         }
         console.log(`User ${username} has joined!`);
       });

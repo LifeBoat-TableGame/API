@@ -4,10 +4,12 @@ import { Server, Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { WsGuard } from '../authentication/wsguard';
 import { UserService } from '../user/user.service';
+import { LobbyService } from '../lobby/lobby.service';
 
-@WebSocketGateway({namespace: '/game'})
+@WebSocketGateway()
 export class GameGateway {
     constructor(
+        private lobbyService: LobbyService,
         private gameService: GameService, 
         private userService: UserService
     ) {}
@@ -19,8 +21,10 @@ export class GameGateway {
     async handleCreate(client: Socket) {
         const token = client.handshake.headers.authorization;
         const user = await this.userService.getWithRelations(token);
-        const gameId = await this.gameService.startGame(user, user.lobby);
+        const lobby = await this.lobbyService.getWithRelations(user.lobby.id);
+        const gameId = await this.gameService.startGame(user, lobby);
         const game = await this.gameService.getGameWithrelations(gameId);
+        console.log(game);
         this.wss.to(user.lobby.id.toString()).emit('gameStarted', game);
     }
 }

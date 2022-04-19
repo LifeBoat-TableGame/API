@@ -7,7 +7,7 @@ import { UserService } from '../user/user.service';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { MenuService } from './menu.service';
 
-@WebSocketGateway({namespace: '/menu'})
+@WebSocketGateway()
 export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   constructor(
