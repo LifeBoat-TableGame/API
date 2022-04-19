@@ -14,6 +14,7 @@ import { join } from 'path';
 import { GameModule } from './game/game.module';
 import { GameGateway } from './game/game.gateway';
 import { MenuModule } from './menu/menu.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { MenuModule } from './menu/menu.module';
       synchronize: true,
     }),
   ],
-  controllers: [ChatController],
+  controllers: [ChatController, AppController],
   providers: [AppService, ChatGateway, MenuGateway, GameGateway],
 })
 export class AppModule {}
