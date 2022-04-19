@@ -4,6 +4,9 @@
 .btn {
     @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
 }
+.btn:hover {
+    @apply bg-olive-200 m-1 mt-3 rounded-md p-1 text-lg
+}
 .vertical-container {
     @apply flex justify-center flex-col
 }
@@ -15,4 +18,7 @@
 }
 .small-field {
     @apply rounded text-2xl px-1
+}
+.btn-disabled {
+    @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
 }
