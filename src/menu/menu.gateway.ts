@@ -77,7 +77,7 @@ export class MenuGateway implements OnGatewayInit, OnGatewayDisconnect {
     const token = client.handshake.headers.authorization;
     const user = await this.userService.getWithRelations(token);
     await this.lobbyService.leaveLobby(user, id);
-    client.to(id.toString()).emit('userLeft', user.username);
+    client.to(id.toString()).emit('userLeft', user.username, user.id);
     client.leave(id.toString());
     const rooms = await this.lobbyService.getLobbies();
     this.wss.emit('updateRooms', rooms);
