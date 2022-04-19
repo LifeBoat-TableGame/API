@@ -1,6 +1,8 @@
 <template>
   <div class="vertical-container">
     im a game page
+    <button @click="getGameInfo" class="btn">Get game info</button>
+    <button @click="getPlayerInfo" class="btn btn-primary">Get player info</button>
   </div>
 </template>
 
@@ -12,6 +14,9 @@ const name = 'GameTemp';
 const components = {
 };
 const mainStore = useMainStore();
+
+const getGameInfo = () => mainStore.getGameInfo();
+const getPlayerInfo = () => mainStore.getPlayerInfo();
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {

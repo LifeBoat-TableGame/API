@@ -65,6 +65,12 @@ export const useMainStore: any = defineStore("mainStoreID", {
       console.log('starting game', this.activeRoomId);
       this.socket.emit('create');
     },
+    getGameInfo(){
+      this.socket.emit('getGameInfo'); 
+    },
+    getPlayerInfo(){
+      this.socket.emit('getPlayerInfo');
+    },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
       this.socket.on('gameStarted', (game) => {
@@ -102,6 +108,14 @@ export const useMainStore: any = defineStore("mainStoreID", {
           this.activeRoomId = lobby;
         }
         console.log(`User ${username} has joined!`);
+      });
+
+      this.socket.on('gameInfo', (game) => {
+        console.log(game);
+      });
+      
+      this.socket.on('playerInfo', (player) => {
+        console.log(player);
       });
     }
   },
