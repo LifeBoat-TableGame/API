@@ -41,7 +41,7 @@ export class GameService {
         return await this.gameRepository.save(newGame);
     }
 
-    async createGameSupply(gameSupply: CreateGameSupplyDto) {
+    async createGameSupply(gameSupply: CreateGameSupplyDto[]) {
         const newItem = this.gameSupplyRepository.create(gameSupply);
         return await this.gameSupplyRepository.save(newItem);
     }
@@ -54,6 +54,26 @@ export class GameService {
     async createCharacterQueue(characterQueue: CreateCharacterQueueDto) {
         const newItem = this.characterQueueRepository.create(characterQueue);
         return await this.characterQueueRepository.save(newItem);
+    }
+
+    async drawSupplies(amount: number) {
+        await this.gameSupplyRepository
+        .createQueryBuilder("game_supply")
+        .orderBy("RANDOM()")
+        .take(amount)
+        .update(GameSupply)
+        .set({picked: true})
+        .execute();
+    }
+    async getDrawnSupplies() {
+        return await this.gameSupplyRepository
+        .createQueryBuilder("game_supply")
+        .leftJoinAndSelect("game_supply.supply", "supply")
+        .where("game_supply.picked")
+        .getMany();
+    }
+    async removeGameSupply(supply: GameSupply) {
+        return await this.gameSupplyRepository.remove(supply);
     }
 
     async startGame(user: User, lobby: Lobby) {
@@ -83,13 +103,13 @@ export class GameService {
                 order: characters[index].defaultOrder
             });
         }));
-        const supplyPromise = Promise.all(this.cardsService.shuffle(supplies).map( async (supply) => {
-            await this.createGameSupply({
-                gameId: game.id, 
+        const supplyPromise = Promise.all(supplies.map( async (supply) => {
+            await this.createGameSupply(Array(supply.amount).fill({
+                gameId: game.id,
                 supplyName: supply.name
-            });
+            }));
         }));
-        const navigationPromise = Promise.all(this.cardsService.shuffle(navigations).map( async (navigation) => {
+        const navigationPromise = Promise.all(navigations.map( async (navigation) => {
             await this.createGameNavigation({
                 gameId: game.id, 
                 navigationId: navigation.id

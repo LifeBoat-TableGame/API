@@ -15,6 +15,9 @@ export class Supply {
     @Column()
     description: string;
 
+    @Column()
+    amount: number;
+
     @OneToMany(() => GameSupply, (gameSupply) => gameSupply.supply)
     gameConnection: GameSupply;
 }

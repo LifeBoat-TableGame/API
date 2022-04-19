@@ -1,9 +1,12 @@
-import { Column, Entity, Generated, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, Generated, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Game } from "./game.entity";
 import { Supply } from "./supply.entity";
 
 @Entity()
 export class GameSupply {
+
+    @PrimaryGeneratedColumn()
+    id?: number;
     
     @PrimaryColumn()
     gameId: number;
@@ -14,6 +17,9 @@ export class GameSupply {
     @Generated('increment')
     @Column({unique: true})
     order: number;
+
+    @Column({default: false})
+    picked: boolean;
 
     @ManyToOne(() => Game, (game) => game.supplyDeck)
     @JoinColumn({name: "gameId"})
