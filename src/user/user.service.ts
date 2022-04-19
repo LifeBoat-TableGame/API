@@ -27,9 +27,23 @@ export class UserService {
         .createQueryBuilder("user")
         .where("user.token = :token", {token: token})
         .leftJoinAndSelect("user.player", "player")
+        .leftJoinAndSelect("player.game", "game")
         .leftJoinAndSelect("user.lobby", "lobby")
         .getOne();
         return user;
+    }
+
+    async getPlayerRelations(id: number) {
+        const player = await this.playerRepository.findOne({
+            where: {id: id},
+            relations: {
+                character: true,
+                enemy: true,
+                friendship: true,
+                hand: true,
+            },
+        });
+        return player;
     }
 
     async createPlayer(playerData: CreatePlayerDto | CreatePlayerInGameDto) {

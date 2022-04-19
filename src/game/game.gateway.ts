@@ -27,4 +27,22 @@ export class GameGateway {
         console.log(game);
         this.wss.to(user.lobby.id.toString()).emit('gameStarted', game);
     }
+
+    @UseGuards(WsGuard)
+    @SubscribeMessage('gameInfo')
+    async handleGameInfo(client: Socket) {
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        const game = await this.gameService.getGameWithrelations(user.player.game.id);
+        client.emit('gameInfo', game);
+    }
+
+    @UseGuards(WsGuard)
+    @SubscribeMessage('playerInfo')
+    async handlePlayerInfo(client: Socket) {
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        const player = await this.userService.getPlayerRelations(user.player.game.id);
+        client.emit('playerInfo', player);
+    }
 }

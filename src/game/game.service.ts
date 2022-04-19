@@ -91,11 +91,12 @@ export class GameService {
         const enemyQueue = this.cardsService.shuffle(characters);
 
         const queue = [];
+        const sorted = characters.sort((a, b) => a.defaultOrder - b.defaultOrder)
         const players = lobby.users.map((user, index) => {
             queue.push({
                 gameId: game.id,
                 characterName: characters[index].name,
-                order: characters[index].defaultOrder
+                order: sorted.indexOf(characters[index])
             });
             return {
                 user: user, 
@@ -113,7 +114,7 @@ export class GameService {
                 supplyName: supply.name
             }));
         }));
-        const navigationPromise = Promise.all(navigations.map( async (navigation) => {
+        await Promise.all(navigations.map( async (navigation) => {
             await this.createGameNavigation({
                 gameId: game.id, 
                 navigationId: navigation.id
