@@ -11,7 +11,8 @@ export const useMainStore: any = defineStore("mainStoreID", {
     isAdmin: false,
     selfId: -1,
     name: 'noname',
-    socket: io('http://localhost:3000/menu'),
+    menuSocket: io('http://localhost:3000/menu'),
+    gameSocket: io('http://localhost:3000/menu'),
   }),
   getters: {
     getToken: (state) => {
@@ -21,84 +22,94 @@ export const useMainStore: any = defineStore("mainStoreID", {
   actions: {
     logOut() {
       console.log('logging out...')
-      this.token = '';
-      this.socket.disconnect();
-      this.socket = io('http://localhost:3000/menu');
-      this.initListeners();
       router.push('/login')
-    },
-    changeSocket(adress: string, token: string) {
-      this.socket.disconnect();
-      this.socket = io(adress, { extraHeaders: { Authorization: token } });
-      console.log('changing socket to', adress, 'with token', token)
-      this.initListeners();
     },
     useToken(token: string) {
       this.token = token;
-      this.changeSocket('http://localhost:3000/menu', token);
+      console.log('using token', token)
+      this.menuSocket.disconnect();
+      this.menuSocket = io('http://localhost:3000/menu', { extraHeaders: { Authorization: token } });
+      this.initListeners();
     },
     renameUser(name: string) {
       console.log(`rename: ${name}`);
-      this.socket.emit('rename', name);
+      this.menuSocket.emit('rename', name);
     },
     //сделать async renameConfirmed как-нибудь
     register(userName: string) {
       console.log(`register: ${userName}`);
-      this.socket.emit('register');
+      this.menuSocket.emit('register');
     },
     createRoom(roomName: string) {
       console.log(`creating room: ${roomName}`);
-      this.socket.emit('createRoom', roomName);
+      this.menuSocket.emit('createRoom', roomName);
     },
     joinRoom(roomId: number) {
       console.log(`joining room: ${roomId}`);
-      this.socket.emit('joinRoom', roomId);
+      this.menuSocket.emit('joinRoom', roomId);
     },
     leaveRoom(roomId: number) {
       console.log(`leaving room: ${roomId}`);
-      this.socket.emit('leaveRoom', roomId);
+      this.menuSocket.emit('leaveRoom', roomId);
+      this.destroyGameSocket()
       this.isAdmin=false;
       this.activeRoomId=0;
-      this.changeSocket('http://localhost:3000/menu', this.token);
     },
     getRooms() {
       console.log('trying to get rooms...')
-      this.socket.emit('getRooms');
+      this.menuSocket.emit('getRooms');
+    },
+    initGameSocket() {
+      this.destroyGameSocket();
+      console.log('creating game socket with token', this.token)
+      this.gameSocket = io('http://localhost:3000/game', { extraHeaders: { Authorization: this.token } });
+      this.initGameListeners();
+    },
+    destroyGameSocket() {
+      console.log('destroying game socket');
+      this.gameSocket.disconnect();
     },
     startGame() {
-      this.changeSocket('http://localhost:3000/game', this.token);
-      this.socket.emit('create');
+      console.log('starting game', this.activeRoomId);
+      this.gameSocket.emit('create');
+    },
+    initGameListeners() {
+      console.log('listening to \'gameStarted\'')
+      this.gameSocket.on('gameStarted', (game) => {
+        router.push('/game')
+      });
     },
     initListeners() {
       console.log('listening to \'registered\'')
-      this.socket.on('registered', (token: string, id: number) => {
+      this.menuSocket.on('registered', (token: string, id: number) => {
         this.selfId = id;
         this.useToken(token);
       });
       console.log('listening to \'RoomCreated\'')
-      this.socket.on('RoomCreated', (id: number) => {
+      this.menuSocket.on('RoomCreated', (id: number) => {
         console.log(`room created with id: ${id}`);
+        this.initGameSocket();
         this.activeRoomId = id;
         this.isAdmin = true;
       });
       console.log('listening to \'gameStarted\'')
-      this.socket.on('gameStarted', (game) => {
+      this.gameSocket.on('gameStarted', (game) => {
         router.push('/game')
       });
       console.log('listening to \'UserUpdated\'')
-      this.socket.on('UserUpdated', (name: string) => {
+      this.menuSocket.on('UserUpdated', (name: string) => {
         this.name = name;
       });
       console.log('listening to \'updateRooms\'')
-      this.socket.on('updateRooms', (res) => {
+      this.menuSocket.on('updateRooms', (res) => {
         console.log(res);
         useRoomStore().updateRooms(res)
       });
       console.log('listening to \'userJoined\'')
-      this.socket.on('userJoined', (id: number, username: string, lobby: number) => {
+      this.menuSocket.on('userJoined', (id: number, username: string, lobby: number) => {
         if (id == this.selfId) {
           this.activeRoomId = lobby;
-          this.changeSocket('http://localhost:3000/game', this.token);
+          this.initGameSocket();
         }
         console.log(`User ${username} has joined!`);
       });

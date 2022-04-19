@@ -9,7 +9,12 @@ const app = createApp(App);
 app
     .use(router)
     .use(createPinia())
-const mainStore = useMainStore();
 //ADD: check for token here
-mainStore.initListeners();
+const mainStore = useMainStore();
+fetch('http://localhost:3000/api/token').then(res => res.text()).then(data => {
+    const { token, id } = JSON.parse(data);
+    mainStore.selfId = id;
+    mainStore.useToken(token);
+});
+router.push('/login');
 app.mount('#app');

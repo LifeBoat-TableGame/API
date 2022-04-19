@@ -16,12 +16,4 @@ const components = {
 const mainStore = useMainStore();
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
-
-if (mainStore.token != '') {
-  console.log('token exists, redirecting to main');
-  router.push('/');
-}
-else {
-  mainStore.register('unknownUser');
-}
 </script>

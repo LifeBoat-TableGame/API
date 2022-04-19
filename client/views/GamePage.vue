@@ -14,16 +14,8 @@ const components = {
 const mainStore = useMainStore();
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
-
-if (mainStore.token == '') {
-  console.log('token does not exists, redirecting to login');
-  router.push('/login');
-}
 if (mainStore.activeRoomId == 0) {
   console.log('game does not exists, redirecting to main');
   router.push('/');
-}
-else {
-  mainStore.register('unknownUser');
 }
 </script>
