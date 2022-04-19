@@ -15,6 +15,7 @@ export class Player {
     user: User;
 
     @ManyToOne(() => Game, (game) => game.players)
+    @JoinColumn()
     game: Game;
 
     @ManyToOne(() => Character, (character) => character.players)
@@ -29,7 +30,7 @@ export class Player {
     @JoinColumn()
     enemy: Character;
 
-    @OneToOne(() => Hand)
+    @OneToOne(() => Hand, (hand) => hand.player)
     hand: Hand;
 
     @Column({default: 0})

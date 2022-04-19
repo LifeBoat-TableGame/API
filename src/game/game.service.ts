@@ -85,6 +85,8 @@ export class GameService {
         
         const game = await this.createGame({state: GameState.Supplies});
         const characters = await this.cardsService.getRandomCharacters(lobby.users.length);
+        if(characters.length < lobby.users.length) 
+            throw new WsException('Not enought characters.');
         const supplies = await this.cardsService.getAllSupplies();
         const navigations = await this.cardsService.getAllNavigations();
         const friendQueue = this.cardsService.shuffle(characters);

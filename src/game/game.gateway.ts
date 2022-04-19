@@ -29,7 +29,7 @@ export class GameGateway {
     }
 
     @UseGuards(WsGuard)
-    @SubscribeMessage('gameInfo')
+    @SubscribeMessage('getGameInfo')
     async handleGameInfo(client: Socket) {
         const token = client.handshake.headers.authorization;
         const user = await this.userService.getWithRelations(token);
@@ -38,11 +38,11 @@ export class GameGateway {
     }
 
     @UseGuards(WsGuard)
-    @SubscribeMessage('playerInfo')
+    @SubscribeMessage('getPlayerInfo')
     async handlePlayerInfo(client: Socket) {
         const token = client.handshake.headers.authorization;
         const user = await this.userService.getWithRelations(token);
-        const player = await this.userService.getPlayerRelations(user.player.game.id);
+        const player = await this.userService.getPlayerRelations(user.player.id);
         client.emit('playerInfo', player);
     }
 }
