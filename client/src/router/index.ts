@@ -13,6 +13,12 @@ const routes = [
         component: () =>
             import ('/views/LoginPage.vue')
     },
+    {
+        path: '/game',
+        name: 'Game',
+        component: () =>
+            import ('/views/GamePage.vue')
+    },
 ]
 
 const router = createRouter({

@@ -9,9 +9,7 @@ const app = createApp(App);
 app
     .use(router)
     .use(createPinia())
-
 const mainStore = useMainStore();
 //ADD: check for token here
 mainStore.initListeners();
-
 app.mount('#app');
