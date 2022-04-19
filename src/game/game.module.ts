@@ -11,6 +11,7 @@ import { Hand } from '../models/hand.entity';
 import { UserModule } from '../user/user.module';
 import { CardsModule } from '../cards/cards.module';
 import { CharacterQueue } from '../models/characterQueue.entity';
+import { LobbyModule } from '../lobby/lobby.module';
 
 @Module({
     imports: [
@@ -25,7 +26,8 @@ import { CharacterQueue } from '../models/characterQueue.entity';
             CharacterQueue
         ]),
         UserModule,
-        CardsModule
+        CardsModule,
+        LobbyModule
     ],
     providers: [GameService],
     exports: [GameService]

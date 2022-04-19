@@ -51,8 +51,9 @@ export class GameService {
         return await this.gameNavigationRepository.save(newItem);
     }
 
-    async createCharacterQueue(characterQueue: CreateCharacterQueueDto) {
+    async createCharacterQueue(characterQueue: CreateCharacterQueueDto[]) {
         const newItem = this.characterQueueRepository.create(characterQueue);
+        console.log(newItem);
         return await this.characterQueueRepository.save(newItem);
     }
 
@@ -89,21 +90,24 @@ export class GameService {
         const friendQueue = this.cardsService.shuffle(characters);
         const enemyQueue = this.cardsService.shuffle(characters);
 
-        const playerPromise = Promise.all(lobby.users.map( async (user, index) => {
-            await this.userService.createPlayer({
+        const queue = [];
+        const players = lobby.users.map((user, index) => {
+            queue.push({
+                gameId: game.id,
+                characterName: characters[index].name,
+                order: characters[index].defaultOrder
+            });
+            return {
                 user: user, 
                 character: characters[index], 
                 friendship: friendQueue[index], 
                 enemy: enemyQueue[index],
                 game: game
-            });
-            await this.createCharacterQueue({
-                gameId: game.id,
-                characterName: characters[index].name,
-                order: characters[index].defaultOrder
-            });
-        }));
-        const supplyPromise = Promise.all(supplies.map( async (supply) => {
+            }
+        });
+        await this.userService.createPlayers(players);
+        await this.createCharacterQueue(queue);
+        await Promise.all(supplies.map( async (supply) => {
             await this.createGameSupply(Array(supply.amount).fill({
                 gameId: game.id,
                 supplyName: supply.name
@@ -115,7 +119,6 @@ export class GameService {
                 navigationId: navigation.id
             });
         }));
-        await Promise.all([playerPromise, supplyPromise, navigationPromise]);
         return game.id;
     }
 }

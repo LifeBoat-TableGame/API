@@ -17,15 +17,15 @@ export class Player {
     @ManyToOne(() => Game, (game) => game.players)
     game: Game;
 
-    @OneToOne(() => Character)
+    @ManyToOne(() => Character, (character) => character.players)
     @JoinColumn()
     character: Character;
 
-    @OneToOne(() => Character)
+    @ManyToOne(() => Character, (character) => character.friends)
     @JoinColumn()
     friendship: Character;
 
-    @OneToOne(() => Character)
+    @ManyToOne(() => Character, (character) => character.enemies)
     @JoinColumn()
     enemy: Character;
 

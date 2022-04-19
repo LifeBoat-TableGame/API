@@ -13,6 +13,7 @@ export class AuthenticationService {
         return await this.userService.createUser({token: uuid});
     }
     async validate(token: string) {
+        if(token == undefined) return false;
         const user =  await this.userService.getByToken(token);
         return user != null;
     }

@@ -37,6 +37,11 @@ export class UserService {
         await this.playerRepository.save(newPlayer);
         return newPlayer;
     }
+    async createPlayers(playerData: CreatePlayerDto[] | CreatePlayerInGameDto[]) {
+        const newPlayer = await this.playerRepository.create(playerData);
+        await this.playerRepository.save(newPlayer);
+        return newPlayer;
+    }
 
     async createUser(userData: CreateUserDto) {
         const newUser = await this.userRepository.create(userData);
