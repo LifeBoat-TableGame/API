@@ -40,7 +40,8 @@ export class UserService {
                 character: true,
                 enemy: true,
                 friendship: true,
-                hand: true,
+                openCards: true,
+                closedCards: true
             },
         });
         return player;

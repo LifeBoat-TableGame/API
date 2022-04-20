@@ -1,7 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Character } from "./character.entity";
 import { Game } from "./game.entity";
-import { Hand } from "./hand.entity";
+import { Supply } from "./supply.entity";
 import { User } from "./user.entity";
 
 @Entity()
@@ -29,9 +29,16 @@ export class Player {
     @ManyToOne(() => Character, (character) => character.enemies)
     @JoinColumn()
     enemy: Character;
+    
+    closedAmount: number;
 
-    @OneToOne(() => Hand, (hand) => hand.player)
-    hand: Hand;
+    @ManyToMany(() => Supply)
+    @JoinTable()
+    closedCards: Supply[];
+
+    @ManyToMany(() => Supply)
+    @JoinTable()
+    openCards: Supply[];
 
     @Column({default: 0})
     damage: number;

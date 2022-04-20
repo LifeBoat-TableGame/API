@@ -7,7 +7,6 @@ import { Supply } from '../models/supply.entity';
 import { Player } from '../models/player.entity';
 import { GameNavigation } from '../models/gameNavigation.entity';
 import { Navigation } from '../models/navigation.entity';
-import { Hand } from '../models/hand.entity';
 import { UserModule } from '../user/user.module';
 import { CardsModule } from '../cards/cards.module';
 import { CharacterQueue } from '../models/characterQueue.entity';
@@ -19,8 +18,7 @@ import { LobbyModule } from '../lobby/lobby.module';
             GameSupply, 
             Game,
             Supply, 
-            Player, 
-            Hand, 
+            Player,
             GameNavigation, 
             Navigation,
             CharacterQueue
