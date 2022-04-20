@@ -117,6 +117,10 @@ export const useMainStore: any = defineStore("mainStoreID", {
       this.socket.on('playerInfo', (player) => {
         console.log(player);
       });
+
+      this.socket.on('toChoose', (supplies) => {
+        console.log(supplies);
+      })
     }
   },
 });

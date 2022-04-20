@@ -36,8 +36,11 @@ export class GameService {
                     character: true,
                     openCards: true,
                     closedCards: true,
-                    user: true
-                }
+                    user: true,
+                },
+                queue: {
+                    character: true,
+                },
             }
         });
         return game;
@@ -65,13 +68,14 @@ export class GameService {
     }
 
     async drawSupplies(amount: number) {
-        await this.gameSupplyRepository
+        const selected = await this.gameSupplyRepository
         .createQueryBuilder("game_supply")
+        .where("game_supply.picked is false")
         .orderBy("RANDOM()")
-        .take(amount)
-        .update(GameSupply)
-        .set({picked: true})
-        .execute();
+        .limit(amount)
+        .getMany();
+        selected.forEach(supply => supply.picked = true);
+        return await this.gameSupplyRepository.save(selected)
     }
     async getDrawnSupplies() {
         return await this.gameSupplyRepository
