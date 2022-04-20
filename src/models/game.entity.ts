@@ -35,7 +35,7 @@ export class Game {
     @OneToMany(() => CharacterQueue, (queue) => queue.game)
     queue: CharacterQueue[];
 
-    @Column({default: 1})
+    @Column({default: 0})
     currentCharacterIndex: number;
 
     @Column({default: 0})
