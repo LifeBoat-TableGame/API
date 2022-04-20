@@ -5,13 +5,15 @@ import { UseGuards } from '@nestjs/common';
 import { WsGuard } from '../authentication/wsguard';
 import { UserService } from '../user/user.service';
 import { LobbyService } from '../lobby/lobby.service';
+import { NotificationService } from './notification/notification.service';
 
 @WebSocketGateway()
 export class GameGateway {
     constructor(
         private lobbyService: LobbyService,
         private gameService: GameService, 
-        private userService: UserService
+        private userService: UserService,
+        private notificationService: NotificationService
     ) {}
 
     @WebSocketServer() wss: Server;
@@ -25,7 +27,7 @@ export class GameGateway {
         const gameId = await this.gameService.startGame(user, lobby);
         const game = await this.gameService.getGameWithrelations(gameId);
         console.log(game);
-        this.wss.to(user.lobby.id.toString()).emit('gameStarted', game);
+        await this.notificationService.startGame(game, lobby.id.toString(), this.wss);
     }
 
     @UseGuards(WsGuard)
@@ -34,7 +36,7 @@ export class GameGateway {
         const token = client.handshake.headers.authorization;
         const user = await this.userService.getWithRelations(token);
         const game = await this.gameService.getGameWithrelations(user.player.game.id);
-        client.emit('gameInfo', game);
+        this.notificationService.gameInfo(game, client);
     }
 
     @UseGuards(WsGuard)

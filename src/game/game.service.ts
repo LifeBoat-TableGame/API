@@ -35,14 +35,10 @@ export class GameService {
                 players: {
                     character: true,
                     openCards: true,
-                    closedCards: true
+                    closedCards: true,
+                    user: true
                 }
             }
-        });
-        game.players.forEach(player => {
-            if(player.closedCards) player.closedAmount = player.closedCards.length;
-            else player.closedAmount = 0;
-            delete player.closedCards;
         });
         return game;
     }

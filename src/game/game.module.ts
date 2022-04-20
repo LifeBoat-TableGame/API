@@ -11,6 +11,7 @@ import { UserModule } from '../user/user.module';
 import { CardsModule } from '../cards/cards.module';
 import { CharacterQueue } from '../models/characterQueue.entity';
 import { LobbyModule } from '../lobby/lobby.module';
+import { NotificationService } from './notification/notification.service';
 
 @Module({
     imports: [
@@ -27,7 +28,7 @@ import { LobbyModule } from '../lobby/lobby.module';
         CardsModule,
         LobbyModule
     ],
-    providers: [GameService],
-    exports: [GameService]
+    providers: [GameService, NotificationService],
+    exports: [GameService, NotificationService]
 })
 export class GameModule {}
