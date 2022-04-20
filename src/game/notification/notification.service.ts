@@ -16,7 +16,7 @@ export class NotificationService {
         delete player.friendship;
     }
 
-    async startGame(game: Game, lobbyId: string, wss: Server) {
+    async updateGame(game: Game, lobbyId: string, wss: Server) {
         const sockets = await wss.in(lobbyId).fetchSockets();
         game.players.forEach( player => {
             const token = player.user.token;
@@ -24,7 +24,7 @@ export class NotificationService {
             socket.emit('playerInfo', player);
             this.limitPlayer(player);
         });
-        wss.in(lobbyId).emit('gameStarted', game);
+        wss.in(lobbyId).emit('gameInfo', game);
     }
 
     gameInfo(game: Game, client: Socket) {

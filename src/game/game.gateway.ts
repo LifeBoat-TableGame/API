@@ -26,8 +26,8 @@ export class GameGateway {
         const lobby = await this.lobbyService.getWithRelations(user.lobby.id);
         const gameId = await this.gameService.startGame(user, lobby);
         const game = await this.gameService.getGameWithrelations(gameId);
-        console.log(game);
-        await this.notificationService.startGame(game, lobby.id.toString(), this.wss);
+        this.wss.emit('gameStarted');
+        await this.notificationService.updateGame(game, lobby.id.toString(), this.wss);
     }
 
     @UseGuards(WsGuard)
