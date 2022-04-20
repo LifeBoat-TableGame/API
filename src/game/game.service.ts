@@ -29,11 +29,22 @@ export class GameService {
     private readonly minimal: 4;
 
     async getGameWithrelations(id: number) {
-        return await this.gameRepository
-            .createQueryBuilder('game')
-            .where("game.id = :id", {id: id})
-            .leftJoinAndSelect('game.players', 'player')
-            .getOne();
+        const game = await this.gameRepository.findOne({
+            where: { id: id },
+            relations: {
+                players: {
+                    character: true,
+                    openCards: true,
+                    closedCards: true
+                }
+            }
+        });
+        game.players.forEach(player => {
+            if(player.closedCards) player.closedAmount = player.closedCards.length;
+            else player.closedAmount = 0;
+            delete player.closedCards;
+        });
+        return game;
     }
 
     async createGame(game: CreateGameDto) {
