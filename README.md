@@ -35,7 +35,7 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-##Websocket client commands
+## Websocket client commands
 
 ```
 # get token
@@ -56,9 +56,18 @@ socket.emit('leaveRoom', roomId);
 
 # get room list
 socket.emit('getRooms');
+
+# start a game
+socket.emit('create');
+
+# get game object of current game
+socket.emit('getGameInfo');
+
+# get player object of yourself
+socket.emit('getPlayerInfo');
 ```
 
-##Websocket client events
+## Websocket client events
 
 ```
 # token registered
@@ -80,5 +89,62 @@ Room {
 # room list info
 socket.on('Rooms', (rooms: Room[]) => {});
 
+# game started
+socket.on('gameStarted', () => {});
+
+# game information
+socket.on('gameInfo', (game: Game) => {});
+
+Game {
+  players: Player[];
+  queue: CharacterQueue[];
+  state: GameState;
+  currentCharacterIndex: number;
+  seagulls: number;
+}
+
+CharacterQueue {
+  gameId: number;
+  characterName: string;
+  order: number;
+}
+enum GameState {
+  Supplies = 1,
+  Regular = 2
+}
+
+# player information
+socket.on('playerInfo', (player: Player) => {});
+
+Player {
+  id: number;
+  character: Character;
+  friendship: Character;
+  enemy: Character;
+  closedCards: Supply[];
+  openCards: Supply[];
+  damage: number;
+  rowed: boolean;
+  fought: boolean;
+  Thirst: boolean;
+}
+
+Character {
+  name: string;
+  strengh: number;
+  survival: number;
+  description: string;
+  defaultOrder: number;
+}
+
+Supply {
+  name: string;
+  strength: number | null;
+  bonus: number | null;
+  description: string;
+  amount: number;
+}
+# supplies to pick one from
+socket.on('toChoose', (supplies: Supply[]) => {});
 ```
 
