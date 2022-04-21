@@ -57,4 +57,12 @@ export class GameGateway {
         const player = await this.userService.getPlayerRelations(user.player.id);
         client.emit('playerInfo', player);
     }
+
+    @UseGuards(WsGuard)
+    @SubscribeMessage('openSupply')
+    async handleOpenSupply(client: Socket, supplyName: string){
+        const token = client.handshake.headers.authorization;
+        this.gameService.openSupply(token, supplyName);
+        client.emit('supplyOpened');
+    }
 }

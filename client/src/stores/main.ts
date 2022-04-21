@@ -71,6 +71,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
     getPlayerInfo(){
       this.socket.emit('getPlayerInfo');
     },
+    openSupply(supplyName: string){
+      this.socket.emit('openSupply', supplyName);
+    },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
       this.socket.on('gameStarted', (game) => {
