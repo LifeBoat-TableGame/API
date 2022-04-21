@@ -75,4 +75,12 @@ export class GameGateway {
 
         await this.notificationService.updateGame(updated, user.lobby.id.toString(), this.wss);
     }
+    
+    @UseGuards(WsGuard)
+    @SubscribeMessage('openSupply')
+    async handleOpenSupply(client: Socket, supplyName: string){
+        const token = client.handshake.headers.authorization;
+        this.gameService.openSupply(token, supplyName);
+        client.emit('supplyOpened');
+    }
 }

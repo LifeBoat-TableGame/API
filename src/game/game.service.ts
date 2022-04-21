@@ -24,7 +24,8 @@ export class GameService {
         @InjectRepository(GameSupply) private gameSupplyRepository: Repository<GameSupply>,
         @InjectRepository(Game) private gameRepository: Repository<Game>,
         @InjectRepository(GameNavigation) private gameNavigationRepository: Repository<GameNavigation>,
-        @InjectRepository(CharacterQueue) private characterQueueRepository: Repository<CharacterQueue>
+        @InjectRepository(CharacterQueue) private characterQueueRepository: Repository<CharacterQueue>,
+        @InjectRepository(Player) private playerRepository: Repository<Player>
         ) {}
 
     private readonly minimal: 4;
@@ -135,5 +136,28 @@ export class GameService {
             });
         }));
         return game.id;
+    }
+
+    async openSupply(token: string, supplyName: string){
+        try{
+        const user = await this.userService.getWithRelations(token);
+        console.log(user);
+        const player = await this.userService.getPlayerRelations(user.player.id);
+        const closed = player.closedCards;
+        var toOpen;
+        closed.forEach(function(value, index){
+            if (value.name == supplyName){
+                toOpen = value;
+                closed.splice(index, 1);
+                return;
+            }
+        });
+        player.closedCards = closed;
+        player.openCards.push(toOpen);
+        this.playerRepository.save(player);
+        } catch {
+            console.log('uh-oh');
+        }   
+        
     }
 }
