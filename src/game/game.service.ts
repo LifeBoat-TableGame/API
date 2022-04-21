@@ -14,6 +14,7 @@ import CreateGameNavigationDto from './dto/createGameNavigationDto';
 import { GameNavigation } from '../models/gameNavigation.entity';
 import CreateCharacterQueueDto from './dto/createCharacterQueueDto';
 import { CharacterQueue } from '../models/characterQueue.entity';
+import { Player } from '../models/player.entity';
 
 @Injectable()
 export class GameService {
@@ -40,6 +41,7 @@ export class GameService {
                 },
                 queue: {
                     character: true,
+                    game: true
                 },
             }
         });
@@ -67,25 +69,61 @@ export class GameService {
         return await this.characterQueueRepository.save(newItem);
     }
 
-    async drawSupplies(amount: number) {
+    async drawSupplies(amount: number, gameId: number) {
         const selected = await this.gameSupplyRepository
         .createQueryBuilder("game_supply")
-        .where("game_supply.picked is false")
+        .where("game_supply.picked is false AND game_supply.gameId = :gameId", {gameId: gameId})
         .orderBy("RANDOM()")
         .limit(amount)
         .getMany();
         selected.forEach(supply => supply.picked = true);
         return await this.gameSupplyRepository.save(selected)
     }
-    async getDrawnSupplies() {
+    async getDrawnSupplies(gameId: number) {
         return await this.gameSupplyRepository
         .createQueryBuilder("game_supply")
         .leftJoinAndSelect("game_supply.supply", "supply")
-        .where("game_supply.picked")
+        .where("game_supply.picked AND game_supply.gameId = :gameId", {gameId: gameId})
         .getMany();
     }
-    async removeGameSupply(supply: GameSupply) {
-        return await this.gameSupplyRepository.remove(supply);
+
+    async pickSupply(supply: string, player: Player, game: Game) {
+        if(game.state != GameState.Supplies)
+            throw new WsException('Action is unavailable during this phase');
+
+        const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex);
+        console.log(currentCharacter);
+        console.log(player.character);
+        if(currentCharacter.characterName != player.character.name)
+            throw new WsException('Not your turn');
+        const gameSupply = await this.gameSupplyRepository.findOne({
+            where: {
+                supplyName: supply,
+                gameId: game.id,
+                picked: true
+            },
+            relations: {supply: true},
+        });
+        console.log('deleting...');
+        console.log(gameSupply.id)
+        const res = await this.gameSupplyRepository.delete({id: gameSupply.id});
+        console.log('deleted', res);
+        player.closedCards.push(gameSupply.supply);
+        await this.userService.updatePlayer(player);
+    }
+    async gameTurn(game: Game) {
+        console.log('2');
+        let newIndex = game.currentCharacterIndex + 1;
+        let newState = game.state;
+        if(game.currentCharacterIndex == game.players.length - 1){
+            newState = game.state == 1 ? 2 : 1;
+            newIndex = 0;
+        } 
+        console.log(3);
+        await this.gameRepository.update({id: game.id}, {
+            currentCharacterIndex: newIndex,
+            state: newState
+        });
     }
 
     async startGame(user: User, lobby: Lobby) {

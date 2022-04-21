@@ -58,6 +58,10 @@ export class UserService {
         return newPlayer;
     }
 
+    async updatePlayer(player: Player) {
+        return await this.playerRepository.save(player);
+    }
+
     async createUser(userData: CreateUserDto) {
         const newUser = await this.userRepository.create(userData);
         await this.userRepository.save(newUser);

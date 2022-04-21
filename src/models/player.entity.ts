@@ -50,6 +50,6 @@ export class Player {
     fought: boolean;
 
     @Column({default: false})
-    Thirst: boolean;
+    thirst: boolean;
 
 }

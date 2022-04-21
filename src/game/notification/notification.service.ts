@@ -21,7 +21,8 @@ export class NotificationService {
         game.players.forEach( player => {
             const token = player.user.token;
             const socket = sockets.find(client => client.handshake.headers.authorization == token);
-            socket.emit('playerInfo', player);
+            if(socket)
+                socket.emit('playerInfo', player);
             this.limitPlayer(player);
         });
         wss.in(lobbyId).emit('gameInfo', game);
