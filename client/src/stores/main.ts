@@ -68,6 +68,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
     getGameInfo(){
       this.socket.emit('getGameInfo'); 
     },
+    pickSupply(name: string) {
+      this.socket.emit('pickSupply', name);
+    },
     getPlayerInfo(){
       this.socket.emit('getPlayerInfo');
     },
@@ -120,6 +123,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
 
       this.socket.on('toChoose', (supplies) => {
         console.log(supplies);
+      });
+      this.socket.on('exception', (obj) => {
+        console.log('!!!', obj);
       })
     }
   },

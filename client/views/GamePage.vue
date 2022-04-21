@@ -3,6 +3,7 @@
     im a game page
     <button @click="getGameInfo" class="btn">Get game info</button>
     <button @click="getPlayerInfo" class="btn btn-primary">Get player info</button>
+    <button @click="pickSupply" class="btn btn-primary">Pick supply</button>
   </div>
 </template>
 
@@ -17,6 +18,7 @@ const mainStore = useMainStore();
 
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();
+const pickSupply = () => mainStore.pickSupply("Butah");
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {
