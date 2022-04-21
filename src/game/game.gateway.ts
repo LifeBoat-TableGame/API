@@ -7,6 +7,7 @@ import { UserService } from '../user/user.service';
 import { LobbyService } from '../lobby/lobby.service';
 import { NotificationService } from './notification/notification.service';
 import { GameState } from '../models/game.entity';
+import { CardsService } from '../cards/cards.service';
 
 @WebSocketGateway()
 export class GameGateway {
@@ -14,7 +15,8 @@ export class GameGateway {
         private lobbyService: LobbyService,
         private gameService: GameService, 
         private userService: UserService,
-        private notificationService: NotificationService
+        private notificationService: NotificationService,
+        private cardsService: CardsService,
     ) {}
 
     @WebSocketServer() wss: Server;
@@ -27,18 +29,11 @@ export class GameGateway {
         const lobby = await this.lobbyService.getWithRelations(user.lobby.id);
         const gameId = await this.gameService.startGame(user, lobby);
         const game = await this.gameService.getGameWithrelations(gameId);
-        // fetching player who will pick a supply
-        const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex).characterName;
-        const currentPlayer =  game.players.find(player => player.character.name == currentCharacter);
-        const clients = await this.wss.in(lobby.id.toString()).fetchSockets();
-        const currentClient = clients.find(client => 
-            client.handshake.headers.authorization == currentPlayer.user.token
-        );
-
         this.wss.emit('gameStarted');
+        // fetching player who will pick a supply
+        const supplies = await this.cardsService.drawSupplies(game.players.length, game.id);
+        await this.notificationService.cardsToChoose(supplies, game, this.wss, lobby.id.toString());
         await this.notificationService.updateGame(game, lobby.id.toString(), this.wss);
-        const supplies = await this.gameService.drawSupplies(game.players.length, game.id);
-        currentClient.emit('toChoose', supplies);
     }
 
     @UseGuards(WsGuard)
@@ -72,24 +67,12 @@ export class GameGateway {
         const game = await this.gameService.getGameWithrelations(user.player.game.id);
 
         await this.gameService.pickSupply(supply, player, game);
-        console.log(1);
         await this.gameService.gameTurn(game);
-        console.log(4);
         const updated = await this.gameService.getGameWithrelations(user.player.game.id);
         // fetching player who will pick a supply
-        const currentCharacter = updated.queue.find(character => character.order == updated.currentCharacterIndex).characterName;
-        console.log(5);
-        const currentPlayer =  updated.players.find(player => player.character.name == currentCharacter);
-        console.log(6);
-        const clients = await this.wss.in(user.lobby.id.toString()).fetchSockets();
-        console.log(7);
-        const currentClient = clients.find(client => 
-            client.handshake.headers.authorization == currentPlayer.user.token
-        );
+        const supplies = await this.cardsService.getDrawnSupplies(updated.id);
+        await this.notificationService.cardsToChoose(supplies, updated, this.wss, user.lobby.id.toString())
+
         await this.notificationService.updateGame(updated, user.lobby.id.toString(), this.wss);
-        console.log(9);
-        const supplies = await this.gameService.getDrawnSupplies(updated.id);
-        console.log(10);
-        currentClient.emit('toChoose', supplies);
     }
 }

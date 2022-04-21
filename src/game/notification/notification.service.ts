@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Game } from '../../models/game.entity';
 import {Server, Socket} from 'socket.io';
 import { Player } from '../../models/player.entity';
+import { GameSupply } from '../../models/gameSupply.entity';
 
 @Injectable()
 export class NotificationService {
@@ -33,5 +34,14 @@ export class NotificationService {
             this.limitPlayer(player);
         });
         client.emit('gameInfo', game);
+    }
+    async cardsToChoose(supplies: GameSupply[], game: Game, wss: Server, lobbyId: string) {
+        const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex).characterName;
+        const currentPlayer =  game.players.find(player => player.character.name == currentCharacter);
+        const clients = await wss.in(lobbyId).fetchSockets();
+        const currentClient = clients.find(client => 
+            client.handshake.headers.authorization == currentPlayer.user.token
+        );
+        currentClient.emit('toChoose', supplies);
     }
 }

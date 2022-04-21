@@ -4,13 +4,16 @@ import { Supply } from '../models/supply.entity';
 import { Repository } from 'typeorm';
 import { Character } from '../models/character.entity';
 import { Navigation } from '../models/navigation.entity';
+import { GameSupply } from '../models/gameSupply.entity';
+import CreateGameSupplyDto from '../game/dto/createGameSupplyDto';
 
 @Injectable()
 export class CardsService {
     constructor(
         @InjectRepository(Character) private characterRepository: Repository<Character>, 
         @InjectRepository(Supply) private supplyRepository: Repository<Supply>,
-        @InjectRepository(Navigation) private navigationRepository: Repository<Navigation>
+        @InjectRepository(Navigation) private navigationRepository: Repository<Navigation>,
+        @InjectRepository(GameSupply) private gameSupplyRepository: Repository<GameSupply>
     ) {}
     
     shuffle<Type>(array: Type[]) {
@@ -64,5 +67,39 @@ export class CardsService {
             },
         });
         return nav;
+    }
+
+    async drawSupplies(amount: number, gameId: number) {
+        const selected = await this.gameSupplyRepository
+        .createQueryBuilder("game_supply")
+        .where("game_supply.picked is false AND game_supply.gameId = :gameId", {gameId: gameId})
+        .orderBy("RANDOM()")
+        .limit(amount)
+        .getMany();
+        selected.forEach(supply => supply.picked = true);
+        return await this.gameSupplyRepository.save(selected)
+    }
+    async getDrawnSupplies(gameId: number) {
+        return await this.gameSupplyRepository
+        .createQueryBuilder("game_supply")
+        .leftJoinAndSelect("game_supply.supply", "supply")
+        .where("game_supply.picked AND game_supply.gameId = :gameId", {gameId: gameId})
+        .getMany();
+    }
+    async getDrawnSupply(gameId: number, supply: string) {
+        const gameSupply = await this.gameSupplyRepository.findOne({
+            where: {
+                supplyName: supply,
+                gameId: gameId,
+                picked: true
+            },
+            relations: {supply: true},
+        });
+        return gameSupply;
+    }
+
+    async createGameSupply(gameSupply: CreateGameSupplyDto[]) {
+        const newItem = this.gameSupplyRepository.create(gameSupply);
+        return await this.gameSupplyRepository.save(newItem);
     }
 }
