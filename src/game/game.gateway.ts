@@ -80,7 +80,14 @@ export class GameGateway {
     @SubscribeMessage('openSupply')
     async handleOpenSupply(client: Socket, supplyName: string){
         const token = client.handshake.headers.authorization;
-        this.gameService.openSupply(token, supplyName);
+        const user = await this.userService.getByToken(token);
+        if(!user.player)
+            throw new WsException('You must be in game');
+        const player = await this.userService.getPlayerRelations(user.player.id);
+        if(user.player.game.state != GameState.Regular)
+            throw new WsException('Activity is not available during current phase');
+        await this.gameService.openSupply(token, supplyName);
+        await this.notificationService.updateGame(player.game, user.lobby.id.toString(), this.wss);
         client.emit('supplyOpened');
     }
 }

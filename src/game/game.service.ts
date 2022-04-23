@@ -139,7 +139,6 @@ export class GameService {
     }
 
     async openSupply(token: string, supplyName: string){
-        try{
         const user = await this.userService.getWithRelations(token);
         console.log(user);
         const player = await this.userService.getPlayerRelations(user.player.id);
@@ -152,12 +151,11 @@ export class GameService {
                 return;
             }
         });
+        if(toOpen === null){
+            throw new WsException('Could not find a supply to open');
+        }
         player.closedCards = closed;
         player.openCards.push(toOpen);
-        this.playerRepository.save(player);
-        } catch {
-            console.log('uh-oh');
-        }   
-        
+        await this.playerRepository.save(player);
     }
 }
