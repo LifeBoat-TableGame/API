@@ -1,6 +1,6 @@
 <template>
   <div class="vertical-container">
-    <login-form />
+    <login-form class="mt-60"/>
   </div>
 </template>
 

@@ -1,24 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-.btn {
-    @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
+@layer base {
+    body {
+        @apply bg-main-bg
+    }
+    #app {
+        @apply text-deep-blue min-h-screen text-lg
+    }
 }
-.btn:hover {
-    @apply bg-olive-200 m-1 mt-3 rounded-md p-1 text-lg
-}
-.vertical-container {
-    @apply flex justify-center flex-col items-center
-}
-.horisontal-container {
-    @apply flex justify-center items-center
-}
-.box {
-    @apply bg-light-blue flex flex-col text-lg items-center rounded-md
-}
-.small-field {
-    @apply rounded text-2xl px-1
-}
-.btn-disabled {
-    @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
+@layer components {
+    .btn {
+        @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
+    }
+    .btn:hover {
+        @apply bg-olive-200 m-1 mt-3 rounded-md p-1 text-lg
+    }
+    .vertical-container {
+        @apply flex flex-col items-center justify-center
+    }
+    .horisontal-container {
+        @apply flex items-center justify-center 
+    }
+    .box {
+        @apply rounded-md
+    }
+    .small-field {
+        @apply rounded text-2xl px-1 m-2
+    }
+    .btn-disabled {
+        @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
+    }
 }
