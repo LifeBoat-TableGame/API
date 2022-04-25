@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-light-blue flex flex-col text-lg items-center rounded-md">
+  <div class="bg-light-blue vertical-container text-lg rounded-md">
     <p class="text-2xl">{{ title }}</p>
     <input v-model="username" type="text" class="small-field"/>
     <button type="submit" @click="logIn" class="btn">Rename</button>

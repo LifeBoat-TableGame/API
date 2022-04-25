@@ -1,9 +1,9 @@
 <template>
   <div class="horisontal-container">
-    <div class="min-h-full">
+    <div>
       <room-list class="box"/>
     </div>
-    <div class="flex flex-col items-center">
+    <div class="vertical-container">
       <room-creator v-if=(!activeRoomExists) @room:created="roomCreated" class="box"/>
       <active-room-menu v-if=activeRoomExists v-bind:activeRoomId=mainStore.activeRoomId @room:collapse="collapseRoom" class="box"/>
       <button @click="logOut" class="btn">logout</button>
