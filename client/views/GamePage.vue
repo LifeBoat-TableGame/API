@@ -3,9 +3,7 @@
     <div class="game-grid">
       <div class="players-field bg-olive-400">players</div>
       <div class="seagull-field bg-main-blue">
-        <div class="flex">
-
-        </div>
+        <SeagullsBoard :amount="seagulls" />
       </div>
       <div class="timer-field bg-dark-blue">
         <Timer :time="new Date()" />
@@ -24,13 +22,18 @@
 import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
 import Timer from '../src/components/Timer.vue';
+import SeagullsBoard from '../src/components/SeagullsBoard.vue';
 import { ref } from 'vue';
 
 const name = 'GameTemp';
-const phase = ref("Раздача припасов");
+
 const components = {
-  Timer
+  Timer,
+  SeagullsBoard
 };
+
+const seagulls = ref(2);
+const phase = ref("Раздача припасов");
 const mainStore = useMainStore();
 
 const getGameInfo = () => mainStore.getGameInfo();
