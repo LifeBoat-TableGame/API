@@ -109,7 +109,7 @@ export class GameGateway {
             throw new WsException('You must be in game');
         }
         const player = await this.userService.getPlayerRelations(user.player.id);
-        await this.actionsService.useSupply(token, supplyName, target);
+        await this.actionsService.useSupply(player, supplyName, target);
         const updated = await this.gameService.getGameWithrelations(user.player.game.id);
         await this.notificationService.updateGame(updated, user.lobby.id.toString(), this.wss);
         client.emit('supplyUsed');
