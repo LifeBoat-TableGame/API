@@ -8,7 +8,7 @@ import { LobbyService } from '../lobby/lobby.service';
 import { NotificationService } from './notification/notification.service';
 import { GameState } from '../models/game.entity';
 import { CardsService } from '../cards/cards.service';
-import { ActionsService } from 'src/cards/actions/actions.service';
+import { ActionsService } from './actions/actions.service';
 
 @WebSocketGateway()
 export class GameGateway {

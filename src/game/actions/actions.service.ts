@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
-import { GameService } from 'src/game/game.service';
-import { Player } from 'src/models/player.entity';
-import { UserService } from 'src/user/user.service';
+import { GameService } from '../../game/game.service';
+import { Player } from '../../models/player.entity';
+import { UserService } from '../../user/user.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
