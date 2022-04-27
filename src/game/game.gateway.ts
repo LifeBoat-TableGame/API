@@ -1,4 +1,4 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
+import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, WsException, ConnectedSocket } from '@nestjs/websockets';
 import { GameService } from './game.service';
 import { Server, Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
@@ -96,9 +96,11 @@ export class GameGateway {
 
     @UseGuards(WsGuard)
     @SubscribeMessage('useSupply')
-    async handleUseSupply(client: Socket, data){
-        const supplyName = data.supplyName;
-        const target = data.target;
+    async handleUseSupply(
+        @ConnectedSocket() client: Socket, 
+        @MessageBody('supplyName') supplyName: string, 
+        @MessageBody('target') target: string
+    ){
         const token = client.handshake.headers.authorization;
         const user = await this.userService.getWithRelations(token);
         console.log(supplyName);
