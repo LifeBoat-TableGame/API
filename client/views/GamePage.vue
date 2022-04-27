@@ -5,7 +5,9 @@
       <div class="seagull-field bg-main-blue">seagull</div>
       <div class="timer-field bg-dark-blue">timer</div>
       <div class="phase-field bg-deep-blue">phase</div>
-      <div class="self-field bg-light-red">cards with self info</div>
+      <div class="self-field bg-light-red">cards with self info
+        <Card v-bind:supply=supply class="rotate-12"></Card>
+      </div>
       <div class="boat-field bg-deep-red"> boat</div>
     </div>
 </template>
@@ -13,7 +15,17 @@
 <script setup lang="ts">
 import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
+import Card from '../src/components/Card.vue';
+import { Supply } from '../src/interfaces/game';
 
+
+const supply = {
+    name: 'string',
+    strength: 5,
+    bonus: null,
+    description: 'string',
+    amount: 1,
+} as Supply;
 const name = 'GameTemp';
 const components = {
 };
