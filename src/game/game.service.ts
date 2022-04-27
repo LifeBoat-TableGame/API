@@ -151,7 +151,7 @@ export class GameService {
                 return;
             }
         });
-        if(toOpen === null){
+        if(toOpen == null){
             throw new WsException('Could not find a supply to open');
         }
         player.closedCards = closed;

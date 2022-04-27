@@ -6,10 +6,15 @@ import { Navigation } from '../models/navigation.entity';
 import { Supply } from '../models/supply.entity';
 import { CardsService } from './cards.service';
 import { ActionsService } from './actions/actions.service';
+import { UserModule } from 'src/user/user.module';
+import { Player } from 'src/models/player.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Character, Supply, Navigation, GameSupply])],
+  imports: [
+    TypeOrmModule.forFeature([Character, Supply, Navigation, GameSupply, Player]),
+    UserModule
+    ],
   providers: [CardsService, ActionsService],
-  exports: [CardsService]
+  exports: [CardsService, ActionsService]
 })
 export class CardsModule {}

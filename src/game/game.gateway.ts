@@ -8,6 +8,7 @@ import { LobbyService } from '../lobby/lobby.service';
 import { NotificationService } from './notification/notification.service';
 import { GameState } from '../models/game.entity';
 import { CardsService } from '../cards/cards.service';
+import { ActionsService } from 'src/cards/actions/actions.service';
 
 @WebSocketGateway()
 export class GameGateway {
@@ -17,6 +18,7 @@ export class GameGateway {
         private userService: UserService,
         private notificationService: NotificationService,
         private cardsService: CardsService,
+        private actionsService: ActionsService
     ) {}
 
     @WebSocketServer() wss: Server;
@@ -80,14 +82,35 @@ export class GameGateway {
     @SubscribeMessage('openSupply')
     async handleOpenSupply(client: Socket, supplyName: string){
         const token = client.handshake.headers.authorization;
-        const user = await this.userService.getByToken(token);
+        const user = await this.userService.getWithRelations(token);
         if(!user.player)
             throw new WsException('You must be in game');
         const player = await this.userService.getPlayerRelations(user.player.id);
         if(user.player.game.state != GameState.Regular)
             throw new WsException('Activity is not available during current phase');
         await this.gameService.openSupply(token, supplyName);
-        await this.notificationService.updateGame(player.game, user.lobby.id.toString(), this.wss);
+        const updated = await this.gameService.getGameWithrelations(user.player.game.id);
+        await this.notificationService.updateGame(updated, user.lobby.id.toString(), this.wss);
         client.emit('supplyOpened');
     }
+
+    @UseGuards(WsGuard)
+    @SubscribeMessage('useSupply')
+    async handleUseSupply(client: Socket, data){
+        const supplyName = data.supplyName;
+        const target = data.target;
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        console.log(supplyName);
+        console.log(target);
+        if(!user.player) {
+            throw new WsException('You must be in game');
+        }
+        const player = await this.userService.getPlayerRelations(user.player.id);
+        await this.actionsService.useSupply(token, supplyName, target);
+        const updated = await this.gameService.getGameWithrelations(user.player.game.id);
+        await this.notificationService.updateGame(updated, user.lobby.id.toString(), this.wss);
+        client.emit('supplyUsed');
+    }
+    
 }

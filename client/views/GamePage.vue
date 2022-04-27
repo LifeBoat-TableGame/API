@@ -4,6 +4,8 @@
     <button @click="getGameInfo" class="btn">Get game info</button>
     <button @click="getPlayerInfo" class="btn btn-primary">Get player info</button>
     <button @click="pickSupply" class="btn btn-primary">Pick supply</button>
+    <button @click="openSupply" class="btn btn-primary">open Medkit</button>
+    <button @click="useSupply" class="btn btn-primary">Use Medkit</button>
   </div>
 </template>
 
@@ -19,6 +21,8 @@ const mainStore = useMainStore();
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();
 const pickSupply = () => mainStore.pickSupply("Butah");
+const openSupply = () => mainStore.openSupply('Аптечка');
+const useSupply = () => mainStore.useSupply("Аптечка", "Шкет");
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {
