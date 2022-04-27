@@ -35,7 +35,7 @@ export class ActionsService {
         }
         switch(supplyName){
             case "Аптечка":
-                this.useMedkit(player, supply, target);
+                await this.useMedkit(player, supply, target);
                 break;
         }
 
