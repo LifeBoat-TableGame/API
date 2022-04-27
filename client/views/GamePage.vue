@@ -14,7 +14,8 @@
         </p>
       </div>
       <div class="self-field bg-light-red">cards with self info
-        <Card v-bind:supply=supply class="rotate-12"></Card>
+        <Hand :supplies="supplies">
+        </Hand>
       </div>
       <div class="boat-field bg-deep-red"> boat</div>
     </div>
@@ -25,18 +26,34 @@ import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
 import Timer from '../src/components/Timer.vue';
 import SeagullsBoard from '../src/components/SeagullsBoard.vue';
+import Hand from '../src/components/Hand.vue'
 import { ref } from 'vue';
-import Card from '../src/components/Card.vue';
 import { Supply } from '../src/interfaces/game';
 
 
-const supply = {
-    name: 'string',
+const supplies = [
+  {
+    name: 'card1',
     strength: 5,
     bonus: null,
-    description: 'string',
+    description: 'card1',
     amount: 1,
-} as Supply;
+  },
+  {
+    name: 'card2',
+    strength: 5,
+    bonus: null,
+    description: 'card2',
+    amount: 1,
+  },
+  {
+    name: 'card3',
+    strength: 5,
+    bonus: null,
+    description: 'card3',
+    amount: 1,
+  },
+] as Supply[];
 const name = 'GameTemp';
 
 const components = {
