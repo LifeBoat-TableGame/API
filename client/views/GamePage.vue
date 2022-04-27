@@ -2,9 +2,19 @@
     <div>game page</div>
     <div class="game-grid">
       <div class="players-field bg-olive-400">players</div>
-      <div class="seagull-field bg-main-blue">seagull</div>
-      <div class="timer-field bg-dark-blue">timer</div>
-      <div class="phase-field bg-deep-blue">phase</div>
+      <div class="seagull-field bg-main-blue">
+        <div class="flex">
+
+        </div>
+      </div>
+      <div class="timer-field bg-dark-blue">
+        <Timer :time="new Date()" />
+      </div>
+      <div class="phase-field bg-grey-bg">
+        <p class="phase">
+          {{ phase }}
+        </p>
+      </div>
       <div class="self-field bg-light-red">cards with self info</div>
       <div class="boat-field bg-deep-red"> boat</div>
     </div>
@@ -13,9 +23,13 @@
 <script setup lang="ts">
 import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
+import Timer from '../src/components/Timer.vue';
+import { ref } from 'vue';
 
 const name = 'GameTemp';
+const phase = ref("Раздача припасов");
 const components = {
+  Timer
 };
 const mainStore = useMainStore();
 
@@ -51,5 +65,9 @@ if (mainStore.activeRoomId == 0) {
 }
 .timer-field {
   @apply col-start-5 col-span-2 row-start-1 row-span-1;
+}
+
+.phase {
+  @apply text-3xl text-center m-auto top-1/4 relative;
 }
 </style>
