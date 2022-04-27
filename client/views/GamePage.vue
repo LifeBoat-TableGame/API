@@ -13,7 +13,9 @@
           {{ phase }}
         </p>
       </div>
-      <div class="self-field bg-light-red">cards with self info</div>
+      <div class="self-field bg-light-red">cards with self info
+        <Card v-bind:supply=supply class="rotate-12"></Card>
+      </div>
       <div class="boat-field bg-deep-red"> boat</div>
     </div>
 </template>
@@ -24,7 +26,17 @@ import router from '../src/router';
 import Timer from '../src/components/Timer.vue';
 import SeagullsBoard from '../src/components/SeagullsBoard.vue';
 import { ref } from 'vue';
+import Card from '../src/components/Card.vue';
+import { Supply } from '../src/interfaces/game';
 
+
+const supply = {
+    name: 'string',
+    strength: 5,
+    bonus: null,
+    description: 'string',
+    amount: 1,
+} as Supply;
 const name = 'GameTemp';
 
 const components = {
