@@ -1,5 +1,5 @@
 <template>
-  <div class="horisontal-container mt-60 items-start">
+  <div class="horisontal-container mx-auto relative top-1/3 items-start">
     <div class="vertical-container">
       <room-creator v-if=(!activeRoomExists) @room:created="roomCreated" class="m-2"/>
       <active-room-menu v-if=activeRoomExists v-bind:activeRoomId=mainStore.activeRoomId @room:collapse="collapseRoom"/>
