@@ -1,13 +1,13 @@
 <template>
   <div class="vertical-container">
-    im a game page
+    game page
     <div class="game-grid">
-      <div class="players-field"></div>
-      <div class="seagull-field"></div>
-      <div class="timer-field"></div>
-      <div class="phase-field"></div>
-      <div class="self-field"></div>
-      <div class="boat-field"></div>
+      <div class="players-field bg-olive-400">players</div>
+      <div class="seagull-field bg-main-blue">seagull</div>
+      <div class="timer-field bg-dark-blue">timer</div>
+      <div class="phase-field bg-deep-blue">phase</div>
+      <div class="self-field bg-light-red">cards with self info</div>
+      <div class="boat-field bg-deep-red"> boat</div>
     </div>
   </div>
 </template>
@@ -28,7 +28,7 @@ const pickSupply = () => mainStore.pickSupply("Butah");
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {
   console.log('game does not exists, redirecting to main');
-  router.push('/');
+  //router.push('/');
 }
 </script>
 
@@ -54,4 +54,4 @@ if (mainStore.activeRoomId == 0) {
 .timer-field {
   @apply col-start-5 col-span-2 row-start-1 row-span-1;
 }
-</style
+</style>
