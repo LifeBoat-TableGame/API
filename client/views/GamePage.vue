@@ -1,6 +1,5 @@
 <template>
-  <div class="vertical-container">
-    game page
+    <div>game page</div>
     <div class="game-grid">
       <div class="players-field bg-olive-400">players</div>
       <div class="seagull-field bg-main-blue">seagull</div>
@@ -9,7 +8,6 @@
       <div class="self-field bg-light-red">cards with self info</div>
       <div class="boat-field bg-deep-red"> boat</div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
