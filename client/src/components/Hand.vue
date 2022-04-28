@@ -1,7 +1,10 @@
 
 <template>
   <div class="hand">
-    <Card v-for="supply of supplies" :key="supply.name" :supply=supply />
+    <div v-for="(supply, index) in supplies" :key="supply.name" class="cardWrapper">
+      <Card :supply=supply />
+      <div>{{ index }}</div>
+    </div>
   </div>
 </template>
 
@@ -23,8 +26,17 @@ const emit = defineEmits(['card:clicked'])
 
 </script>
 <style scoped>
+.cardWrapper {
+  @apply overflow-hidden;
+}
+
+.cardWrapper:last-child,
+.cardWrapper:hover {
+  @apply overflow-visible;
+}
+
 .hand {
-  @apply max-w-[15rem] flex
+  @apply flex max-w-[15rem]
 }
 </style>
 

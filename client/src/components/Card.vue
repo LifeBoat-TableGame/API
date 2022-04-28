@@ -42,12 +42,5 @@ const useCard = () => {
     hover:scale-150
     origin-[50%_70%] hover:rotate-0
 }
-.cardWrapper {
-  @apply overflow-hidden;
-}
-
-.cardWrapper:last-child, .cardWrapper:hover {
-  @apply overflow-visible;
-}
 </style>
 
