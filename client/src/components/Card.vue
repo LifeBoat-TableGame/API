@@ -1,7 +1,7 @@
 
 <template>
-<div :class="[tilts[6+props.posFromMiddle], 'hover:rotate-0', shifts[6+props.posFromMiddle], 'cardWrapper']">
-  <div class="card vertical-container box noselect" @click="useCard">
+<div :class="[tilts[6+props.posFromMiddle], 'hover:rotate-0', shifts[6+props.posFromMiddle], 'cardWrapper', 'hover:scale-150']">
+  <div :class="['card', 'vertical-container', 'box', 'noselect',]" @click="useCard">
     <div>{{ supply.name }}
     </div>
     <div>{{ supply.description }}
@@ -59,7 +59,6 @@ const props = defineProps<{
   posFromMiddle: number
 }>();
 
-console.log(props.posFromMiddle)
 const emit = defineEmits(['card:clicked'])
 
 
@@ -85,7 +84,6 @@ const useCard = () => {
     border-2 border-dark-blue 
     hover:border-deep-blue
     w-24 h-36
-    hover:scale-150
     origin-[50%_90%]
 }
 </style>

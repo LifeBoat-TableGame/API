@@ -1,7 +1,12 @@
 
 <template>
   <div class="hand">
-      <Card v-for="(supply, index) in supplies" :key="supply.name" :posFromMiddle="index-Math.ceil(supplies.length/2)+1" :supply=supply :tilted="true">
+      <Card v-for="(supply, index) in supplies" 
+      :key="supply.name" 
+      :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 
+      :supply=supply 
+      :tilted="true" 
+      >
       </Card>
   </div>
 </template>
