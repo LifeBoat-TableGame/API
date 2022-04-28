@@ -5,7 +5,7 @@
       :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 
       :supply=supply 
       :tilted="true"
-      v-bind:class="[index!=0 ? overlapVal : '']"
+      :style="[index!=0 ? {marginLeft: -4 + 'rem' } : {}]"
       >
       </Card>
   </div>
@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['card:clicked'])
 const overlapVal = computed(() => {
-  return 'ml-[-' + (6-(30-6)/(props.supplies.length-1))+ 'rem]'
+  return -6+(30-6)/(props.supplies.length-1)
 });
 </script>
 <style scoped>
