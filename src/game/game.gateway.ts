@@ -103,8 +103,6 @@ export class GameGateway {
     ){
         const token = client.handshake.headers.authorization;
         const user = await this.userService.getWithRelations(token);
-        console.log(supplyName);
-        console.log(target);
         if(!user.player) {
             throw new WsException('You must be in game');
         }

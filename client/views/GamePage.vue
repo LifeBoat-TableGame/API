@@ -22,7 +22,7 @@ const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();
 const pickSupply = () => mainStore.pickSupply("Butah");
 const openSupply = () => mainStore.openSupply('Аптечка');
-const useSupply = () => mainStore.useSupply("Аптечка", "Jhon");
+const useSupply = () => mainStore.useSupply("Аптечка", "Боцман");
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {
