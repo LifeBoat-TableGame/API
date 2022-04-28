@@ -1,5 +1,6 @@
 
 <template>
+<div class="cardWrapper">
   <div class="card vertical-container box noselect" @click="useCard">
     <div>{{ supply.name }}
     </div>
@@ -7,6 +8,7 @@
     </div>
     <div>{{ supply.strength }}
     </div>
+  </div>
   </div>
 </template>
 
@@ -39,6 +41,13 @@ const useCard = () => {
     w-24 h-36 
     hover:scale-150
     origin-[50%_70%] hover:rotate-0
+}
+.cardWrapper {
+  @apply overflow-hidden;
+}
+
+.cardWrapper:last-child, .cardWrapper:hover {
+  @apply overflow-visible;
 }
 </style>
 

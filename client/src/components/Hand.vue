@@ -1,6 +1,6 @@
 
 <template>
-  <div class="horisontal-container hand">
+  <div class="hand">
     <Card v-for="supply of supplies" :key="supply.name" :supply=supply />
   </div>
 </template>
@@ -24,7 +24,7 @@ const emit = defineEmits(['card:clicked'])
 </script>
 <style scoped>
 .hand {
-  @apply flex
+  @apply max-w-[15rem] flex
 }
 </style>
 
