@@ -82,6 +82,7 @@ const useCard = () => {
   hover:z-10
   hover:rotate-0 
   hover:scale-150
+  duration-100
 }
 </style>
 
