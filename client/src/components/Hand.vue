@@ -1,10 +1,8 @@
 
 <template>
   <div class="hand">
-    <div v-for="(supply, index) in supplies" :key="supply.name" class="cardWrapper">
-      <Card :supply=supply />
-      <div>{{ index }}</div>
-    </div>
+      <Card v-for="(supply, index) in supplies" :key="supply.name" :posFromMiddle="index-Math.ceil(supplies.length/2)+1" :supply=supply :tilted="true">
+      </Card>
   </div>
 </template>
 
@@ -18,25 +16,18 @@ const title = 'ActiveRoomMenu';
 const mainStore = useMainStore();
 const roomStore = useRoomStore();
 
+
 const props = defineProps<{
   supplies: Supply[];
 }>();
 const emit = defineEmits(['card:clicked'])
 
-
 </script>
 <style scoped>
-.cardWrapper {
-  @apply overflow-hidden;
-}
 
-.cardWrapper:last-child,
-.cardWrapper:hover {
-  @apply overflow-visible;
-}
 
 .hand {
-  @apply flex max-w-[15rem]
+  @apply flex max-w-[30rem]
 }
 </style>
 

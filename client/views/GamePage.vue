@@ -14,8 +14,7 @@
         </p>
       </div>
       <div class="self-field bg-light-red">cards with self info
-        <Hand :supplies="supplies">
-        </Hand>
+        <Hand :supplies="supplies" />
       </div>
       <div class="boat-field bg-deep-red"> boat</div>
     </div>
@@ -31,29 +30,18 @@ import { ref } from 'vue';
 import { Supply } from '../src/interfaces/game';
 
 
-const supplies = [
-  {
-    name: 'card1',
+const supplies = [] as Supply[];
+
+for (var i = 1; i<=13; i++) {
+ supplies.push({
+    name: 'card'+i,
     strength: 5,
     bonus: null,
-    description: 'card1',
+    description: '-',
     amount: 1,
-  },
-  {
-    name: 'card2',
-    strength: 5,
-    bonus: null,
-    description: 'card2',
-    amount: 1,
-  },
-  {
-    name: 'card3',
-    strength: 5,
-    bonus: null,
-    description: 'card3',
-    amount: 1,
-  },
-] as Supply[];
+  })
+}
+
 const name = 'GameTemp';
 
 const components = {
