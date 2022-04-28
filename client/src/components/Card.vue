@@ -73,15 +73,15 @@ const useCard = () => {
   @apply 
   bg-light-bg 
   text-2xl 
-  hover:text-3xl 
   border-2 
   w-24 h-36
   border-dark-blue 
   hover:border-deep-blue 
   origin-[50%_100%] 
   hover:z-10
+  translate-x-[1rem]
   hover:rotate-0 
-  hover:scale-150
+  hover:scale-[1.2]
   duration-100
 }
 </style>

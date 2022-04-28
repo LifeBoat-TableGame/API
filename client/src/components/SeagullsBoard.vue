@@ -22,12 +22,11 @@ const props = defineProps({
 </script>
 
 <style scoped>
-
 .container {
     @apply flex flex-wrap p-2;
 }
 
 .chip {
-    @apply  m-2 rounded-full p-3 w-fit h-fit bg-light-blue;
+    @apply m-2 p-3 rounded-full w-fit h-fit bg-light-blue border-2 border-light-blue hover:border-dark-blue;
 }
 </style>

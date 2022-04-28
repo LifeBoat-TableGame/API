@@ -1,7 +1,7 @@
 <template>
   <div class="bg-light-blue vertical-container text-lg rounded-md w-fit">
     <p class="text-2xl">{{ title }}</p>
-    <input v-model="username" type="text" class="small-field" placeholder="noname"/>
+    <input v-model="username" type="text" class="small-field" placeholder="noname" v-on:keyup.enter="logIn"/>
     <button type="submit" @click="logIn" class="btn">Применить</button>
   </div>
 </template>
