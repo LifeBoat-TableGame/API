@@ -13,6 +13,7 @@ import { CharacterQueue } from '../models/characterQueue.entity';
 import { LobbyModule } from '../lobby/lobby.module';
 import { NotificationService } from './notification/notification.service';
 import { ActionsService } from './actions/actions.service';
+import { Dispute } from '../models/dispute.entity';
 
 @Module({
     imports: [
@@ -23,7 +24,8 @@ import { ActionsService } from './actions/actions.service';
             Player,
             GameNavigation, 
             Navigation,
-            CharacterQueue
+            CharacterQueue,
+            Dispute
         ]),
         UserModule,
         CardsModule,
