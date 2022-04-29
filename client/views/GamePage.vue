@@ -1,7 +1,9 @@
 <template>
     <div>game page</div>
     <div class="game-grid">
-      <div class="players-field bg-olive-400">players</div>
+      <div class="players-field bg-olive-400">
+        <PlayerProfile name="Don" :supplies="supplies"/>
+      </div>
       <div class="seagull-field bg-main-blue">
         <SeagullsBoard :amount="seagulls" />
       </div>
@@ -25,6 +27,7 @@ import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
 import Timer from '../src/components/Timer.vue';
 import SeagullsBoard from '../src/components/SeagullsBoard.vue';
+import PlayerProfile from '../src/components/PlayerProfile.vue';
 import Hand from '../src/components/Hand.vue'
 import { ref } from 'vue';
 import { Supply } from '../src/interfaces/game';
@@ -46,7 +49,8 @@ const name = 'GameTemp';
 
 const components = {
   Timer,
-  SeagullsBoard
+  SeagullsBoard,
+  PlayerProfile
 };
 
 const seagulls = ref(2);
