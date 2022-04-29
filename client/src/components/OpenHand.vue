@@ -1,10 +1,10 @@
 <template>
-<div class=" bg-dark-bg rounded-sm relative flex flex-row items-center flex-wrap px-2 my-2 mr-2">
+<div class=" bg-dark-bg rounded-sm relative flex flex-row items-center flex-wrap px-2 my-2">
     <div class="card relative" 
         v-for="(supply, index) in supplies" 
         :style="{
             marginLeft: (coefficient) + 'rem',
-            marginRight: (index == props.supplies.length - 1 ? coefficient : 0) + 'rem'
+            marginRight: (index == props.supplies.length - 1 ? 1.75 : 0) + 'rem'
         }"
     >
     </div>
