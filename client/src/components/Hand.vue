@@ -4,8 +4,10 @@
       :key="supply.name" 
       :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 
       :supply=supply 
-      :tilted="true"
-      :style="[index!=0 ? {marginLeft: -4 + 'rem' } : {}]"
+      :tilted="tilted"
+      :style="[index!=0 ? {marginLeft: overlapVal + 'rem' } : {}]"
+      :w="cardW"
+      :h="cardH"
       >
       </Card>
   </div>
@@ -24,12 +26,16 @@ const roomStore = useRoomStore();
 
 
 const props = defineProps<{
-  supplies: Supply[];
+  supplies: Supply[],
+  cardH: number,
+  cardW: number,
+  tilted: boolean
 }>();
 const emit = defineEmits(['card:clicked'])
 const overlapVal = computed(() => {
-  return -6+(30-6)/(props.supplies.length-1)
+  return -props.cardW+(30-props.cardW)/(props.supplies.length-1)
 });
+console.log(overlapVal.value)
 </script>
 <style scoped>
 

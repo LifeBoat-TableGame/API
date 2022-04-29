@@ -16,7 +16,7 @@
         </p>
       </div>
       <div class="self-field bg-light-red">cards with self info
-        <Hand :supplies="supplies" />
+        <Hand :supplies="supplies" :cardH="9" :cardW="6" :tilted="true"/>
       </div>
       <div class="boat-field bg-deep-red"> boat</div>
     </div>

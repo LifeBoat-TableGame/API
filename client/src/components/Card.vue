@@ -1,7 +1,8 @@
 
 <template>
   <div
-    :class="['card', 'vertical-container', 'box', 'noselect', tilts[6 + props.posFromMiddle], shifts[6 + props.posFromMiddle]]"
+    :class="['card', 'vertical-container', 'box', 'noselect', tilted ? tilts[6 + props.posFromMiddle] : '', tilted ? shifts[6 + props.posFromMiddle ] : '']"
+    :style="[{width: props.w + 'rem', height: props.h + 'rem'}]"
     @click="useCard">
     <div>{{ supply.name }}
     </div>
@@ -20,6 +21,7 @@ import { Supply } from '../interfaces/game';
 const title = 'ActiveRoomMenu';
 const mainStore = useMainStore();
 const roomStore = useRoomStore();
+
 
 
 const tilts = [
@@ -54,9 +56,11 @@ const shifts = [
 ]
 
 const props = defineProps<{
-  supply: Supply
-  tilted: boolean
-  posFromMiddle: number
+  supply: Supply,
+  tilted: boolean,
+  posFromMiddle: number,
+  h: number,
+  w: number,
 }>();
 
 const emit = defineEmits(['card:clicked'])
@@ -74,7 +78,6 @@ const useCard = () => {
   bg-light-bg 
   text-2xl 
   border-2 
-  w-24 h-36
   border-dark-blue 
   hover:border-deep-blue 
   origin-[50%_100%] 
