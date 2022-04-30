@@ -6,6 +6,9 @@
     <button @click="pickSupply" class="btn btn-primary">Pick supply</button>
     <button @click="openSupply" class="btn btn-primary">open Medkit</button>
     <button @click="useSupply" class="btn btn-primary">Use Medkit</button>
+    <button @click="swap">Swap</button>
+    <button @click="accept">Accept</button>
+    <button @click="decline">Decline</button>
   </div>
 </template>
 
@@ -23,6 +26,9 @@ const getPlayerInfo = () => mainStore.getPlayerInfo();
 const pickSupply = () => mainStore.pickSupply("Butah");
 const openSupply = () => mainStore.openSupply('Аптечка');
 const useSupply = () => mainStore.useSupply("Аптечка", "Боцман");
+const swap = () => mainStore.swapWith("Jhon");
+const accept = () => mainStore.accept();
+const decline = () => mainStore.decline()
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {

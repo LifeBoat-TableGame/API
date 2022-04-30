@@ -95,6 +95,41 @@ export class GameGateway {
     }
 
     @UseGuards(WsGuard)
+    @SubscribeMessage('swap')
+    async handleSwap(client: Socket, targetName: string) {
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        if(!user.player)
+            throw new WsException('You must be in game');
+        const player = await this.userService.getPlayerRelations(user.player.id);
+        const game = await this.gameService.getGameWithrelations(user.player.game.id);
+        await this.actionsService.requestSwap(player, game,  targetName);
+        this.wss.to(user.lobby.id.toString()).emit('swapDispute', player.character.name, targetName);
+    }
+
+    @UseGuards(WsGuard)
+    @SubscribeMessage('acceptDispute')
+    async handleAcceptDispute(client: Socket) {
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        if(!user.player)
+            throw new WsException('You must be in game');
+        const player = await this.userService.getPlayerRelations(user.player.id);
+        await this.actionsService.acceptDispute(player);
+    }
+
+    @UseGuards(WsGuard)
+    @SubscribeMessage('declineDispute')
+    async handleDeclineDispute(client: Socket) {
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        if(!user.player)
+            throw new WsException('You must be in game');
+        const player = await this.userService.getPlayerRelations(user.player.id);
+        await this.actionsService.declineDispute(player);
+    }
+
+    @UseGuards(WsGuard)
     @SubscribeMessage('useSupply')
     async handleUseSupply(
         @ConnectedSocket() client: Socket, 

@@ -7,7 +7,9 @@ import { Player } from "./player.entity";
 
 export enum GameState {
     Supplies = 1,
-    Regular = 2
+    Regular = 2,
+    Dispute = 3,
+    Fight = 4,
 }
 
 @Entity()

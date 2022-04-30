@@ -53,6 +53,11 @@ export class GameService {
         const newGame = this.gameRepository.create(game);
         return await this.gameRepository.save(newGame);
     }
+    async updateGameState(game: Game, newState: GameState) {
+        await this.gameRepository.update({id: game.id}, {
+            state: newState,
+        });
+    }
 
     async createGameNavigation(gameNavigation: CreateGameNavigationDto) {
         const newItem = this.gameNavigationRepository.create(gameNavigation);
