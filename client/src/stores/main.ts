@@ -85,6 +85,18 @@ export const useMainStore: any = defineStore("mainStoreID", {
     swapWith(target: string) {
       this.socket.emit('swap', target);
     },
+    demandClose(target: string) {
+      this.socket.emit('demandSupply', {
+        characters: target,
+        supply: null
+      });
+    },
+    demandOpen(target: string, supply: string) {
+      this.socket.emit('demandSupply', {
+        character: target, 
+        supply: supply
+      });
+    },
     accept() {
       this.socket.emit('acceptDispute');
     },

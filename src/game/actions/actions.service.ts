@@ -74,36 +74,69 @@ export class ActionsService {
         const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex);
         if(player.character.name != currentCharacter.characterName)
             throw new WsException("Not your turn");
-        const dispute = await this.disputeService.create({
+        await this.disputeService.startDispute({
             game: game,
             initiator: player,
             victim: target,
             type: DisputeType.Swap
+        }, async () => {
+            const p1 = this.gameService.updateGameState(game, GameState.Regular);
+            const p2 = this.gameService.gameTurn(game);
+            await p1;
+            await p2;
         });
-        let timeToWait = 10;
-        const interval = setInterval(async () => {
-            timeToWait--;
-            console.log(`${timeToWait} seconds remains`);
-            if(timeToWait == 0) {
-                clearInterval(interval);
-                const dispute = await this.disputeService.get(game.id);
-                if(dispute) {
-                    //give up on dispute
-                    if(dispute.game.state != GameState.Dispute) return;
-                    //forcing swap
-                    if(dispute.type == DisputeType.Swap) {
-                        await this.characterQueueRepository.update({gameId: dispute.gameId, characterName: dispute.initiator.character.name}, {
-                            newOrder: dispute.game.queue.find(p => p.characterName == dispute.victim.character.name).order
-                        });
-                        await this.characterQueueRepository.update({gameId: dispute.gameId, characterName: dispute.victim.character.name}, {
-                            newOrder: dispute.game.queue.find(p => p.characterName == dispute.initiator.character.name).order
-                        });
-                    }
-                    
-                } else console.log("dispute rspolved");
-            }
-        }, 1000);
         await this.gameService.updateGameState(game, GameState.Dispute);
+    }
+
+    async requestClosedSupply(player: Player, game: Game, targetName: string) {
+        const target = game.players.find(p => p.character.name == targetName);
+        console.log(targetName);
+        if(!target)
+            throw new WsException("Character does not exists in the game");
+        if(game.state != GameState.Regular)
+            throw new WsException("Action is not allowed during current phase");
+        const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex);
+        if(player.character.name != currentCharacter.characterName)
+            throw new WsException("Not your turn");
+        await this.disputeService.startDispute({
+            game: game,
+            initiator: player,
+            victim: target,
+            type: DisputeType.Get
+        }, async () => {
+            const p1 = this.gameService.updateGameState(game, GameState.Regular);
+            const p2 = this.gameService.gameTurn(game);
+            await p1;
+            await p2;
+        });
+        await this.gameService.updateGameState(game, GameState.Dispute)
+    }
+
+    async requestOpenSupply(player: Player, game: Game, targetName: string, supplyName: string) {
+        const target = game.players.find(p => p.character.name == targetName);
+        if(!target)
+            throw new WsException("Character does not exists in the game");
+        if(game.state != GameState.Regular)
+            throw new WsException("Action is not allowed during current phase");
+        const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex);
+        if(player.character.name != currentCharacter.characterName)
+            throw new WsException("Not your turn");
+        const supply = target.openCards.find(card => card.name == supplyName);
+        if(!supply)
+            throw new WsException("Target has no supply with this name");
+        await this.disputeService.startDispute({
+            game: game,
+            initiator: player,
+            victim: target,
+            target: supply,
+            type: DisputeType.Get
+        }, async () => {
+            const p1 = this.gameService.updateGameState(game, GameState.Regular);
+            const p2 = this.gameService.gameTurn(game);
+            await p1;
+            await p2;
+        });
+        await this.gameService.updateGameState(game, GameState.Dispute)
     }
 
     async declineDispute(player: Player) {
@@ -125,16 +158,7 @@ export class ActionsService {
         if(dispute.victim.id != player.id)
             throw new WsException("You are not in a dispute");
         await this.gameService.updateGameState(player.game, GameState.Regular);
-        await this.disputeService.remove(player.game.id);
         //giving up on issue
-        if(dispute.type == DisputeType.Swap) {
-            await this.characterQueueRepository.update({gameId: dispute.gameId, characterName: dispute.initiator.character.name}, {
-                newOrder: dispute.game.queue.find(p => p.characterName == dispute.victim.character.name).order
-            });
-            await this.characterQueueRepository.update({gameId: dispute.gameId, characterName: dispute.victim.character.name}, {
-                newOrder: dispute.game.queue.find(p => p.characterName == dispute.initiator.character.name).order
-            });
-            
-        }
+        await this.disputeService.executeDispute(dispute);
     }
 }

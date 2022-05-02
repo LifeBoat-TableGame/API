@@ -108,6 +108,26 @@ export class GameGateway {
     }
 
     @UseGuards(WsGuard)
+    @SubscribeMessage('demandSupply')
+    async handleDemandSupply(
+        @ConnectedSocket() client: Socket, 
+        @MessageBody('character') targetName: string,
+        @MessageBody('supply') supplyName?: string | null
+        ) {
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        if(!user.player)
+            throw new WsException('You must be in game');
+        const req1 = this.userService.getPlayerRelations(user.player.id);
+        const req2 = this.gameService.getGameWithrelations(user.player.game.id);
+        const player = await req1;
+        const game = await req2;
+        if(supplyName) await this.actionsService.requestOpenSupply(player, game, targetName, supplyName);
+        else await this.actionsService.requestClosedSupply(player, game,  targetName);
+        this.wss.to(user.lobby.id.toString()).emit('demandDispute', player.character.name, targetName, supplyName);
+    }
+
+    @UseGuards(WsGuard)
     @SubscribeMessage('acceptDispute')
     async handleAcceptDispute(client: Socket) {
         const token = client.handshake.headers.authorization;

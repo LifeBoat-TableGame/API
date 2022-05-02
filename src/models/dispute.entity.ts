@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { Game } from "./game.entity";
 import { GameSupply } from "./gameSupply.entity";
 import { Player } from "./player.entity";
+import { Supply } from "./supply.entity";
 
 export enum DisputeType {
     Swap = 1,
@@ -26,9 +27,9 @@ export class Dispute {
     @JoinColumn()
     victim: Player;
 
-    @OneToOne(() => GameSupply)
+    @ManyToOne(() => Supply)
     @JoinColumn()
-    target: GameSupply
+    target: Supply
 
     @Column()
     type: DisputeType

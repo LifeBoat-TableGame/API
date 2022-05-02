@@ -1,7 +1,7 @@
 import { Game } from "../../models/game.entity";
-import { GameSupply } from "../../models/gameSupply.entity";
 import { Player } from "../../models/player.entity";
 import { DisputeType } from "../../models/dispute.entity";
+import { Supply } from "../../models/supply.entity";
 
 export interface CreateOpenSupplyDisputeDto {
     game: Game;
@@ -10,7 +10,7 @@ export interface CreateOpenSupplyDisputeDto {
 
     victim: Player;
 
-    target: GameSupply;
+    target: Supply;
 
     type: DisputeType;
 }
