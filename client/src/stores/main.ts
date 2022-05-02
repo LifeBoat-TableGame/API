@@ -77,6 +77,28 @@ export const useMainStore: any = defineStore("mainStoreID", {
     openSupply(supplyName: string){
       this.socket.emit('openSupply', supplyName);
     },
+    useSupply(supplyName: string, target: string){
+      console.log(supplyName);
+      console.log(target);
+      this.socket.emit('useSupply',{supplyName: supplyName, target: target});
+    },
+    swapWith(target: string) {
+      this.socket.emit('swap', target);
+    },
+    demandClose(target: string) {
+      console.log(target);
+      this.socket.emit('demandSupply', { targetName: target, supplyName: null });
+    },
+    demandOpen(target: string, supply: string) {
+      console.log(target);
+      this.socket.emit('demandSupply', { targetName: target, supplyName: supply });
+    },
+    accept() {
+      this.socket.emit('acceptDispute');
+    },
+    decline() {
+      this.socket.emit('declineDispute');
+    },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
       this.socket.on('gameStarted', (game) => {

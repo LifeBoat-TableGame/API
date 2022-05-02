@@ -41,7 +41,8 @@ export class UserService {
                 enemy: true,
                 friendship: true,
                 openCards: true,
-                closedCards: true
+                closedCards: true,
+                game: true
             },
         });
         return player;
@@ -70,5 +71,21 @@ export class UserService {
 
     async removeUser(user: User) {
         await this.userRepository.delete(user);
+    }
+
+    async isAlive(player: Player){
+        if(player.damage > player.character.strength){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async isConscious(player: Player){
+        if(player.damage <= player.character.strength){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
