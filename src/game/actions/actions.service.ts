@@ -98,6 +98,8 @@ export class ActionsService {
         const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex);
         if(player.character.name != currentCharacter.characterName)
             throw new WsException("Not your turn");
+        if(target.closedCards.length < 1)
+            throw new WsException("Target has no closed cards");
         await this.disputeService.startDispute({
             game: game,
             initiator: player,
@@ -109,7 +111,7 @@ export class ActionsService {
             await p1;
             await p2;
         });
-        await this.gameService.updateGameState(game, GameState.Dispute)
+        await this.gameService.updateGameState(game, GameState.Dispute);
     }
 
     async requestOpenSupply(player: Player, game: Game, targetName: string, supplyName: string) {
@@ -136,7 +138,7 @@ export class ActionsService {
             await p1;
             await p2;
         });
-        await this.gameService.updateGameState(game, GameState.Dispute)
+        await this.gameService.updateGameState(game, GameState.Dispute);
     }
 
     async declineDispute(player: Player) {

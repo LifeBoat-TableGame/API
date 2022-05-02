@@ -58,15 +58,13 @@ export class DisputeService {
             const targetIndex = dispute.victim.openCards.findIndex( supply => supply.name == dispute.target.name);
             if(targetIndex < 0)
                 return;
-            console.log(dispute.victim);
-            console.log(dispute.initiator);
             dispute.victim.openCards.splice(targetIndex, 1);
             dispute.initiator.openCards.splice(0, 0, dispute.target);
             console.log(dispute.initiator.openCards);
         } 
         else {
             const supply = this.get_random(dispute.victim.closedCards);
-            const targetIndex = dispute.victim.openCards.findIndex( s => s.name == supply.name);
+            const targetIndex = dispute.victim.closedCards.findIndex( s => s.name == supply.name);
             if(targetIndex < 0)
                 return;
             dispute.victim.closedCards.splice(targetIndex, 1);
@@ -89,10 +87,12 @@ export class DisputeService {
                 initiator: {
                     character: true,
                     openCards: true,
+                    closedCards: true
                 },
                 victim: {
                     character: true,
-                    openCards: true
+                    openCards: true,
+                    closedCards: true
                 },
                 target: true,
                 game: {

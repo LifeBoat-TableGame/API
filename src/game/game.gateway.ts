@@ -111,8 +111,8 @@ export class GameGateway {
     @SubscribeMessage('demandSupply')
     async handleDemandSupply(
         @ConnectedSocket() client: Socket, 
-        @MessageBody('character') targetName: string,
-        @MessageBody('supply') supplyName?: string | null
+        @MessageBody('targetName') targetName: string,
+        @MessageBody('supplyName') supplyName?: string
         ) {
         const token = client.handshake.headers.authorization;
         const user = await this.userService.getWithRelations(token);
