@@ -1,22 +1,27 @@
 <template>
-    <div>game page</div>
+    <div class=" fixed bg-main-blue w-full">game page</div>
     <div class="game-grid">
-      <div class="players-field bg-olive-400">
+      <div class="players-field top-row bg-olive-400">
         <PlayerProfile name="Don" :supplies="supplies"/>
       </div>
-      <div class="seagull-field bg-main-blue">
+      <div class="seagull-field top-row bg-main-blue">
         <SeagullsBoard :amount="seagulls" />
       </div>
-      <div class="timer-field bg-dark-blue">
+      <div class="timer-field top-row bg-dark-blue">
         <Timer :time="new Date()" />
       </div>
-      <div class="phase-field bg-grey-bg">
+      <div class="phase-field top-row bg-grey-bg">
         <p class="phase">
           {{ phase }}
         </p>
       </div>
-      <div class="self-field bg-light-red">cards with self info
+      <div class="self-open bg-olive-100">
+      </div>
+      <div class="self-hand bg-light-red">
         <Hand :supplies="supplies" :cardH="9" :cardW="6" :tilted="true"/>
+      </div>
+      <div class="self-icon bg-grey-bg">
+        <img class=" rounded-full border-2 border-main-blue w-40 h-40"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
       <div class="boat-field bg-deep-red"> boat</div>
     </div>
@@ -69,17 +74,26 @@ if (mainStore.activeRoomId == 0) {
 </script>
 
 <style scoped>
+.top-row {
+  @apply mt-6;
+}
 .game-grid {
-  @apply grid w-screen h-screen grid-cols-9 grid-rows-6;
+  @apply grid w-full h-full grid-cols-9 grid-rows-6;
 }
 .players-field {
   @apply col-start-1 col-span-2 row-span-full;
 }
-.self-field {
-  @apply row-end-7 row-span-2 col-start-3 col-end-10;
+.self-hand {
+  @apply row-end-7 row-span-1 col-start-6 col-span-3;
+}
+.self-open {
+  @apply row-end-7 row-span-1 col-span-3 col-start-3;
+}
+.self-icon {
+  @apply row-end-7 row-span-1 col-span-1 col-end-10;
 }
 .boat-field {
-  @apply col-start-3 col-span-full row-start-2 row-end-5;
+  @apply col-start-3 col-span-full row-start-2 row-end-6;
 }
 .seagull-field {
   @apply col-start-3 col-span-2 row-start-1 row-span-1;
