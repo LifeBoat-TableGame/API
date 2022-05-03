@@ -10,6 +10,7 @@ export enum GameState {
     Regular = 2,
     Dispute = 3,
     Fight = 4,
+    Picking = 5
 }
 
 @Entity()

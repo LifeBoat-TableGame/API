@@ -15,6 +15,9 @@ export class GameNavigation {
     @Column({unique: true})
     order: number;
 
+    @Column({default: false})
+    picked: boolean;
+
     @ManyToOne(() => Game, (game) => game.navigationDeck)
     @JoinColumn({name: "gameId"})
     game: Game;
