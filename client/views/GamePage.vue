@@ -16,12 +16,13 @@
         </p>
       </div>
       <div class="self-open bg-olive-100">
+        <Hand :supplies="supplies" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" class="m-1"/>
       </div>
       <div class="self-hand bg-light-red">
-        <Hand :supplies="supplies" :cardH="9" :cardW="6" :tilted="true"/>
+        <Hand :supplies="supplies" :cardH="9" :cardW="6" :handW="30" :tilted="true" class="m-1"/>
       </div>
       <div class="self-icon bg-grey-bg">
-        <img class=" rounded-full border-2 border-main-blue w-40 h-40"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
+        <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
       <div class="boat-field bg-deep-red">
         <Boat :characters="queue.reverse()"/>
@@ -44,7 +45,7 @@ import { CharacterQueue } from '../src/interfaces/game';
 const queue: CharacterQueue[] = [];
 const supplies = [] as Supply[];
 
-for (var i = 1; i<=8; i++) {
+for (var i = 1; i<=13; i++) {
  supplies.push({
     name: 'card'+i,
     strength: 5,
@@ -52,6 +53,7 @@ for (var i = 1; i<=8; i++) {
     description: '-',
     amount: 1,
   })
+  if(i<=8)
   queue.push({
     characterName: "",
     gameId: 1,

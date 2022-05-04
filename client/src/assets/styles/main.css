@@ -40,4 +40,7 @@
     .btn-disabled {
         @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
     }
+    .border-highlight {
+        @apply border-2 border-dark-blue hover:border-deep-blue hover:outline-double outline-1 outline-light-bg
+    }
 }

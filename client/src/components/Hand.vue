@@ -1,11 +1,11 @@
 <template>
-  <div class="hand">
+  <div :class="['hand', !tilted ? 'bg-dark-bg p-2' : '']">
       <Card v-for="(supply, index) in supplies" 
       :key="supply.name" 
       :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 
       :supply=supply 
       :tilted="tilted"
-      :style="[index!=0 ? {marginLeft: overlapVal + 'rem' } : {}]"
+      :style="[index!=0 ? {marginLeft: overlapVal + 'rem' } : {marginLeft: -1.2 + 'rem' }]"
       :w="cardW"
       :h="cardH"
       >
@@ -29,19 +29,22 @@ const props = defineProps<{
   supplies: Supply[],
   cardH: number,
   cardW: number,
+  handW: number,
   tilted: boolean
 }>();
+console.log(props.tilted)
 const emit = defineEmits(['card:clicked'])
 const overlapVal = computed(() => {
-  return -props.cardW+(30-props.cardW)/(props.supplies.length-1)
+  return -props.cardW+(props.handW-props.cardW)/(props.supplies.length-1)
 });
-console.log(overlapVal.value)
 </script>
 <style scoped>
 
 
 .hand {
-  @apply flex max-w-[30rem]
+  @apply
+  flex 
+  rounded-sm
 }
 </style>
 

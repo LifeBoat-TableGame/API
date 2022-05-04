@@ -1,8 +1,8 @@
 
 <template>
   <div
-    :class="['card', 'vertical-container', 'box', 'noselect', tilted ? tilts[6 + props.posFromMiddle] : '', tilted ? shifts[6 + props.posFromMiddle ] : '']"
-    :style="[{width: props.w + 'rem', height: props.h + 'rem'}]"
+    :class="['card', 'vertical-container', 'noselect', 'border-highlight', tilted ? tilts[6 + props.posFromMiddle] : '', tilted ? shifts[6 + props.posFromMiddle ] : '']"
+    :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/6 + 'rem', lineHeight:props.h/4.5, borderRadius:props.h/16+'rem'}]"
     @click="useCard">
     <div>{{ supply.name }}
     </div>
@@ -75,11 +75,7 @@ const useCard = () => {
 <style scoped>
 .card {
   @apply 
-  bg-light-bg 
-  text-2xl 
-  border-2 
-  border-dark-blue 
-  hover:border-deep-blue 
+  bg-light-bg
   origin-[50%_100%] 
   hover:z-10
   translate-x-[1rem]

@@ -1,6 +1,6 @@
 <template>
     <div class=" grid grid-rows-3 grid-flow-col justify-center items-center">
-        <CharacterCard class=" row-start-2 text-center" v-for="item in sortedCharacters" :character="item.character" />
+        <CharacterCard class=" row-start-2 text-center border-highlight" v-for="item in sortedCharacters" :character="item.character" />
     </div>
 </template>
 

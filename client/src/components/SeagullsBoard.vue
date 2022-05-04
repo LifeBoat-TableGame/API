@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div v-for="seagull in amount" class="chip">
+        <div v-for="seagull in amount" class="border-highlight chip">
             <SeagullImage :size="50" />
         </div>
     </div>
@@ -27,6 +27,6 @@ const props = defineProps({
 }
 
 .chip {
-    @apply m-2 p-3 rounded-full w-fit h-fit bg-light-blue border-2 border-light-blue hover:border-dark-blue;
+    @apply m-2 p-3 rounded-full w-fit h-fit bg-light-blue border-light-blue hover:border-dark-blue;
 }
 </style>
