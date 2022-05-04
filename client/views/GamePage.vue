@@ -23,7 +23,9 @@
       <div class="self-icon bg-grey-bg">
         <img class=" rounded-full border-2 border-main-blue w-40 h-40"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
-      <div class="boat-field bg-deep-red"> boat</div>
+      <div class="boat-field bg-deep-red">
+        <Boat :characters="queue.reverse()"/>
+      </div>
     </div>
 </template>
 
@@ -36,17 +38,31 @@ import PlayerProfile from '../src/components/PlayerProfile.vue';
 import Hand from '../src/components/Hand.vue'
 import { ref } from 'vue';
 import { Supply } from '../src/interfaces/game';
+import Boat from '../src/components/Boat.vue';
+import { CharacterQueue } from '../src/interfaces/game';
 
-
+const queue: CharacterQueue[] = [];
 const supplies = [] as Supply[];
 
-for (var i = 1; i<=13; i++) {
+for (var i = 1; i<=8; i++) {
  supplies.push({
     name: 'card'+i,
     strength: 5,
     bonus: null,
     description: '-',
     amount: 1,
+  })
+  queue.push({
+    characterName: "",
+    gameId: 1,
+    order: i,
+    character: {
+      name: "Character " + i,
+      strength: 5,
+      survival: 6,
+      description: "long long time ago once apon a time...",
+      defaultOrder: 1
+    }
   })
 }
 

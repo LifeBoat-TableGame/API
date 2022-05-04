@@ -13,7 +13,7 @@ export interface Player {
 };
 export interface Character {
     name: string;
-    strengh: number;
+    strength: number;
     survival: number;
     description: string;
     defaultOrder: number;
@@ -29,6 +29,7 @@ export interface CharacterQueue {
     gameId: number;
     characterName: string;
     order: number;
+    character: Character;
 };
 enum GameState {
     Supplies = 1,
