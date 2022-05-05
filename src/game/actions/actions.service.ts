@@ -89,7 +89,10 @@ export class ActionsService {
         const nav = await this.cardsService.gameNavigationById(game.id, id);
         if(!nav) 
             throw new WsException("Card does not exist");
-        return await this.gameService.pickNavigation(game, nav);
+        const p1 = this.gameService.pickNavigation(game, nav);
+        const p2 = this.gameService.gameTurn(game, GameState.Regular);
+        await p1;
+        await p2;
     }
 
     async requestSwap(player: Player, game: Game, targetName: string) {

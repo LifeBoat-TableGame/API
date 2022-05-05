@@ -44,6 +44,10 @@ export class GameService {
                     character: true,
                     game: true
                 },
+                chosenNavigationDeck: {
+                    navigation: true,
+                    chosenIn: true
+                },
             }
         });
         return game;
@@ -84,12 +88,14 @@ export class GameService {
     }
 
     async pickNavigation(game: Game, navigation: GameNavigation) {
-        game.navigationDeck.push(navigation);
-        return await this.gameRepository.save(game);
+        navigation.chosenIn = game;
+        console.log(game);
+        await this.gameNavigationRepository.save(navigation);
+        await this.cardsService.removeDrawnNavigation(game.id);
     }
-    async gameTurn(game: Game) {
+    async gameTurn(game: Game, state?: GameState) {
         let newIndex = game.currentCharacterIndex + 1;
-        let newState = game.state;
+        let newState = state ?? game.state;
         if(game.currentCharacterIndex == game.players.length - 1){
             newState = game.state == 1 ? 2 : 1;
             newIndex = 0;
@@ -139,10 +145,11 @@ export class GameService {
                 supplyName: supply.name
             }));
         }));
-        const promise3 = Promise.all(navigations.map( async (navigation) => {
+        const promise3 = Promise.all(navigations.map( async (navigation, index) => {
             await this.createGameNavigation({
-                gameId: game.id, 
-                navigationId: navigation.id
+                gameId: game.id,
+                navigationId: navigation.id,
+                order: index
             });
         }));
         await promise1;

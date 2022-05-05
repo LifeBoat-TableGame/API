@@ -76,6 +76,7 @@ export class CardsService {
         .createQueryBuilder("game_navigation")
         .where("game_navigation.picked is false AND game_navigation.gameId = :gameId", {gameId: gameId})
         .orderBy("game_navigation.order", "ASC")
+        .leftJoinAndSelect("game_navigation.chosenIn", "game")
         .limit(amount)
         .getMany();
         selected.forEach(navigation => navigation.picked = true);
@@ -87,6 +88,12 @@ export class CardsService {
             where: {
                 gameId: gameId,
                 navigationId: id
+           },
+           relations: {
+               navigation: {
+                   charactersOverboard: true,
+                   charactersThirst: true,
+               }
            }
         });
     }
@@ -95,14 +102,15 @@ export class CardsService {
         const rowsCount = await this.gameNavigationRepository.countBy({
             gameId: gameId
         });
+        const updateString = `"order" + ${rowsCount}`;
         return await this.gameNavigationRepository
-        .createQueryBuilder("game_navigation")
-        .where("game_supply.picked is false AND game_supply.gameId = :gameId", {gameId: gameId})
+        .createQueryBuilder()
         .update(GameNavigation)
         .set({
             picked: false,
-            order: () => `order + ${rowsCount}`
+            order: () => updateString
         })
+        .where("picked is true AND gameId = :gameId", {gameId: gameId})
         .execute();
     }
 
@@ -116,7 +124,8 @@ export class CardsService {
                 navigation: {
                     charactersOverboard: true,
                     charactersThirst: true,
-                }
+                },
+                chosenIn: true,
             }
         });
     }

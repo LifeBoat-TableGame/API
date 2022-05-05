@@ -28,9 +28,10 @@ export class Game {
     @OneToMany(() => GameNavigation, (gameNavigation) => gameNavigation.game)
     navigationDeck: GameNavigation[];
 
-    @ManyToMany(() => Navigation)
-    @JoinTable()
-    chosenNavigationDeck: Navigation[];
+    @OneToMany(() => GameNavigation, (gameNavigation) => gameNavigation.chosenIn)
+    chosenNavigationDeck: GameNavigation[];
+    
+    chosenNavigationCount: number;
 
     @Column()
     state: GameState;

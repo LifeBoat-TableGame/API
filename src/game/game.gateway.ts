@@ -92,6 +92,25 @@ export class GameGateway {
         const navigations = await this.actionsService.row(player, game);
         client.emit('chooseNavigation', navigations);
     }
+
+    @UseGuards(WsGuard)
+    @SubscribeMessage('pickNavigation')
+    async handlePickNavigation(client: Socket, id: number) {
+        const token = client.handshake.headers.authorization;
+        console.log(id);
+        const user = await this.userService.getWithRelations(token);
+        if(!user.player)
+            throw new WsException('You must be in game');
+        const p1 = this.userService.getPlayerRelations(user.player.id);
+        const p2 =  this.gameService.getGameWithrelations(user.player.game.id);
+        const player = await p1;
+        const game = await p2;
+        if(user.player.game.state != GameState.Picking)
+            throw new WsException('Activity is not available during current phase');
+        await this.actionsService.pickNavigation(player, game, id);
+        const updatedGame = await this.gameService.getGameWithrelations(user.player.game.id);
+        await this.notificationService.updateGame(updatedGame, user.lobby.id.toString(), this.wss);
+    }
     
     @UseGuards(WsGuard)
     @SubscribeMessage('openSupply')
