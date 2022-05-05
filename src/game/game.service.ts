@@ -83,8 +83,9 @@ export class GameService {
         await this.userService.updatePlayer(player);
     }
 
-    async pickNavigation() {
-        
+    async pickNavigation(game: Game, navigation: GameNavigation) {
+        game.navigationDeck.push(navigation);
+        return await this.gameRepository.save(game);
     }
     async gameTurn(game: Game) {
         let newIndex = game.currentCharacterIndex + 1;

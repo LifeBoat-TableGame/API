@@ -77,6 +77,21 @@ export class GameGateway {
 
         await this.notificationService.updateGame(updated, user.lobby.id.toString(), this.wss);
     }
+
+    @UseGuards(WsGuard)
+    @SubscribeMessage('getNavigation')
+    async handleGetNavigation(client: Socket) {
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        if(!user.player)
+            throw new WsException('You must be in game');
+        const player = await this.userService.getPlayerRelations(user.player.id);
+        if(user.player.game.state != GameState.Regular)
+            throw new WsException('Activity is not available during current phase');
+        const game = await this.gameService.getGameWithrelations(user.player.game.id);
+        const navigations = await this.actionsService.row(player, game);
+        client.emit('chooseNavigation', navigations);
+    }
     
     @UseGuards(WsGuard)
     @SubscribeMessage('openSupply')

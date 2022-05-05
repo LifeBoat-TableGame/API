@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Character } from '../models/character.entity';
 import { Navigation } from '../models/navigation.entity';
 import { GameSupply } from '../models/gameSupply.entity';
+import { GameNavigation } from '../models/gameNavigation.entity';
 import CreateGameSupplyDto from '../game/dto/createGameSupplyDto';
 
 @Injectable()
@@ -13,7 +14,8 @@ export class CardsService {
         @InjectRepository(Character) private characterRepository: Repository<Character>, 
         @InjectRepository(Supply) private supplyRepository: Repository<Supply>,
         @InjectRepository(Navigation) private navigationRepository: Repository<Navigation>,
-        @InjectRepository(GameSupply) private gameSupplyRepository: Repository<GameSupply>
+        @InjectRepository(GameSupply) private gameSupplyRepository: Repository<GameSupply>,
+        @InjectRepository(GameNavigation) private gameNavigationRepository: Repository<GameNavigation>,
     ) {}
     
     shuffle<Type>(array: Type[]) {
@@ -67,6 +69,56 @@ export class CardsService {
             },
         });
         return nav;
+    }
+
+    async drawNavigation(amount: number, gameId: number) {
+        const selected = await this.gameNavigationRepository
+        .createQueryBuilder("game_navigation")
+        .where("game_navigation.picked is false AND game_navigation.gameId = :gameId", {gameId: gameId})
+        .orderBy("game_navigation.order", "ASC")
+        .limit(amount)
+        .getMany();
+        selected.forEach(navigation => navigation.picked = true);
+        return await this.gameNavigationRepository.save(selected);
+    }
+
+    async gameNavigationById(gameId: number, id: number){
+        return await this.gameNavigationRepository.findOne({
+            where: {
+                gameId: gameId,
+                navigationId: id
+           }
+        });
+    }
+
+    async removeDrawnNavigation(gameId: number) {
+        const rowsCount = await this.gameNavigationRepository.countBy({
+            gameId: gameId
+        });
+        return await this.gameNavigationRepository
+        .createQueryBuilder("game_navigation")
+        .where("game_supply.picked is false AND game_supply.gameId = :gameId", {gameId: gameId})
+        .update(GameNavigation)
+        .set({
+            picked: false,
+            order: () => `order + ${rowsCount}`
+        })
+        .execute();
+    }
+
+    async getDrawnNavigation(gameId: number) {
+        return await this.gameNavigationRepository.find({
+            where: {
+                gameId: gameId,
+                picked: true
+            },
+            relations: {
+                navigation: {
+                    charactersOverboard: true,
+                    charactersThirst: true,
+                }
+            }
+        });
     }
 
     async drawSupplies(amount: number, gameId: number) {
