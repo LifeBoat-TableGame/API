@@ -44,6 +44,10 @@ export class GameService {
                     character: true,
                     game: true
                 },
+                chosenNavigationDeck: {
+                    navigation: true,
+                    chosenIn: true
+                },
             }
         });
         return game;
@@ -82,9 +86,16 @@ export class GameService {
         player.closedCards.push(gameSupply.supply);
         await this.userService.updatePlayer(player);
     }
-    async gameTurn(game: Game) {
+
+    async pickNavigation(game: Game, navigation: GameNavigation) {
+        navigation.chosenIn = game;
+        console.log(game);
+        await this.gameNavigationRepository.save(navigation);
+        await this.cardsService.removeDrawnNavigation(game.id);
+    }
+    async gameTurn(game: Game, state?: GameState) {
         let newIndex = game.currentCharacterIndex + 1;
-        let newState = game.state;
+        let newState = state ?? game.state;
         if(game.currentCharacterIndex == game.players.length - 1){
             newState = game.state == 1 ? 2 : 1;
             newIndex = 0;
@@ -107,8 +118,8 @@ export class GameService {
             throw new WsException('Not enought characters.');
         const supplies = await this.cardsService.getAllSupplies();
         const navigations = await this.cardsService.getAllNavigations();
-        const friendQueue = this.cardsService.shuffle(characters);
-        const enemyQueue = this.cardsService.shuffle(characters);
+        const friendQueue = this.cardsService.shuffle(characters).reverse();
+        const enemyQueue = this.cardsService.shuffle(characters).reverse();
 
         const queue = [];
         const sorted = characters.sort((a, b) => a.defaultOrder - b.defaultOrder)
@@ -127,19 +138,24 @@ export class GameService {
             }
         });
         await this.userService.createPlayers(players);
-        await this.createCharacterQueue(queue);
-        await Promise.all(supplies.map( async (supply) => {
+        const promise1 = this.createCharacterQueue(queue);
+        const promise2 = Promise.all(supplies.map( async (supply) => {
             await this.cardsService.createGameSupply(Array(supply.amount).fill({
                 gameId: game.id,
                 supplyName: supply.name
             }));
         }));
-        await Promise.all(navigations.map( async (navigation) => {
+        const promise3 = Promise.all(navigations.map( async (navigation, index) => {
             await this.createGameNavigation({
-                gameId: game.id, 
-                navigationId: navigation.id
+                gameId: game.id,
+                navigationId: navigation.id,
+                order: index
             });
         }));
+        await promise1;
+        await promise2;
+        await promise3;
+
         return game.id;
     }
 

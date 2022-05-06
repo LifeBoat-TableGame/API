@@ -10,6 +10,7 @@ export enum GameState {
     Regular = 2,
     Dispute = 3,
     Fight = 4,
+    Picking = 5
 }
 
 @Entity()
@@ -27,9 +28,10 @@ export class Game {
     @OneToMany(() => GameNavigation, (gameNavigation) => gameNavigation.game)
     navigationDeck: GameNavigation[];
 
-    @ManyToMany(() => Navigation)
-    @JoinTable()
-    chosenNavigationDeck: Navigation[];
+    @OneToMany(() => GameNavigation, (gameNavigation) => gameNavigation.chosenIn)
+    chosenNavigationDeck: GameNavigation[];
+    
+    chosenNavigationCount: number;
 
     @Column()
     state: GameState;

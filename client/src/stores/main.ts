@@ -93,6 +93,12 @@ export const useMainStore: any = defineStore("mainStoreID", {
       console.log(target);
       this.socket.emit('demandSupply', { targetName: target, supplyName: supply });
     },
+    toRow() {
+      this.socket.emit('getNavigation');
+    },
+    pickNavigation(id: number) {
+      this.socket.emit('pickNavigation', id);
+    },
     accept() {
       this.socket.emit('acceptDispute');
     },
@@ -137,7 +143,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
         }
         console.log(`User ${username} has joined!`);
       });
-
+      this.socket.on('chooseNavigation', (navs) => {
+        console.log(navs);
+      });
       this.socket.on('gameInfo', (game) => {
         console.log(game);
       });

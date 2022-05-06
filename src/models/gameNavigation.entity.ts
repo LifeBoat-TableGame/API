@@ -11,13 +11,19 @@ export class GameNavigation {
     @PrimaryColumn()
     navigationId: number;
 
-    @Generated('increment')
-    @Column({unique: true})
+    @Column()
     order: number;
+
+    @Column({default: false})
+    picked: boolean;
 
     @ManyToOne(() => Game, (game) => game.navigationDeck)
     @JoinColumn({name: "gameId"})
     game: Game;
+
+    @ManyToOne(() => Game, (game) => game.chosenNavigationDeck)
+    @JoinColumn()
+    chosenIn: Game;
 
     @ManyToOne(() => Navigation, (navigation) => navigation.gameConnection)
     @JoinColumn({name: "navigationId"})

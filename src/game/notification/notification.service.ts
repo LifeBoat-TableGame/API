@@ -16,6 +16,10 @@ export class NotificationService {
         delete player.enemy;
         delete player.friendship;
     }
+    private limitGame(game: Game) {
+        game.chosenNavigationCount = game.chosenNavigationDeck ? game.chosenNavigationDeck.length : 0;
+        delete game.chosenNavigationDeck;
+    }
 
     async updateGame(game: Game, lobbyId: string, wss: Server) {
         const sockets = await wss.in(lobbyId).fetchSockets();
@@ -26,6 +30,7 @@ export class NotificationService {
                 socket.emit('playerInfo', player);
             this.limitPlayer(player);
         });
+        this.limitGame(game);
         wss.in(lobbyId).emit('gameInfo', game);
     }
 
@@ -33,6 +38,7 @@ export class NotificationService {
         game.players.forEach(player => {
             this.limitPlayer(player);
         });
+        this.limitGame(game);
         client.emit('gameInfo', game);
     }
     async cardsToChoose(supplies: GameSupply[], game: Game, wss: Server, lobbyId: string) {

@@ -10,6 +10,7 @@ import { Game, GameState } from '../../models/game.entity';
 import { DisputeService } from '../dispute/dispute.service';
 import { DisputeType } from '../../models/dispute.entity';
 import { CharacterQueue } from '../../models/characterQueue.entity';
+import { CardsService } from '../../cards/cards.service';
 
 @Injectable()
 export class ActionsService {
@@ -18,6 +19,7 @@ export class ActionsService {
         @Inject(UserService) private userService: UserService,
         @Inject(GameService) private gameService: GameService,
         @Inject(DisputeService) private disputeService: DisputeService,
+        @Inject(CardsService) private cardsService: CardsService,
         @InjectRepository(Player) private playerRepository: Repository<Player>,
         @InjectRepository(CharacterQueue) private characterQueueRepository: Repository<CharacterQueue>
     ) {}
@@ -63,6 +65,34 @@ export class ActionsService {
             throw new WsException("Can't use Medkit on target with full health");
         }
 
+    }
+
+    async row(player: Player, game: Game) {
+        const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex);
+        if(player.character.name != currentCharacter.characterName)
+            throw new WsException("Not your turn");
+        const cardsAmount = 2;
+        const p1 = this.cardsService.drawNavigation(2, game.id);
+        const p2 = this.gameService.updateGameState(game, GameState.Picking);
+        await p1;
+        await p2;
+        const navigations = await this.cardsService.getDrawnNavigation(game.id);
+        return navigations.map(nav => nav.navigation);
+    }
+
+    async pickNavigation(player: Player, game: Game, id: number) {
+        const currentCharacter = game.queue.find(character => character.order == game.currentCharacterIndex);
+        if(player.character.name != currentCharacter.characterName)
+            throw new WsException("Not your turn");
+        if(game.state != GameState.Picking)
+            throw new WsException("Action is not allowed during current phase");
+        const nav = await this.cardsService.gameNavigationById(game.id, id);
+        if(!nav) 
+            throw new WsException("Card does not exist");
+        const p1 = this.gameService.pickNavigation(game, nav);
+        const p2 = this.gameService.gameTurn(game, GameState.Regular);
+        await p1;
+        await p2;
     }
 
     async requestSwap(player: Player, game: Game, targetName: string) {
