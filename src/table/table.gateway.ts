@@ -1,5 +1,5 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, WsException, ConnectedSocket } from '@nestjs/websockets';
-import { GameService } from './game.service';
+import { TableService } from './table.service';
 import { Server, Socket } from 'socket.io';
 import { UseGuards } from '@nestjs/common';
 import { WsGuard } from '../authentication/wsguard';
@@ -9,12 +9,14 @@ import { NotificationService } from './notification/notification.service';
 import { GameState } from '../models/game.entity';
 import { CardsService } from '../cards/cards.service';
 import { ActionsService } from './actions/actions.service';
+import { GameService } from '../game/game.service';
 
 @WebSocketGateway()
-export class GameGateway {
+export class TableGateway {
     constructor(
         private lobbyService: LobbyService,
-        private gameService: GameService, 
+        private tableService: TableService,
+        private gameService: GameService,
         private userService: UserService,
         private notificationService: NotificationService,
         private cardsService: CardsService,
@@ -29,7 +31,7 @@ export class GameGateway {
         const token = client.handshake.headers.authorization;
         const user = await this.userService.getWithRelations(token);
         const lobby = await this.lobbyService.getWithRelations(user.lobby.id);
-        const gameId = await this.gameService.startGame(user, lobby);
+        const gameId = await this.tableService.startGame(user, lobby);
         const game = await this.gameService.getGameWithrelations(gameId);
         this.wss.emit('gameStarted');
         // fetching player who will pick a supply
@@ -68,7 +70,7 @@ export class GameGateway {
             throw new WsException('Activity is not available during current phase');
         const game = await this.gameService.getGameWithrelations(user.player.game.id);
 
-        await this.gameService.pickSupply(supply, player, game);
+        await this.tableService.pickSupply(supply, player, game);
         await this.gameService.gameTurn(game);
         const updated = await this.gameService.getGameWithrelations(user.player.game.id);
         // fetching player who will pick a supply
@@ -122,7 +124,7 @@ export class GameGateway {
         const player = await this.userService.getPlayerRelations(user.player.id);
         if(user.player.game.state != GameState.Regular)
             throw new WsException('Activity is not available during current phase');
-        await this.gameService.openSupply(token, supplyName);
+        await this.tableService.openSupply(token, supplyName);
         const updated = await this.gameService.getGameWithrelations(user.player.game.id);
         await this.notificationService.updateGame(updated, user.lobby.id.toString(), this.wss);
         client.emit('supplyOpened');

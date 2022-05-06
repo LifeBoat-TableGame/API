@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
-import { GameService } from '../../game/game.service';
+import { TableService } from '../table.service';
 import { Player } from '../../models/player.entity';
 import { UserService } from '../../user/user.service';
 import { Repository } from 'typeorm';
@@ -11,12 +11,14 @@ import { DisputeService } from '../dispute/dispute.service';
 import { DisputeType } from '../../models/dispute.entity';
 import { CharacterQueue } from '../../models/characterQueue.entity';
 import { CardsService } from '../../cards/cards.service';
+import { GameService } from '../../game/game.service';
 
 @Injectable()
 export class ActionsService {
 
     constructor (
         @Inject(UserService) private userService: UserService,
+        @Inject(TableService) private tableService: TableService,
         @Inject(GameService) private gameService: GameService,
         @Inject(DisputeService) private disputeService: DisputeService,
         @Inject(CardsService) private cardsService: CardsService,
@@ -89,7 +91,7 @@ export class ActionsService {
         const nav = await this.cardsService.gameNavigationById(game.id, id);
         if(!nav) 
             throw new WsException("Card does not exist");
-        const p1 = this.gameService.pickNavigation(game, nav);
+        const p1 = this.tableService.pickNavigation(game, nav);
         const p2 = this.gameService.gameTurn(game, GameState.Regular);
         await p1;
         await p2;

@@ -11,16 +11,18 @@ import { LobbyModule } from './lobby/lobby.module';
 import { UserModule } from './user/user.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { GameModule } from './game/game.module';
-import { GameGateway } from './game/game.gateway';
+import { TableModule } from './table/table.module';
+import { TableGateway } from './table/table.gateway';
 import { MenuModule } from './menu/menu.module';
 import { AppController } from './app.controller';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
     AuthenticationModule,
     CardsModule,
     LobbyModule,
+    TableModule,
     GameModule,
     UserModule,
     MenuModule,
@@ -38,8 +40,9 @@ import { AppController } from './app.controller';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    GameModule,
   ],
   controllers: [ChatController, AppController],
-  providers: [AppService, ChatGateway, MenuGateway, GameGateway],
+  providers: [AppService, ChatGateway, MenuGateway, TableGateway],
 })
 export class AppModule {}
