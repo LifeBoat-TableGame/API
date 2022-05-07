@@ -16,6 +16,7 @@ import { TableGateway } from './table/table.gateway';
 import { MenuModule } from './menu/menu.module';
 import { AppController } from './app.controller';
 import { GameModule } from './game/game.module';
+import { ActionsGateway } from './table/actions.gateway';
 
 @Module({
   imports: [
@@ -43,6 +44,6 @@ import { GameModule } from './game/game.module';
     GameModule,
   ],
   controllers: [ChatController, AppController],
-  providers: [AppService, ChatGateway, MenuGateway, TableGateway],
+  providers: [AppService, ChatGateway, MenuGateway, TableGateway, ActionsGateway],
 })
 export class AppModule {}
