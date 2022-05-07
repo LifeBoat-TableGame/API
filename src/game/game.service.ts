@@ -163,20 +163,15 @@ export class GameService {
         const user = await this.userService.getWithRelations(token);
         console.log(user);
         const player = await this.userService.getPlayerRelations(user.player.id);
-        const closed = player.closedCards;
-        var toOpen;
-        closed.forEach(function(value, index){
-            if (value.name == supplyName){
-                toOpen = value;
-                closed.splice(index, 1);
-                return;
-            }
-        });
-        if(toOpen == null){
+        let supply = player.closedCards.find(supply => supply.name == supplyName);
+        if (!supply){
             throw new WsException('Could not find a supply to open');
         }
-        player.closedCards = closed;
-        player.openCards.push(toOpen);
+        if (supply.name == "Зонтик"){
+            throw new WsException("Can't open parasol, instead useSupply to do that");
+        }
+        player.closedCards.splice(player.closedCards.indexOf(supply), 1);
+        player.openCards.push(supply);
         await this.playerRepository.save(player);
     }
 }

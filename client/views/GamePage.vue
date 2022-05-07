@@ -6,7 +6,9 @@
     <button @click="pickSupply" class="btn btn-primary">Pick supply</button>
     <button @click="pickNavigation" class="btn btn-primary">Pick Navigation</button>
     <button @click="openSupply" class="btn btn-primary">open Medkit</button>
-    <button @click="useSupply" class="btn btn-primary">Use Medkit</button>
+    <button @click="useSupply" class="btn btn-primary">Use Supply</button>
+    <input v-model="text3" type="text" class="small-field"/>
+    <input v-model="text4" type="text" class="small-field"/>
     <button @click="row" class="btn btn-primary">Row</button>
     <button @click="swap">Swap</button>
     <button @click="demandOpen">Get Opened</button>
@@ -26,13 +28,15 @@ import { ref } from 'vue';
 const name = 'GameTemp';
 const text1 = ref('');
 const text2 = ref('');
+const text3 = ref('');
+const text4 = ref('');
 const mainStore = useMainStore();
 
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();
 const pickSupply = () => mainStore.pickSupply(text1.value);
-const openSupply = () => mainStore.openSupply('Аптечка');
-const useSupply = () => mainStore.useSupply("Аптечка", "Боцман");
+const openSupply = () => mainStore.openSupply(text3.value);
+const useSupply = () => mainStore.useSupply(text3.value, text4.value);
 const swap = () => mainStore.swapWith(text1.value);
 const demandClose = () => mainStore.demandClose(text1.value);
 const demandOpen = () => mainStore.demandOpen(text1.value, text2.value);
