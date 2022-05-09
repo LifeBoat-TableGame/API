@@ -1,10 +1,8 @@
 <template>
-  <router-view/>
+  <div class="h-screen">
+    <router-view />
+  </div>
 </template>
 
 <script setup lang="ts">
 </script>
-
-<style>
-@import './assets/styles/basicStyle.css';
-</style>

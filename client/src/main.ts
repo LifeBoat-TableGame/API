@@ -16,5 +16,5 @@ fetch('http://localhost:3000/api/token').then(res => res.text()).then(data => {
     mainStore.selfId = id;
     mainStore.useToken(token);
 });
-router.push('/login');
+//router.push('/login');
 app.mount('#app');

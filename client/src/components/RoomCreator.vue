@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-light-blue">
+  <div class="bg-light-blue box vertical-container">
     <h1>{{ title }}</h1>
     <input v-model="roomData.roomName" type="text" class="small-field"/> <br>
     <input v-model="roomData.password" type="text" class="small-field"/> <br>
-    <button type="submit" @click="createRoom" class="btn">Create</button>
+    <button type="submit" @click="createRoom" class="btn">Создать</button>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ import activeRoomMenu from './activeRoomMenu.vue'
 let inTheRoom = false;
 const mainStore = useMainStore();
 const roomStore = useRoomStore();
-const title = 'RoomCreator';
+const title = 'Создать Комнату';
 let roomData = {
   password: '',
   roomName: 'noname',

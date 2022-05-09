@@ -1,8 +1,8 @@
 <template>
-  <div class="bg-light-blue vertical-container text-lg rounded-md">
+  <div class="bg-light-blue vertical-container text-lg rounded-md w-fit">
     <p class="text-2xl">{{ title }}</p>
-    <input v-model="username" type="text" class="small-field"/>
-    <button type="submit" @click="logIn" class="btn">Rename</button>
+    <input v-model="username" type="text" class="small-field" placeholder="noname" v-on:keyup.enter="logIn"/>
+    <button type="submit" @click="logIn" class="btn">Применить</button>
   </div>
 </template>
 
@@ -15,7 +15,7 @@ import router from '../router';
 const mainStore = useMainStore()
 
 const name = 'LoginForm';
-const title = 'Login';
+const title = 'Войти';
 
 let username = '';
 const logIn = () => {
