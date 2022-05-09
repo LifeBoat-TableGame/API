@@ -25,12 +25,15 @@
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
       <div class="boat-field bg-deep-red">
+        <button @click="ChooseCardBTN()" class="btn">ChooseCard</button>
+        <CardSelector :supplies="supplies" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
         <Boat :characters="queue.reverse()"/>
       </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import CardSelector from '../src/components/CardSelector.vue';
 import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
 import Timer from '../src/components/Timer.vue';
@@ -44,7 +47,14 @@ import { CharacterQueue } from '../src/interfaces/game';
 
 const queue: CharacterQueue[] = [];
 const supplies = [] as Supply[];
-
+const cardSelectorActive = ref(false);
+const ChooseCardBTN = () => {
+  cardSelectorActive.value = true;
+}
+const ChooseCard = (selectedCard) => {
+  console.log(selectedCard);
+  cardSelectorActive.value = false;
+}
 for (var i = 1; i<=13; i++) {
  supplies.push({
     name: 'card'+i,
@@ -92,6 +102,9 @@ const accept = () => mainStore.accept();
 const decline = () => mainStore.decline()
 const row = () => mainStore.toRow();
 const pickNavigation = () => mainStore.pickNavigation(+text1.value);
+getGameInfo();
+getPlayerInfo();
+
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {
