@@ -14,6 +14,9 @@ export class CharacterQueue {
     @Column()
     order: number;
 
+    @Column({nullable: true})
+    newOrder: number;
+
     @ManyToOne(() => Game, (game) => game.queue)
     @JoinColumn({name: "gameId"})
     game: Game;

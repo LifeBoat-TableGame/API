@@ -82,7 +82,16 @@ const mainStore = useMainStore();
 
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();
-const pickSupply = () => mainStore.pickSupply("Butah");
+const pickSupply = () => mainStore.pickSupply(text1.value);
+const openSupply = () => mainStore.openSupply('Аптечка');
+const useSupply = () => mainStore.useSupply("Аптечка", "Боцман");
+const swap = () => mainStore.swapWith(text1.value);
+const demandClose = () => mainStore.demandClose(text1.value);
+const demandOpen = () => mainStore.demandOpen(text1.value, text2.value);
+const accept = () => mainStore.accept();
+const decline = () => mainStore.decline()
+const row = () => mainStore.toRow();
+const pickNavigation = () => mainStore.pickNavigation(+text1.value);
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {

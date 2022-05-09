@@ -77,6 +77,34 @@ export const useMainStore: any = defineStore("mainStoreID", {
     openSupply(supplyName: string){
       this.socket.emit('openSupply', supplyName);
     },
+    useSupply(supplyName: string, target: string){
+      console.log(supplyName);
+      console.log(target);
+      this.socket.emit('useSupply',{supplyName: supplyName, target: target});
+    },
+    swapWith(target: string) {
+      this.socket.emit('swap', target);
+    },
+    demandClose(target: string) {
+      console.log(target);
+      this.socket.emit('demandSupply', { targetName: target, supplyName: null });
+    },
+    demandOpen(target: string, supply: string) {
+      console.log(target);
+      this.socket.emit('demandSupply', { targetName: target, supplyName: supply });
+    },
+    toRow() {
+      this.socket.emit('getNavigation');
+    },
+    pickNavigation(id: number) {
+      this.socket.emit('pickNavigation', id);
+    },
+    accept() {
+      this.socket.emit('acceptDispute');
+    },
+    decline() {
+      this.socket.emit('declineDispute');
+    },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
       this.socket.on('gameStarted', (game) => {
@@ -115,7 +143,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
         }
         console.log(`User ${username} has joined!`);
       });
-
+      this.socket.on('chooseNavigation', (navs) => {
+        console.log(navs);
+      });
       this.socket.on('gameInfo', (game) => {
         console.log(game);
       });
