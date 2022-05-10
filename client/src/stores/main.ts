@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { io } from 'socket.io-client';
+import { Events, Subscription } from '../interfaces/subscription';
 import router from '../router';
 import { useRoomStore } from './rooms';
 
@@ -105,6 +106,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
     decline() {
       this.socket.emit('declineDispute');
     },
+    subscribeToEvent(sub: Subscription) {
+      this.socket.on(sub.event, sub.callback);
+    },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
       this.socket.on('gameStarted', (game) => {
@@ -157,8 +161,12 @@ export const useMainStore: any = defineStore("mainStoreID", {
       this.socket.on('toChoose', (supplies) => {
         console.log(supplies);
       });
-      this.socket.on('exception', (obj) => {
-        console.log('!!!', obj);
+      //example of usage
+      this.subscribeToEvent({
+        event: Events.Error, 
+        callback:(description) => {
+          console.log(description);
+        }
       })
     }
   },
