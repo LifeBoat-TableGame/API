@@ -4,9 +4,10 @@ import { Game } from '../models/game.entity';
 import { GameNavigation } from '../models/gameNavigation.entity';
 import { GameSupply } from '../models/gameSupply.entity';
 import { GameService } from './game.service';
+import { FightService } from './fight/fight.service';
 
 @Module({
-  providers: [GameService],
+  providers: [GameService, FightService],
   imports: [
     TypeOrmModule.forFeature([
       Game,
@@ -14,6 +15,6 @@ import { GameService } from './game.service';
       GameNavigation
     ])
   ],
-  exports: [GameService]
+  exports: [GameService, FightService]
 })
 export class GameModule {}
