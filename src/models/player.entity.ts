@@ -4,6 +4,12 @@ import { Game } from "./game.entity";
 import { Supply } from "./supply.entity";
 import { User } from "./user.entity";
 
+export enum FightRole {
+    Atacker = 1,
+    Defender = 2,
+    Neutral = 3,
+}
+
 @Entity()
 export class Player {
 
@@ -39,6 +45,9 @@ export class Player {
     @ManyToMany(() => Supply)
     @JoinTable()
     openCards: Supply[];
+
+    @Column({default: FightRole.Neutral})
+    fighter: FightRole;
 
     @Column({default: 0})
     damage: number;

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Player } from '../models/player.entity';
+import { FightRole, Player } from '../models/player.entity';
 import { Repository } from 'typeorm';
 import { User } from '../models/user.entity';
 import { CreatePlayerDto, CreatePlayerInGameDto } from './dto/createPlayerDto';
@@ -57,6 +57,21 @@ export class UserService {
         const newPlayer = await this.playerRepository.create(playerData);
         await this.playerRepository.save(newPlayer);
         return newPlayer;
+    }
+
+    async updatePlayerFightRole(player: Player, newRole: FightRole) {
+        await this.playerRepository.update(player.id, {
+            fighter: newRole
+        });
+    }
+
+    async updateFighters(players: Player[], damage: boolean = false) {
+        const ids = players.map(p => p.id);
+        await this.playerRepository.update(ids, {
+            fought: true,
+            fighter: FightRole.Neutral,
+            damage: () => `damage + ${+damage}`
+        });
     }
 
     async updatePlayer(player: Player) {
