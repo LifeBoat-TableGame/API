@@ -12,6 +12,7 @@ import { DisputeType } from '../../models/dispute.entity';
 import { CharacterQueue } from '../../models/characterQueue.entity';
 import { CardsService } from '../../cards/cards.service';
 import { GameService } from '../../game/game.service';
+import { FightService } from '../fight/fight.service';
 
 @Injectable()
 export class ActionsService {
@@ -22,6 +23,7 @@ export class ActionsService {
         @Inject(GameService) private gameService: GameService,
         @Inject(DisputeService) private disputeService: DisputeService,
         @Inject(CardsService) private cardsService: CardsService,
+        @Inject(FightService) private fightService: FightService,
         @InjectRepository(Player) private playerRepository: Repository<Player>,
         @InjectRepository(CharacterQueue) private characterQueueRepository: Repository<CharacterQueue>
     ) {}
@@ -179,10 +181,8 @@ export class ActionsService {
         const dispute = await this.disputeService.get(player.game.id);
         if(dispute.victim.id != player.id)
             throw new WsException("You are not in a dispute");
-        await this.disputeService.remove(player.game.id);
         //starting a fight
-        await this.gameService.updateGameState(dispute.game, GameState.Fight);
-        console.log('fight started');
+        await this.fightService.startFight(dispute.initiator, dispute.victim, dispute.game);
     }
 
     async acceptDispute(player: Player) {

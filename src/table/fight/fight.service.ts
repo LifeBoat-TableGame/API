@@ -3,7 +3,7 @@ import { WsException } from '@nestjs/websockets';
 import { GameService } from '../../game/game.service';
 import { Game, GameState } from '../../models/game.entity';
 import { FightRole, Player } from '../../models/player.entity';
-import { UserService } from '../user.service';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class FightService {

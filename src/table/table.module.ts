@@ -16,6 +16,7 @@ import { ActionsService } from './actions/actions.service';
 import { Dispute } from '../models/dispute.entity';
 import { DisputeService } from './dispute/dispute.service';
 import { GameModule } from '../game/game.module';
+import { FightService } from './fight/fight.service';
 
 @Module({
     imports: [
@@ -34,7 +35,13 @@ import { GameModule } from '../game/game.module';
         LobbyModule,
         GameModule
     ],
-    providers: [TableService, NotificationService, ActionsService, DisputeService],
+    providers: [
+        TableService, 
+        NotificationService, 
+        ActionsService, 
+        DisputeService,
+        FightService
+    ],
     exports: [TableService, NotificationService, ActionsService]
 })
 export class TableModule {}
