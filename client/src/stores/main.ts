@@ -3,8 +3,9 @@ import { io } from 'socket.io-client';
 import { Events, Subscription } from '../interfaces/subscription';
 import router from '../router';
 import { useRoomStore } from './rooms';
+import { useGameStore } from './game';
 
-const defaultSocket = io();
+
 export const useMainStore: any = defineStore("mainStoreID", {
   state: () => ({
     activeRoomId: 0,
@@ -151,11 +152,15 @@ export const useMainStore: any = defineStore("mainStoreID", {
         console.log(navs);
       });
       this.socket.on('gameInfo', (game) => {
-        console.log(game);
+        console.log('setting game');
+        useGameStore().setGame(game);
+        //console.log(game);
       });
       
       this.socket.on('playerInfo', (player) => {
-        console.log(player);
+        console.log('setting player');
+        useGameStore().setPlayer(player);
+        //console.log(player);
       });
 
       this.socket.on('toChoose', (supplies) => {

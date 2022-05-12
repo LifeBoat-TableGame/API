@@ -2,7 +2,7 @@
     <div class=" fixed bg-main-blue w-full">game page</div>
     <div class="game-grid">
       <div class="players-field top-row bg-olive-400">
-        <PlayerProfile name="Don" :supplies="supplies"/>
+        <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :supplies="supplies" />
       </div>
       <div class="seagull-field top-row bg-main-blue">
         <SeagullsBoard :amount="seagulls" />
@@ -44,7 +44,12 @@ import { ref } from 'vue';
 import { Supply } from '../src/interfaces/game';
 import Boat from '../src/components/Boat.vue';
 import { CharacterQueue } from '../src/interfaces/game';
+import { computed } from '@vue/reactivity';
+import { useGameStore } from '../src/stores/game';
 
+const gameStore = useGameStore();
+const mainStore = useMainStore();
+console.log(gameStore.game);
 const queue: CharacterQueue[] = [];
 const supplies = [] as Supply[];
 const cardSelectorActive = ref(false);
@@ -85,10 +90,14 @@ const components = {
   SeagullsBoard,
   PlayerProfile
 };
-
+const otherPlayers = computed(() => {
+  console.log(gameStore.game.players);
+  return gameStore.game.players.filter(function (u) {
+    return u.id != gameStore.playerSelf.id;
+  })
+});
 const seagulls = ref(2);
 const phase = ref("Раздача припасов");
-const mainStore = useMainStore();
 
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();
@@ -101,9 +110,7 @@ const demandOpen = () => mainStore.demandOpen(text1.value, text2.value);
 const accept = () => mainStore.accept();
 const decline = () => mainStore.decline()
 const row = () => mainStore.toRow();
-const pickNavigation = () => mainStore.pickNavigation(+text1.value);
-getGameInfo();
-getPlayerInfo();
+const pickNavigation = () => mainStore.pickNavigation(text1.value);
 
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
