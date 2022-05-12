@@ -8,6 +8,7 @@
     <button @click="openSupply" class="btn btn-primary">open Medkit</button>
     <button @click="useSupply" class="btn btn-primary">Use Medkit</button>
     <button @click="row" class="btn btn-primary">Row</button>
+    <button @click="takeSide" class="btn btn-primary">TakeSide</button>
     <button @click="swap">Swap</button>
     <button @click="demandOpen">Get Opened</button>
     <button @click="demandClose">Get Closed</button>
@@ -40,6 +41,7 @@ const accept = () => mainStore.accept();
 const decline = () => mainStore.decline()
 const row = () => mainStore.toRow();
 const pickNavigation = () => mainStore.pickNavigation(+text1.value);
+const takeSide = () => mainStore.takeSide(text1.value);
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {

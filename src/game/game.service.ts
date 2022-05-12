@@ -6,6 +6,7 @@ import { Game, GameState } from '../models/game.entity';
 import CreateGameDto from './dto/createGameDto';
 import { GameNavigation } from '../models/gameNavigation.entity';
 import CreateGameNavigationDto from './dto/createGameNavigationDto';
+import { Dispute } from '../models/dispute.entity';
 
 @Injectable()
 export class GameService {
@@ -24,7 +25,7 @@ export class GameService {
     async gameTurn(game: Game, state?: GameState) {
         let newIndex = game.currentCharacterIndex + 1;
         let newState = state ?? game.state;
-        if(game.currentCharacterIndex == game.players.length - 1){
+        if(game.isLast){
             newState = game.state == 1 ? 2 : 1;
             newIndex = 0;
         } 
@@ -70,9 +71,10 @@ export class GameService {
         const newGame = this.gameRepository.create(game);
         return await this.gameRepository.save(newGame);
     }
-    async updateGameState(game: Game, newState: GameState) {
+    async updateGameState(game: Game, newState: GameState, newIndex?: number) {
         await this.gameRepository.update({id: game.id}, {
             state: newState,
+            currentCharacterIndex: newIndex ?? game.currentCharacterIndex
         });
     }
 }

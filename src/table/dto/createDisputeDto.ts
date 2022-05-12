@@ -13,6 +13,8 @@ export interface CreateOpenSupplyDisputeDto {
     target: Supply;
 
     type: DisputeType;
+
+    queueIndex: number;
 }
 
 export interface CreateDisputeDto {
@@ -23,4 +25,6 @@ export interface CreateDisputeDto {
     victim: Player;
 
     type: DisputeType;
+
+    queueIndex: number;
 }

@@ -10,6 +10,8 @@ import { GameState } from '../models/game.entity';
 import { CardsService } from '../cards/cards.service';
 import { ActionsService } from './actions/actions.service';
 import { GameService } from '../game/game.service';
+import { FightService } from './fight/fight.service';
+import { FightRole } from '../models/player.entity';
 
 @WebSocketGateway()
 export class TableGateway {
@@ -20,7 +22,8 @@ export class TableGateway {
         private userService: UserService,
         private notificationService: NotificationService,
         private cardsService: CardsService,
-        private actionsService: ActionsService
+        private actionsService: ActionsService,
+        private fightService: FightService,
     ) {}
 
     @WebSocketServer() wss: Server;
@@ -95,5 +98,20 @@ export class TableGateway {
         client.emit('chooseNavigation', navigations);
     }
 
-    
+    @UseGuards(WsGuard)
+    @SubscribeMessage('chooseConflictSide')
+    async handleChooseConflictSide(client: Socket, side: FightRole) {
+        const token = client.handshake.headers.authorization;
+        const user = await this.userService.getWithRelations(token);
+        if(!user.player)
+            throw new WsException('You must be in game');
+        const player = await this.userService.getPlayerRelations(user.player.id);
+        if(user.player.game.state != GameState.Fight)
+            throw new WsException('Activity is not available during current phase');
+        const game = await this.gameService.getGameWithrelations(user.player.game.id);
+        if(side != FightRole.Neutral)
+            await this.fightService.joinFight(player, side);
+        await this.fightService.fightTurn(game);
+        await this.notificationService.updateGame(game, user.lobby.id.toString(), this.wss);
+    }
 }

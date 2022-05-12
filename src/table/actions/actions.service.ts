@@ -112,7 +112,8 @@ export class ActionsService {
             game: game,
             initiator: player,
             victim: target,
-            type: DisputeType.Swap
+            type: DisputeType.Swap,
+            queueIndex: game.currentCharacterIndex
         }, async () => {
             const p1 = this.gameService.updateGameState(game, GameState.Regular);
             const p2 = this.gameService.gameTurn(game);
@@ -138,7 +139,8 @@ export class ActionsService {
             game: game,
             initiator: player,
             victim: target,
-            type: DisputeType.Get
+            type: DisputeType.Get,
+            queueIndex: game.currentCharacterIndex
         }, async () => {
             const p1 = this.gameService.updateGameState(game, GameState.Regular);
             const p2 = this.gameService.gameTurn(game);
@@ -165,7 +167,8 @@ export class ActionsService {
             initiator: player,
             victim: target,
             target: supply,
-            type: DisputeType.Get
+            type: DisputeType.Get,
+            queueIndex: game.currentCharacterIndex
         }, async () => {
             const p1 = this.gameService.updateGameState(game, GameState.Regular);
             const p2 = this.gameService.gameTurn(game);

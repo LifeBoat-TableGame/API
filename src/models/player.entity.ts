@@ -5,9 +5,9 @@ import { Supply } from "./supply.entity";
 import { User } from "./user.entity";
 
 export enum FightRole {
-    Atacker = 1,
-    Defender = 2,
-    Neutral = 3,
+    Atacker = 'Atack',
+    Defender = 'Defend',
+    Neutral = 'Neutral',
 }
 
 @Entity()

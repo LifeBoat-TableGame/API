@@ -44,4 +44,8 @@ export class Game {
 
     @Column({default: 0})
     seagulls: number;
+
+    public get isLast(): boolean {
+        return this.currentCharacterIndex >= this.players.length - 1;
+    }
 }

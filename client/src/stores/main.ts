@@ -105,6 +105,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
     decline() {
       this.socket.emit('declineDispute');
     },
+    takeSide(side: 'Atack' | 'Defend' | 'Neutral') {
+      this.socket.emit('chooseConflictSide', side);
+    },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
       this.socket.on('gameStarted', (game) => {

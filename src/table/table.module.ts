@@ -42,6 +42,6 @@ import { FightService } from './fight/fight.service';
         DisputeService,
         FightService
     ],
-    exports: [TableService, NotificationService, ActionsService]
+    exports: [TableService, NotificationService, ActionsService, FightService]
 })
 export class TableModule {}
