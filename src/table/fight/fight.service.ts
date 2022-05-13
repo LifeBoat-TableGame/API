@@ -72,7 +72,6 @@ export class FightService {
         } else {
             await this.gameService.updateGameState(game, nextNeutralIndex, GameState.Fight);
         }
-            
     }
 
     private nextNeutralCharacter(game: Game, startIndex: number, exclude: string[] = []): number | null {

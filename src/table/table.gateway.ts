@@ -111,7 +111,8 @@ export class TableGateway {
         const game = await this.gameService.getGameWithrelations(user.player.game.id);
         if(side != FightRole.Neutral)
             await this.fightService.joinFight(player, side);
-        await this.fightService.fightTurn(game);
-        await this.notificationService.updateGame(game, user.lobby.id.toString(), this.wss);
+        const newGame = await this.gameService.getGameWithrelations(game.id);
+        await this.fightService.fightTurn(newGame);
+        await this.notificationService.updateGame(newGame, user.lobby.id.toString(), this.wss);
     }
 }
