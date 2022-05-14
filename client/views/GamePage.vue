@@ -27,7 +27,7 @@
       <div class="boat-field bg-deep-red">
         <button @click="ChooseCardBTN()" class="btn">ChooseCard</button>
         <CardSelector :supplies="supplies" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
-        <Boat :characters="queue.reverse()"/>
+        <Boat :characters="queue"/>
       </div>
     </div>
 </template>
@@ -50,7 +50,6 @@ import { useGameStore } from '../src/stores/game';
 const gameStore = useGameStore();
 const mainStore = useMainStore();
 console.log(gameStore.game);
-const queue: CharacterQueue[] = [];
 const supplies = [] as Supply[];
 const cardSelectorActive = ref(false);
 const ChooseCardBTN = () => {
@@ -68,19 +67,6 @@ for (var i = 1; i<=13; i++) {
     description: '-',
     amount: 1,
   })
-  if(i<=8)
-  queue.push({
-    characterName: "",
-    gameId: 1,
-    order: i,
-    character: {
-      name: "Character " + i,
-      strength: 5,
-      survival: 6,
-      description: "long long time ago once apon a time...",
-      defaultOrder: 1
-    }
-  })
 }
 
 const name = 'GameTemp';
@@ -96,8 +82,15 @@ const otherPlayers = computed(() => {
     return u.id != gameStore.playerSelf.id;
   })
 });
-const seagulls = ref(2);
-const phase = ref("Раздача припасов");
+const queue = computed(() => {
+  return gameStore.game.queue;
+});
+const seagulls = computed(() => {
+  return gameStore.game.seagulls;
+});
+const phase = computed(() => {
+  return gameStore.game.state;
+});
 
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();

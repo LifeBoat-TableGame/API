@@ -4,5 +4,6 @@ export interface Subscription {
 }
 export enum Events {
     Error = "exception",
-    PlayerInfo = "playerInfo"
+    PlayerInfo = "playerInfo",
+    GameInfo = "gameInfo",
 }
