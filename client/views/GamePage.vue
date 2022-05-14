@@ -5,8 +5,9 @@
     <button @click="getPlayerInfo" class="btn btn-primary">Get player info</button>
     <button @click="pickSupply" class="btn btn-primary">Pick supply</button>
     <button @click="pickNavigation" class="btn btn-primary">Pick Navigation</button>
-    <button @click="openSupply" class="btn btn-primary">open Medkit</button>
-    <button @click="useSupply" class="btn btn-primary">Use Medkit</button>
+    <button @click="openSupply" class="btn btn-primary">open Supply</button>
+    <button @click="useSupply" class="btn btn-primary">Use Supply</button>
+    <button @click="showChosenNavigation" class="btn btn-primary">showChosenNavigation</button>
     <button @click="row" class="btn btn-primary">Row</button>
     <button @click="takeSide" class="btn btn-primary">TakeSide</button>
     <button @click="swap">Swap</button>
@@ -32,8 +33,9 @@ const mainStore = useMainStore();
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();
 const pickSupply = () => mainStore.pickSupply(text1.value);
-const openSupply = () => mainStore.openSupply('Аптечка');
-const useSupply = () => mainStore.useSupply("Аптечка", "Боцман");
+const openSupply = () => mainStore.openSupply(text1.value);
+const useSupply = () => mainStore.useSupply(text1.value, text2.value);
+const showChosenNavigation = () => mainStore.showChosenNavigation();
 const swap = () => mainStore.swapWith(text1.value);
 const demandClose = () => mainStore.demandClose(text1.value);
 const demandOpen = () => mainStore.demandOpen(text1.value, text2.value);

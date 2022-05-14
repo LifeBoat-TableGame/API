@@ -129,4 +129,39 @@ export class ActionsGateway {
       await this.notificationService.updateGame(updated, user.lobby.id.toString(), this.wss);
       client.emit('supplyUsed');
   }
+
+  @UseGuards(WsGuard)
+  @SubscribeMessage('showChosenNavigation')
+  async handleShowChosenNavigation(
+    @ConnectedSocket() client: Socket
+  ){
+    const token = client.handshake.headers.authorization;
+    const user = await this.userService.getWithRelations(token);
+    if(!user.player) {
+        throw new WsException('You must be in game');
+    }
+    const player = await this.userService.getPlayerRelations(user.player.id);
+    const game = await this.gameService.getGameWithrelations(player.game.id);
+    const chosenNavigation = game.chosenNavigationDeck;
+    
+    client.emit('shownChosenNavigation', chosenNavigation);
+
+  }
+
+  @UseGuards(WsGuard)
+  @SubscribeMessage('pickChosenNavigation')
+  async handlePickChosenNavigation(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('navigationId') navigationId: number
+  ){
+    const token = client.handshake.headers.authorization;
+    const user = await this.userService.getWithRelations(token);
+    if(!user.player) {
+        throw new WsException('You must be in game');
+    }
+    const player = await this.userService.getPlayerRelations(user.player.id);
+    const game = await this.gameService.getGameWithrelations(player.game.id);
+    
+
+  }
 }

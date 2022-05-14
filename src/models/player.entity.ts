@@ -58,7 +58,7 @@ export class Player {
     @Column({default: false})
     fought: boolean;
 
-    @Column({default: false})
-    thirst: boolean;
+    @Column({default: 0})
+    thirst: number;
 
 }
