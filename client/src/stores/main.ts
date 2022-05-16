@@ -4,6 +4,7 @@ import { Events, Subscription } from '../interfaces/subscription';
 import router from '../router';
 import { useRoomStore } from './rooms';
 import { useGameStore } from './game';
+import { Message } from '../interfaces/message';
 
 
 export const useMainStore: any = defineStore("mainStoreID", {
@@ -106,6 +107,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
     },
     decline() {
       this.socket.emit('declineDispute');
+    },
+    sendMessage(msg: Message) {
+      this.socket.emit(msg.type, msg.data);
     },
     subscribeToEvent(sub: Subscription) {
       this.socket.on(sub.event, sub.callback);
