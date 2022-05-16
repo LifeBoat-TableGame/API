@@ -162,18 +162,16 @@ export const useMainStore: any = defineStore("mainStoreID", {
       this.socket.on('gameInfo', (game) => {
         console.log('setting game');
         useGameStore().setGame(game);
-        //console.log(game);
       });
       
       this.socket.on('playerInfo', (player) => {
         console.log('setting player');
         useGameStore().setPlayer(player);
-        //console.log(player);
       });
-
       this.socket.on('toChoose', (supplies) => {
-        console.log(supplies);
+        console.log('trying to pick...')
         useGameStore().setPick(supplies);
+        console.log(supplies);
       });
       //example of usage
       this.subscribeToEvent({
