@@ -48,6 +48,6 @@ export class NotificationService {
         const currentClient = clients.find(client => 
             client.handshake.headers.authorization == currentPlayer.user.token
         );
-        currentClient.emit('toChoose', supplies);
+        currentClient.emit('toChoose', supplies.map(gameSupply => gameSupply.supply));
     }
 }
