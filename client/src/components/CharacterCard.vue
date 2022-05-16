@@ -1,9 +1,9 @@
 <template>
-<div class=" max-w-min border-2 border-x-main-blue rounded-md bg-main-bg">
-    <img class=" rounded-full border-2 border-main-blue w-20 h-20"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
+<div class=" w-32 h-72 border-2 border-x-main-blue rounded-md bg-main-bg flex flex-col">
+    <img class=" mx-auto rounded-full border-2 border-main-blue w-20 h-20"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
     <h3 class=" text-xl">{{props.character.name}}</h3>
     <p>{{props.character.description}}</p>
-    <div class="flex flex-row justify-between">
+    <div class=" w-full flex flex-row justify-between mt-auto ">
         <h1 class="strength">{{props.character.strength}}</h1>
         <h1 class="survival">{{props.character.survival}}</h1>
     </div>
@@ -24,15 +24,15 @@ const props = defineProps({
 
 <style scoped>
     .strength {
-        @apply text-main-red ml-2;
+        @apply text-main-red ml-2
     }
     .survival {
-        @apply text-main-blue mr-2;
+        @apply text-main-blue mr-2
     }
     h1 {
         @apply text-xl;
     }
     p {
-        @apply text-base
+        @apply text-sm
     }
 </style>
