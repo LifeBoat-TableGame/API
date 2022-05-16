@@ -4,17 +4,20 @@ import { Events, Subscription } from '../interfaces/subscription';
 import router from '../router';
 import { useRoomStore } from './rooms';
 import { useGameStore } from './game';
-import { Message } from '../interfaces/message';
+import { MessageData } from '../interfaces/message';
+import { Room } from '../interfaces/room';
+import { Game } from '../interfaces/game';
+import { Player } from '../interfaces/game';
+import { Supply } from '../interfaces/game';
 
-
-export const useMainStore: any = defineStore("mainStoreID", {
+export const useMainStore = defineStore("mainStoreID", {
   state: () => ({
     activeRoomId: 0,
     token: '',
     isAdmin: false,
     selfId: -1,
     name: 'noname',
-    socket: io('http://localhost:3000/'),
+    socket: io('http://localhost:3000/') as any,
   }),
   getters: {
     getToken: (state) => {
@@ -109,8 +112,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
     decline() {
       this.socket.emit('declineDispute');
     },
-    sendMessage(msg: Message) {
-      this.socket.emit(msg.type, msg.data);
+    sendMessage<K extends keyof MessageData>(message: K, data?: MessageData[K]) {
+      if(data) this.socket.emit(message, data);
+      else this.socket.emit(message);
     },
     subscribeToEvent(sub: Subscription) {
       this.socket.on(sub.event, sub.callback);
@@ -120,7 +124,7 @@ export const useMainStore: any = defineStore("mainStoreID", {
     },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
-      this.socket.on('gameStarted', (game) => {
+      this.socket.on('gameStarted', (game: any) => {
         router.push('/game')
       });
     },
@@ -137,7 +141,7 @@ export const useMainStore: any = defineStore("mainStoreID", {
         this.isAdmin = true;
       });
       console.log('listening to \'gameStarted\'')
-      this.socket.on('gameStarted', (game) => {
+      this.socket.on('gameStarted', (game: any) => {
         router.push('/game')
       });
       console.log('listening to \'UserUpdated\'')
@@ -145,7 +149,7 @@ export const useMainStore: any = defineStore("mainStoreID", {
         this.name = name;
       });
       console.log('listening to \'updateRooms\'')
-      this.socket.on('updateRooms', (res) => {
+      this.socket.on('updateRooms', (res: Room[]) => {
         console.log(res);
         useRoomStore().updateRooms(res)
       });
@@ -156,22 +160,21 @@ export const useMainStore: any = defineStore("mainStoreID", {
         }
         console.log(`User ${username} has joined!`);
       });
-      this.socket.on('chooseNavigation', (navs) => {
+      this.socket.on('chooseNavigation', (navs: any) => {
         console.log(navs);
       });
-      this.socket.on('gameInfo', (game) => {
+      this.socket.on('gameInfo', (game: Game) => {
         console.log('setting game');
         useGameStore().setGame(game);
         //console.log(game);
       });
-      
-      this.socket.on('playerInfo', (player) => {
+      this.socket.on('playerInfo', (player: Player) => {
         console.log('setting player');
         useGameStore().setPlayer(player);
         //console.log(player);
       });
 
-      this.socket.on('toChoose', (supplies) => {
+      this.socket.on('toChoose', (supplies: Supply[]) => {
         console.log(supplies);
         useGameStore().setPick(supplies);
       });
@@ -182,7 +185,7 @@ export const useMainStore: any = defineStore("mainStoreID", {
           console.log(description);
         }
       })
-      this.socket.on('shownChosenNavigation', (navs) => {
+      this.socket.on('shownChosenNavigation', (navs: any) => {
         console.log(navs);
       });
     }
