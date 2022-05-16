@@ -99,6 +99,7 @@ Game {
   players: Player[];
   queue: CharacterQueue[];
   state: GameState;
+  chosenNavigationCount: number;
   currentCharacterIndex: number;
   seagulls: number;
 }
@@ -108,14 +109,18 @@ CharacterQueue {
   characterName: string;
   order: number;
 }
-enum GameState {
-  Supplies = 1,
-  Regular = 2
+GameState {
+    Supplies = 1,
+    Regular = 2,
+    Dispute = 3,
+    Fight = 4,
+    Picking = 5
 }
 
 # player information
 socket.on('playerInfo', (player: Player) => {});
 
+#self
 Player {
   id: number;
   character: Character;
@@ -126,7 +131,18 @@ Player {
   damage: number;
   rowed: boolean;
   fought: boolean;
-  Thirst: boolean;
+  thirst: boolean;
+}
+#other
+Player {
+  id: number;
+  character: Character;
+  closedAmount: number;
+  openCards: Supply[];
+  damage: number;
+  rowed: boolean;
+  fought: boolean;
+  thirst: boolean;
 }
 
 Character {

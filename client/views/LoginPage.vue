@@ -1,7 +1,5 @@
 <template>
-  <div class="vertical-container">
-    <login-form />
-  </div>
+    <login-form class="mx-auto relative top-1/3"/>
 </template>
 
 <script setup lang="ts">

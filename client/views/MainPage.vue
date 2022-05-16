@@ -1,13 +1,11 @@
 <template>
-  <div class="horisontal-container">
-    <div>
-      <room-list class="box"/>
-    </div>
+  <div class="horisontal-container mx-auto relative top-1/3 items-start">
     <div class="vertical-container">
-      <room-creator v-if=(!activeRoomExists) @room:created="roomCreated" class="box"/>
-      <active-room-menu v-if=activeRoomExists v-bind:activeRoomId=mainStore.activeRoomId @room:collapse="collapseRoom" class="box"/>
-      <button @click="logOut" class="btn">logout</button>
+      <room-creator v-if=(!activeRoomExists) @room:created="roomCreated" class="m-2"/>
+      <active-room-menu v-if=activeRoomExists v-bind:activeRoomId=mainStore.activeRoomId @room:collapse="collapseRoom"/>
+      <button @click="logOut" class="btn">Изменить Ник</button>
     </div>
+    <room-list class="m-2"/>
   </div>
 </template>
 
