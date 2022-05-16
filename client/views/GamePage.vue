@@ -2,7 +2,7 @@
     <div class=" fixed bg-main-blue w-full">game page</div>
     <div class="game-grid">
       <div class="players-field top-row bg-olive-400">
-        <PlayerProfile name="Don" :supplies="supplies"/>
+        <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :supplies="supplies" />
       </div>
       <div class="seagull-field top-row bg-main-blue">
         <SeagullsBoard :amount="seagulls" />
@@ -16,21 +16,23 @@
         </p>
       </div>
       <div class="self-open bg-olive-100">
-        <Hand :supplies="supplies" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" class="m-1"/>
+        <Hand :supplies="gameStore.playerSelf.openCards" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" class="m-1"/>
       </div>
       <div class="self-hand bg-light-red">
-        <Hand :supplies="supplies" :cardH="9" :cardW="6" :handW="30" :tilted="true" class="m-1"/>
+        <Hand :supplies="gameStore.playerSelf.closedCards" :cardH="9" :cardW="6" :handW="30" :tilted="true" class="m-1"/>
       </div>
       <div class="self-icon bg-grey-bg">
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
       <div class="boat-field bg-deep-red">
-        <Boat :characters="queue.reverse()"/>
+        <CardSelector :supplies="pick" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
+        <Boat :characters="queue"/>
       </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import CardSelector from '../src/components/CardSelector.vue';
 import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
 import Timer from '../src/components/Timer.vue';
@@ -41,10 +43,24 @@ import { ref } from 'vue';
 import { Supply } from '../src/interfaces/game';
 import Boat from '../src/components/Boat.vue';
 import { CharacterQueue } from '../src/interfaces/game';
+import { computed } from '@vue/reactivity';
+import { useGameStore } from '../src/stores/game';
+import { watch } from 'vue';
 
-const queue: CharacterQueue[] = [];
+const gameStore = useGameStore();
+const mainStore = useMainStore();
+console.log(gameStore.game);
 const supplies = [] as Supply[];
-
+const pick = [] as Supply[];
+const cardSelectorActive = computed(() => {
+  return pick.length>0;
+});
+let chosenCard = null;
+const ChooseCard = (selectedCard) => {
+  chosenCard=selectedCard;
+  console.log(selectedCard);
+  pick.splice(0, pick.length);
+}
 for (var i = 1; i<=13; i++) {
  supplies.push({
     name: 'card'+i,
@@ -52,19 +68,6 @@ for (var i = 1; i<=13; i++) {
     bonus: null,
     description: '-',
     amount: 1,
-  })
-  if(i<=8)
-  queue.push({
-    characterName: "",
-    gameId: 1,
-    order: i,
-    character: {
-      name: "Character " + i,
-      strength: 5,
-      survival: 6,
-      description: "long long time ago once apon a time...",
-      defaultOrder: 1
-    }
   })
 }
 
@@ -75,10 +78,37 @@ const components = {
   SeagullsBoard,
   PlayerProfile
 };
-
-const seagulls = ref(2);
-const phase = ref("Раздача припасов");
-const mainStore = useMainStore();
+const otherPlayers = computed(() => {
+  console.log(gameStore.game.players);
+  return gameStore.game.players.filter(function (u) {
+    return u.id != gameStore.playerSelf.id;
+  })
+});
+const queue = computed(() => {
+  return gameStore.game.queue;
+});
+const seagulls = computed(() => {
+  return gameStore.game.seagulls;
+});
+const phase = computed(() => {
+  return gameStore.game.state;
+});
+gameStore.$onAction(({ name, store, after }) => {
+  if (name == 'setPick') {
+    after(pickQueue => {
+      pickQueue.forEach(element => {
+        pick.push(element)
+      });
+      watch(chosenCard, (first, second) => {
+        if (second != null) {
+          if (first != null) console.log('error: picked card wasn\'t used but was discarded');
+          mainStore.pickSupply(second.name);
+          chosenCard = null;
+        }
+      })
+    })
+  }
+})
 
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();

@@ -23,7 +23,6 @@ const components = {
   "room-list": RoomList,
   "room-creator": RoomCreator
 };
-console.log(mainStore.activeRoomId);
 const activeRoomExists = computed(() => mainStore.activeRoomId != 0)
 const logOut = () => {
   mainStore.logOut();
