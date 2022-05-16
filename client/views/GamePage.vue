@@ -16,17 +16,16 @@
         </p>
       </div>
       <div class="self-open bg-olive-100">
-        <Hand :supplies="supplies" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" class="m-1"/>
+        <Hand :supplies="gameStore.playerSelf.openCards" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" class="m-1"/>
       </div>
       <div class="self-hand bg-light-red">
-        <Hand :supplies="supplies" :cardH="9" :cardW="6" :handW="30" :tilted="true" class="m-1"/>
+        <Hand :supplies="gameStore.playerSelf.closedCards" :cardH="9" :cardW="6" :handW="30" :tilted="true" class="m-1"/>
       </div>
       <div class="self-icon bg-grey-bg">
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
       <div class="boat-field bg-deep-red">
-        <button @click="ChooseCardBTN()" class="btn">ChooseCard</button>
-        <CardSelector :supplies="supplies" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
+        <CardSelector :supplies="pick" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
         <Boat :characters="queue"/>
       </div>
     </div>
@@ -46,18 +45,21 @@ import Boat from '../src/components/Boat.vue';
 import { CharacterQueue } from '../src/interfaces/game';
 import { computed } from '@vue/reactivity';
 import { useGameStore } from '../src/stores/game';
+import { watch } from 'vue';
 
 const gameStore = useGameStore();
 const mainStore = useMainStore();
 console.log(gameStore.game);
 const supplies = [] as Supply[];
-const cardSelectorActive = ref(false);
-const ChooseCardBTN = () => {
-  cardSelectorActive.value = true;
-}
+const pick = [] as Supply[];
+const cardSelectorActive = computed(() => {
+  return pick.length>0;
+});
+let chosenCard = null;
 const ChooseCard = (selectedCard) => {
+  chosenCard=selectedCard;
   console.log(selectedCard);
-  cardSelectorActive.value = false;
+  pick.splice(0, pick.length);
 }
 for (var i = 1; i<=13; i++) {
  supplies.push({
@@ -91,6 +93,22 @@ const seagulls = computed(() => {
 const phase = computed(() => {
   return gameStore.game.state;
 });
+gameStore.$onAction(({ name, store, after }) => {
+  if (name == 'setPick') {
+    after(pickQueue => {
+      pickQueue.forEach(element => {
+        pick.push(element)
+      });
+      watch(chosenCard, (first, second) => {
+        if (second != null) {
+          if (first != null) console.log('error: picked card wasn\'t used but was discarded');
+          mainStore.pickSupply(second.name);
+          chosenCard = null;
+        }
+      })
+    })
+  }
+})
 
 const getGameInfo = () => mainStore.getGameInfo();
 const getPlayerInfo = () => mainStore.getPlayerInfo();

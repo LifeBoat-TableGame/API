@@ -165,6 +165,7 @@ export const useMainStore: any = defineStore("mainStoreID", {
 
       this.socket.on('toChoose', (supplies) => {
         console.log(supplies);
+        useGameStore().setPick(supplies);
       });
       //example of usage
       this.subscribeToEvent({
