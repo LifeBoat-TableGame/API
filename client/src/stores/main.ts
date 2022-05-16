@@ -166,17 +166,16 @@ export const useMainStore = defineStore("mainStoreID", {
       this.socket.on('gameInfo', (game: Game) => {
         console.log('setting game');
         useGameStore().setGame(game);
-        //console.log(game);
       });
       this.socket.on('playerInfo', (player: Player) => {
         console.log('setting player');
         useGameStore().setPlayer(player);
-        //console.log(player);
       });
 
       this.socket.on('toChoose', (supplies: Supply[]) => {
         console.log(supplies);
         useGameStore().setPick(supplies);
+        console.log(supplies);
       });
       //example of usage
       this.subscribeToEvent({

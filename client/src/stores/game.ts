@@ -14,20 +14,17 @@ export const useGameStore = defineStore("gameStoreID", {
         setPick(supplies: Supply[]) {
             this.suppliesToPick = supplies;
             console.log('picking supply', this.suppliesToPick);
-            return this.suppliesToPick;
         },
         clearPick() {
             this.suppliesToPick = [];
         },
         setGame(game: Game) {
             this.game = game;
-            console.log('Game Object', game); 
-            return this.game   ;       
+            console.log('Game Object', game);  
         },
         setPlayer(player: Player) {
             this.playerSelf = player;
-            console.log('Player Object', player); 
-            return this.playerSelf;
+            console.log('Player Object', player);
         }
     }
 });

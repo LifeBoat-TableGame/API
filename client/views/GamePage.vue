@@ -2,7 +2,7 @@
     <div class=" fixed bg-main-blue w-full">game page</div>
     <div class="game-grid">
       <div class="players-field top-row bg-olive-400">
-        <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :supplies="supplies" />
+        <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :openSupplies="player.openCards" :closedSuppliesAmount="player.closedAmount"/>
       </div>
       <div class="seagull-field top-row bg-main-blue">
         <SeagullsBoard :amount="seagulls" />
@@ -25,7 +25,7 @@
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
       <div class="boat-field bg-deep-red">
-        <CardSelector :supplies="pick" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
+        <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
         <Boat :characters="queue"/>
       </div>
     </div>
@@ -50,20 +50,20 @@ import { Events } from '../src/interfaces/subscription';
 
 const gameStore = useGameStore();
 const mainStore = useMainStore();
-console.log(gameStore.game);
-const supplies = [] as Supply[];
-const pick = [] as Supply[];
 const cardSelectorActive = computed(() => {
-  return pick.length>0;
+  return gameStore.suppliesToPick.length>0;
 });
 mainStore.getGameInfo();
 mainStore.getPlayerInfo();
 let chosenCard = null;
 const ChooseCard = (selectedCard) => {
   chosenCard=selectedCard;
-  console.log(selectedCard);
-  pick.splice(0, pick.length);
+  console.log('card selected', selectedCard);
+  mainStore.pickSupply(selectedCard.name)
+  gameStore.clearPick();
 }
+/*
+const supplies = [] as Supply[];
 for (var i = 1; i<=13; i++) {
  supplies.push({
     name: 'card'+i,
@@ -73,6 +73,7 @@ for (var i = 1; i<=13; i++) {
     amount: 1,
   })
 }
+*/
 
 const name = 'GameTemp';
 
@@ -82,7 +83,6 @@ const components = {
   PlayerProfile
 };
 const otherPlayers = computed(() => {
-  console.log(gameStore.game.players);
   return gameStore.game.players.filter(function (u) {
     return u.id != gameStore.playerSelf.id;
   })
@@ -96,22 +96,23 @@ const seagulls = computed(() => {
 const phase = computed(() => {
   return gameStore.game.state;
 });
-gameStore.$onAction(({ name, store, after }) => {
+/*gameStore.$onAction(({ name, store, after }) => {
   if (name == 'setPick') {
-    after(pickQueue => {
-      pickQueue.forEach(element => {
+    after(e => {
+      store.suppliesToPick.forEach(element => {
         pick.push(element)
       });
       watch(chosenCard, (first, second) => {
-        if (second != null) {
-          if (first != null) console.log('error: picked card wasn\'t used but was discarded');
-          mainStore.pickSupply(second.name);
-          chosenCard = null;
+          console.log('CCC');
+          if (second != null) {
+            if (first != null) console.log('error: picked card wasn\'t used but was discarded');
+            mainStore.pickSupply(second.name);
+            chosenCard = null;
         }
       })
     })
   }
-})
+})*/
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 if (mainStore.activeRoomId == 0) {
