@@ -34,4 +34,6 @@ export class Dispute {
     @Column()
     type: DisputeType
     
+    @Column()
+    queueIndex: number;
 }

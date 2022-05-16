@@ -4,6 +4,12 @@ import { Game } from "./game.entity";
 import { Supply } from "./supply.entity";
 import { User } from "./user.entity";
 
+export enum FightRole {
+    Atacker = 'Atack',
+    Defender = 'Defend',
+    Neutral = 'Neutral',
+}
+
 @Entity()
 export class Player {
 
@@ -40,6 +46,9 @@ export class Player {
     @JoinTable()
     openCards: Supply[];
 
+    @Column({default: FightRole.Neutral})
+    fighter: FightRole;
+
     @Column({default: 0})
     damage: number;
 
@@ -49,7 +58,7 @@ export class Player {
     @Column({default: false})
     fought: boolean;
 
-    @Column({default: false})
-    thirst: boolean;
+    @Column({default: 0})
+    thirst: number;
 
 }

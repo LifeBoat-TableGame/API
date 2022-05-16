@@ -10,7 +10,8 @@ export enum GameState {
     Regular = 2,
     Dispute = 3,
     Fight = 4,
-    Picking = 5
+    Picking = 5,
+    NavigationPicked = 6
 }
 
 @Entity()
@@ -44,4 +45,8 @@ export class Game {
 
     @Column({default: 0})
     seagulls: number;
+
+    public get isLast(): boolean {
+        return this.currentCharacterIndex >= this.players.length - 1;
+    }
 }

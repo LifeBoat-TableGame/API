@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WsException } from '@nestjs/websockets';
-import { GameService } from '../../game/game.service';
+import { TableService } from '../table.service';
 import { Player } from '../../models/player.entity';
 import { UserService } from '../../user/user.service';
 import { Repository } from 'typeorm';
@@ -11,26 +11,36 @@ import { DisputeService } from '../dispute/dispute.service';
 import { DisputeType } from '../../models/dispute.entity';
 import { CharacterQueue } from '../../models/characterQueue.entity';
 import { CardsService } from '../../cards/cards.service';
+import { GameService } from '../../game/game.service';
+import { FightService } from '../fight/fight.service';
 
 @Injectable()
 export class ActionsService {
 
     constructor (
         @Inject(UserService) private userService: UserService,
+        @Inject(TableService) private tableService: TableService,
         @Inject(GameService) private gameService: GameService,
         @Inject(DisputeService) private disputeService: DisputeService,
         @Inject(CardsService) private cardsService: CardsService,
+        @Inject(FightService) private fightService: FightService,
         @InjectRepository(Player) private playerRepository: Repository<Player>,
-        @InjectRepository(CharacterQueue) private characterQueueRepository: Repository<CharacterQueue>
+        @InjectRepository(CharacterQueue) private characterQueueRepository: Repository<CharacterQueue>,
+        @InjectRepository(Game) private gameRepository: Repository<Game>
     ) {}
 
     async useSupply(player: Player, supplyName: string, targetName?: string){
         if (!this.userService.isConscious(player)){
             throw new WsException('You must be conscious to use supply');
         }
-        const supply = player.openCards.find(supply => supply.name == supplyName);
+        let supply = player.openCards.find(supply => supply.name == supplyName);
         if(!supply){
-            throw new WsException("Couldn't find opened supply named " + supplyName);
+            supply = player.closedCards.find(supply => supply.name == supplyName);
+            if (!supply){
+                throw new WsException("Couldn't find opened supply named " + supplyName);
+            } else if (supply.name != "Зонтик") {
+                throw new WsException("This supply should be opened to be used");
+            }
         }
         let target: Player;
         if (targetName){
@@ -43,11 +53,22 @@ export class ActionsService {
             case "Аптечка":
                 await this.useMedkit(player, supply, target);
                 break;
+            case "Сигнальный пистолет":
+                await this.useFlareGun(player, supply);
+                break;
+            case "Зонтик":
+                await this.useParasol(player, supply);
+                break;
+            case "Вода":
+                await this.useWater(player, supply, target); 
         }
 
     }
 
     async useMedkit(supplyUser: Player, supply: Supply, target?: Player){
+        if(supplyUser.game.state != GameState.Regular){
+            throw new WsException("Gamestate should be regular");
+        }
         if(!target){
             throw new WsException("Medkit must have a target");
         }
@@ -60,11 +81,64 @@ export class ActionsService {
             await this.playerRepository.save(target);
             await this.playerRepository.save(supplyUser);
             
-
         } else {
             throw new WsException("Can't use Medkit on target with full health");
         }
 
+    }
+
+    async useFlareGun(supplyUser: Player, supply: Supply){
+        if(supplyUser.game.state != GameState.Regular){
+            throw new WsException("Gamestate should be regular");
+        }
+        const game = await this.gameService.getGameWithrelations(supplyUser.game.id);
+
+        let nav = await this.cardsService.drawNavigation(3, supplyUser.game.id);
+        console.log(nav);
+        let seagulls = game.seagulls;
+        for(const element of nav){
+            seagulls += (await this.cardsService.getNavigation(element.navigationId)).seagul;
+        }
+        await this.gameRepository.update({id: supplyUser.game.id}, {seagulls: seagulls});
+        await this.cardsService.removeDrawnNavigation(supplyUser.game.id);
+        supplyUser.openCards.splice(supplyUser.openCards.indexOf(supply), 1);
+        await this.playerRepository.save(supplyUser);
+    }
+
+    async useParasol(supplyUser: Player, supply: Supply){
+        if(supplyUser.game.state != GameState.Regular){
+            throw new WsException("Gamestate should be regular");
+        }
+        const toOpen = supplyUser.closedCards.splice(supplyUser.closedCards.indexOf(supply), 1);
+        supplyUser.openCards.push(toOpen[0]);
+        await this.playerRepository.save(supplyUser);
+
+    }
+
+    async useWater(supplyUser: Player, supply: Supply, target?: Player){
+        if(supplyUser.game.state != GameState.NavigationPicked){
+            throw new WsException("Gamestate should be NavigationPicked");
+        }
+        if(!target){
+            throw new WsException("Water must have a target");
+        }
+        if(!this.userService.isAlive(target)){
+            throw new WsException("Target must be alive");
+        }
+        if (target.thirst > 0){
+            if(target.id == supplyUser.id){
+                supplyUser.thirst--;
+                supplyUser.openCards.splice(supplyUser.openCards.indexOf(supply), 1);
+                await this.playerRepository.save(supplyUser);
+            } else {
+                target.thirst--;
+                supplyUser.openCards.splice(supplyUser.openCards.indexOf(supply), 1);
+                await this.playerRepository.save(target);
+                await this.playerRepository.save(supplyUser);
+            }
+        } else {
+            throw new WsException("Target is not thirsty");
+        }
     }
 
     async row(player: Player, game: Game) {
@@ -89,7 +163,7 @@ export class ActionsService {
         const nav = await this.cardsService.gameNavigationById(game.id, id);
         if(!nav) 
             throw new WsException("Card does not exist");
-        const p1 = this.gameService.pickNavigation(game, nav);
+        const p1 = this.tableService.pickNavigation(game, nav);
         const p2 = this.gameService.gameTurn(game, GameState.Regular);
         await p1;
         await p2;
@@ -108,7 +182,8 @@ export class ActionsService {
             game: game,
             initiator: player,
             victim: target,
-            type: DisputeType.Swap
+            type: DisputeType.Swap,
+            queueIndex: game.currentCharacterIndex
         }, async () => {
             const p1 = this.gameService.updateGameState(game, GameState.Regular);
             const p2 = this.gameService.gameTurn(game);
@@ -134,7 +209,8 @@ export class ActionsService {
             game: game,
             initiator: player,
             victim: target,
-            type: DisputeType.Get
+            type: DisputeType.Get,
+            queueIndex: game.currentCharacterIndex
         }, async () => {
             const p1 = this.gameService.updateGameState(game, GameState.Regular);
             const p2 = this.gameService.gameTurn(game);
@@ -161,7 +237,8 @@ export class ActionsService {
             initiator: player,
             victim: target,
             target: supply,
-            type: DisputeType.Get
+            type: DisputeType.Get,
+            queueIndex: game.currentCharacterIndex
         }, async () => {
             const p1 = this.gameService.updateGameState(game, GameState.Regular);
             const p2 = this.gameService.gameTurn(game);
@@ -177,10 +254,8 @@ export class ActionsService {
         const dispute = await this.disputeService.get(player.game.id);
         if(dispute.victim.id != player.id)
             throw new WsException("You are not in a dispute");
-        await this.disputeService.remove(player.game.id);
         //starting a fight
-        await this.gameService.updateGameState(dispute.game, GameState.Fight);
-        console.log('fight started');
+        await this.fightService.startFight(dispute.initiator, dispute.victim, dispute.game);
     }
 
     async acceptDispute(player: Player) {
@@ -192,5 +267,19 @@ export class ActionsService {
         await this.gameService.updateGameState(player.game, GameState.Regular);
         //giving up on issue
         await this.disputeService.executeDispute(dispute);
+    }
+
+    async resolveNavigation(game: Game, navigationId: number){
+        const nav = await this.cardsService.getNavigation(navigationId);
+        game.seagulls += nav.seagul;
+        if(game.seagulls >= 4){
+            //game ended
+        }
+        nav.charactersOverboard.forEach(character => {
+            let overBoard = game.players.find(player => player.character.name == character.name);
+            if (overBoard.openCards.find(supply => supply.name == "Спасательный круг")){
+                overBoard.openCards.splice(0, overBoard.openCards.length);
+            }
+        });
     }
 }
