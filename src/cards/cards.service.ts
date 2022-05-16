@@ -133,6 +133,7 @@ export class CardsService {
     async drawSupplies(amount: number, gameId: number) {
         const selected = await this.gameSupplyRepository
         .createQueryBuilder("game_supply")
+        .leftJoinAndSelect("game_supply.supply", "supply")
         .where("game_supply.picked is false AND game_supply.gameId = :gameId", {gameId: gameId})
         .orderBy("RANDOM()")
         .limit(amount)

@@ -81,9 +81,10 @@ export const useMainStore: any = defineStore("mainStoreID", {
       this.socket.emit('openSupply', supplyName);
     },
     useSupply(supplyName: string, target: string){
-      console.log(supplyName);
-      console.log(target);
       this.socket.emit('useSupply',{supplyName: supplyName, target: target});
+    },
+    showChosenNavigation(){
+      this.socket.emit('showChosenNavigation');
     },
     swapWith(target: string) {
       this.socket.emit('swap', target);
@@ -113,6 +114,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
     },
     subscribeToEvent(sub: Subscription) {
       this.socket.on(sub.event, sub.callback);
+    },
+    takeSide(side: 'Atack' | 'Defend' | 'Neutral') {
+      this.socket.emit('chooseConflictSide', side);
     },
     initGameListeners() {
       console.log('listening to \'gameStarted\'')
@@ -178,6 +182,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
           console.log(description);
         }
       })
+      this.socket.on('shownChosenNavigation', (navs) => {
+        console.log(navs);
+      });
     }
   },
 });

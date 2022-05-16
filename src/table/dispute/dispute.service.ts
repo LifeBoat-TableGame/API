@@ -97,6 +97,9 @@ export class DisputeService {
                 target: true,
                 game: {
                     queue: true,
+                    players: {
+                        character: true,
+                    }
                 }
             }});
     }
