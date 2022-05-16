@@ -1,6 +1,10 @@
-export interface Message {
-    type: MessageType;
-    data?: string | object;
+import { Game } from "./game";
+
+export type MessageData = {
+    [MessageType.GetGameInfo]: undefined,
+    [MessageType.Rename]: string,
+    [MessageType.StartGame]: undefined,
+    [MessageType.GetPlayerInfo]: undefined,
 }
 
 export enum MessageType {
@@ -9,5 +13,7 @@ export enum MessageType {
     LeaveRoom = "leaveRoom",
     GetRooms = "getRooms",
     StartGame = "create",
-    GetGameInfo = "getGameInfo"
+    GetGameInfo = "getGameInfo",
+    GetPlayerInfo = "getPlayerInfo",
+    Rename = "rename"
 }
