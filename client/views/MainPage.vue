@@ -29,6 +29,7 @@ const logOut = () => {
 }
 const collapseRoom = () => {
   mainStore.activeRoomId=0;
+  localStorage.removeItem('activeRoom');
 }
 const roomCreated = (created) => {
 }

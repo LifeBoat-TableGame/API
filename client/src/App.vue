@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup lang="ts">import { inject, onMounted } from 'vue';
+<script setup lang="ts">import { inject, onBeforeMount, onMounted } from 'vue';
 import { Game, Player, Supply } from './interfaces/game';
 import { Room } from './interfaces/room';
 import { Events } from './interfaces/subscription';
@@ -19,12 +19,17 @@ const mainStore = useMainStore();
 const socket = inject(SocketKey);
 if(socket == undefined)
   throw new Error("Connection dropped");
+
+onBeforeMount(() => {
+  mainStore.activeRoomId = +( localStorage.getItem("activeRoom") ?? 0);
+});
 onMounted(() => {
   console.log(socket);
   socket.subscribeToEvent(Events.RoomCreated, (id: number) => {
     console.log(`room created with id: ${id}`);
     mainStore.activeRoomId = id;
     mainStore.isAdmin = true;
+    localStorage.setItem("activeRoom", id.toString());
   });
   socket.subscribeToEvent(Events.GameStarted, (game: any) => {
     router.push('/game')

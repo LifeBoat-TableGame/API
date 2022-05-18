@@ -21,7 +21,7 @@ const props = defineProps({
 
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .container {
     @apply flex flex-wrap p-2;
 }

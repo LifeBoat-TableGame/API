@@ -35,7 +35,7 @@ emit('card:selected', cardName)
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .card-selector {
   @apply
   w-[70%]

@@ -19,7 +19,7 @@ const timeBoard = computed(() => {
 });
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 h1 {
     @apply text-6xl relative top-1/3 text-center
 }

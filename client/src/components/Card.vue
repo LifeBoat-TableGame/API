@@ -72,7 +72,7 @@ const useCard = () => {
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .card {
   @apply 
   bg-light-bg

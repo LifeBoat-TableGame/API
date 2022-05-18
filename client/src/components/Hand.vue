@@ -37,7 +37,7 @@ const overlapVal = computed(() => {
   return -props.cardW+(props.handW-props.cardW)/(props.supplies.length-1)
 });
 </script>
-<style scoped>
+<style lang="postcss" scoped>
 
 
 .hand {

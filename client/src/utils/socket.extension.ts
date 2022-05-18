@@ -15,11 +15,11 @@ declare module "socket.io-client" {
 
 export const SocketKey: InjectionKey<Socket> = Symbol('Socket');
 
-    Socket.prototype.sendMessage = function <K extends keyof MessageData>(message: K, data?: MessageData[K]) {
-        if(data) this.emit(message, data);
-        else this.emit(message);
-    }
+Socket.prototype.sendMessage = function <K extends keyof MessageData>(message: K, data?: MessageData[K]) {
+    if(data) this.emit(message, data);
+    else this.emit(message);
+}
 
-    Socket.prototype.subscribeToEvent = function <K extends keyof SubscriptionArguments>(event: K, callback: (arg?: SubscriptionArguments[K]) => void): void {
-        this.on(event as string, callback);
-    }
+Socket.prototype.subscribeToEvent = function <K extends keyof SubscriptionArguments>(event: K, callback: (arg?: SubscriptionArguments[K]) => void): void {
+    this.on(event as string, callback);
+}

@@ -24,7 +24,7 @@ import { Supply } from '../interfaces/game';
     });
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .card {
   @apply 
   bg-light-bg 

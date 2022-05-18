@@ -22,7 +22,7 @@ const props = defineProps({
 });
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
     .strength {
         @apply text-main-red ml-2
     }

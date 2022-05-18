@@ -124,7 +124,7 @@ onBeforeMount(() => {
 });
 if (mainStore.activeRoomId == 0) {
   console.log('game does not exists, redirecting to main');
-  //router.push('/');
+  router.push('/');
 }
 </script>
 
