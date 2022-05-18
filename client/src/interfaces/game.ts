@@ -4,7 +4,7 @@ export interface Player {
     character: Character;
     friendship: Character;
     enemy: Character;
-    closedAmount: Number;
+    closedAmount: number;
     closedCards: Supply[];
     openCards: Supply[];
     damage: number;

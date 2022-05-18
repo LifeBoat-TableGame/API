@@ -19,9 +19,15 @@
 import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
 import { computed } from '@vue/reactivity';
+import { inject } from 'vue';
+import { SocketKey } from '../utils/socket.extension';
+import { MessageType } from '../interfaces/message';
 const title = 'ActiveRoomMenu';
 const mainStore = useMainStore();
 const roomStore = useRoomStore();
+const socket = inject(SocketKey);
+if(!socket)
+  throw new Error("Connection dropped");
 
 const props = defineProps<{
   activeRoomId: Number
@@ -32,11 +38,13 @@ const emit = defineEmits(['room:collapse'])
 //const isAdmin = computed(() => roomStore.rooms.find(x => x.id == mainStore.activeRoomId)?.adminId == mainStore.selfId)
 
 const leaveRoom = () => {
-  mainStore.leaveRoom(mainStore.activeRoomId);
+  socket.sendMessage(MessageType.LeaveRoom, mainStore.activeRoomId);
+  mainStore.isAdmin = false;
+  mainStore.activeRoomId = 0;
   emit('room:collapse');
 }
 const startGame = () => {
-  mainStore.startGame();
+  socket.sendMessage(MessageType.StartGame);
 }
 </script>
 

@@ -15,12 +15,19 @@
 import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
 import { Room } from '../interfaces/room';
+import { inject } from 'vue';
+import { SocketKey } from '../utils/socket.extension';
+import { MessageType } from '../interfaces/message';
 
-const mainStore = useMainStore()
-const roomStore = useRoomStore()
+const mainStore = useMainStore();
+const roomStore = useRoomStore();
+const socket = inject(SocketKey);
+if(!socket)
+  throw new Error("Connection dropped");
+
 const title = 'Список Комнат';
 
-mainStore.getRooms();
+socket.sendMessage(MessageType.GetRooms);
 
 const rooms: Room[] = roomStore.rooms.sort((n1, n2) => {
   if (n1.id > n2.id) {
@@ -35,7 +42,7 @@ const rooms: Room[] = roomStore.rooms.sort((n1, n2) => {
 
 const joinRoom = (room: number) => {
   console.log('connecting to ', { room });
-  mainStore.joinRoom(room);
+  socket.sendMessage(MessageType.JoinRoom, room);
 }
 </script>
 

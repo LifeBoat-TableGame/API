@@ -1,26 +1,25 @@
 import { Socket } from "socket.io-client";
 import { InjectionKey } from "vue";
 import { MessageData } from "../interfaces/message";
-import { Subscription } from "../interfaces/subscription";
+import { SubscriptionArguments } from "../interfaces/subscription";
 
-interface IExtendedSocket extends Socket {
-    sendMessage<K extends keyof MessageData>(message: K, data?: MessageData[K]): void;
-    subscribeToEvent(sub: Subscription): void;
+declare module "socket.io-client" {
+    interface Socket {
+        sendMessage<K extends keyof MessageData>(message: K, data: MessageData[K]): void;
+        sendMessage<K extends keyof MessageData>(message: K): void;
+
+        subscribeToEvent<K extends keyof SubscriptionArguments>(event: K, callback: (arg: SubscriptionArguments[K]) => void): void;
+        subscribeToEvent<K extends keyof SubscriptionArguments>(event: K, callback: () => void): void;
+    }
 }
 
-export const SocketKey: InjectionKey<ExtendedSocket> = Symbol('Socket');
+export const SocketKey: InjectionKey<Socket> = Symbol('Socket');
 
-export class ExtendedSocket extends Socket implements IExtendedSocket {
-    
-    public sendMessage<K extends keyof MessageData>(message: K, data: MessageData[K]): void;
-    public sendMessage<K extends keyof MessageData>(message: K): void;
-    sendMessage<K extends keyof MessageData>(message: K, data?: MessageData[K]) {
+    Socket.prototype.sendMessage = function <K extends keyof MessageData>(message: K, data?: MessageData[K]) {
         if(data) this.emit(message, data);
         else this.emit(message);
     }
 
-    public subscribeToEvent(sub: Subscription) {
-        this.on(sub.event, sub.callback);
+    Socket.prototype.subscribeToEvent = function <K extends keyof SubscriptionArguments>(event: K, callback: (arg?: SubscriptionArguments[K]) => void): void {
+        this.on(event as string, callback);
     }
-
-}

@@ -6,7 +6,7 @@ import { useMainStore } from './stores/main'
 import './assets/styles/main.css';
 import { getLoginData } from './utils/login'
 import { io } from 'socket.io-client'
-import { ExtendedSocket, SocketKey } from './utils/socket.extension'
+import { SocketKey } from './utils/socket.extension';
 
 const app = createApp(App);
 app
@@ -14,12 +14,14 @@ app
     .use(createPinia())
 //ADD: check for token here
 const mainStore = useMainStore();
-fetch('http://localhost:3000/api/token').then(res => res.text()).then(data => {
-    const { token, id } = JSON.parse(data);
+getLoginData().then(data => {
+    const { token, id } = data;
     mainStore.selfId = id;
-    app.provide(SocketKey, io('http://localhost:3000/', { 
+    mainStore.token = token;
+    const socket = io('http://localhost:3000/', { 
         extraHeaders: { Authorization: token } 
-    }) as ExtendedSocket);
+    });
+    app.provide(SocketKey, socket);
     app.mount('#app');
 });
 //router.push('/login');

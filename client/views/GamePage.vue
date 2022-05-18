@@ -44,22 +44,25 @@ import Boat from '../src/components/Boat.vue';
 import { CharacterQueue } from '../src/interfaces/game';
 import { computed } from '@vue/reactivity';
 import { useGameStore } from '../src/stores/game';
-import { watch } from 'vue';
+import { inject, onBeforeMount, watch } from 'vue';
 import { MessageType } from '../src/interfaces/message';
 import { Events } from '../src/interfaces/subscription';
+import { SocketKey } from '../src/utils/socket.extension';
 
 const gameStore = useGameStore();
 const mainStore = useMainStore();
+const socket = inject(SocketKey);
+if(socket == undefined)
+  throw new Error("Connection dropped");
 const cardSelectorActive = computed(() => {
   return gameStore.suppliesToPick.length>0;
 });
-mainStore.getGameInfo();
-mainStore.getPlayerInfo();
+
 let chosenCard = null;
 const ChooseCard = (selectedCard) => {
   chosenCard=selectedCard;
   console.log('card selected', selectedCard);
-  mainStore.pickSupply(selectedCard.name)
+  socket.sendMessage(MessageType.PickSupply, selectedCard.name);
   gameStore.clearPick();
 }
 /*
@@ -115,13 +118,17 @@ const phase = computed(() => {
 })*/
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
+onBeforeMount(() => {
+  socket.sendMessage(MessageType.GetGameInfo);
+  socket.sendMessage(MessageType.GetPlayerInfo);
+});
 if (mainStore.activeRoomId == 0) {
   console.log('game does not exists, redirecting to main');
   //router.push('/');
 }
 </script>
 
-<style scoped>
+<style lang="postcss" scoped>
 .top-row {
   @apply mt-6;
 }
