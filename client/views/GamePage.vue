@@ -16,17 +16,17 @@
         </p>
       </div>
       <div class="self-open bg-olive-100">
-        <Hand :supplies="gameStore.playerSelf.openCards" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" class="m-1"/>
+        <Hand :supplies="gameStore.playerSelf.openCards" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" :playable="true" class="m-1" @card:clicked="selectSupplyToUse"/>
       </div>
       <div class="self-hand bg-light-red">
-        <Hand :supplies="gameStore.playerSelf.closedCards" :cardH="9" :cardW="6" :handW="30" :tilted="true" class="m-1"/>
+        <Hand :supplies="gameStore.playerSelf.closedCards" :cardH="9" :cardW="6" :handW="30" :tilted="true" :playable="true" class="m-1" @card:clicked="OpenSupply"/>
       </div>
       <div class="self-icon bg-grey-bg">
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
-      <div class="boat-field bg-deep-red">
+      <div class="boat-field bg-deep-red game-element" @click="SelectTarget('board')">
         <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
-        <Boat :characters="queue"/>
+        <Boat :characters="queue" @char:targeted="SelectTarget"/>
       </div>
     </div>
 </template>
@@ -58,14 +58,33 @@ const cardSelectorActive = computed(() => {
   return gameStore.suppliesToPick.length>0;
 });
 
-let chosenCard = null;
+let chosenToPickCard = null;
+let supplyToUse = null;
+const OpenSupply = (supplyName:string) => {
+  console.log('opening supply', supplyName);
+  socket.sendMessage(MessageType.OpenSupply, supplyName);
+  gameStore.clearHighlight();
+}
+const SelectTarget = (targetName:string) => {
+  if(supplyToUse!='') {
+    const data = {
+      supplyName: supplyToUse as string,
+      target: targetName as string,
+    } 
+    console.log('using', supplyToUse, 'on', targetName);
+    socket.sendMessage(MessageType.UseSupply, data)
+    supplyToUse='';
+  }
+}
+const selectSupplyToUse = (supplyName:string) => {
+  supplyToUse=supplyName;
+}
 const ChooseCard = (selectedCard) => {
-  chosenCard=selectedCard;
+  chosenToPickCard=selectedCard;
   console.log('card selected', selectedCard);
   socket.sendMessage(MessageType.PickSupply, selectedCard.name);
   gameStore.clearPick();
 }
-/*
 const supplies = [] as Supply[];
 for (var i = 1; i<=13; i++) {
  supplies.push({
@@ -76,7 +95,6 @@ for (var i = 1; i<=13; i++) {
     amount: 1,
   })
 }
-*/
 
 const name = 'GameTemp';
 
@@ -99,23 +117,6 @@ const seagulls = computed(() => {
 const phase = computed(() => {
   return gameStore.game.state;
 });
-/*gameStore.$onAction(({ name, store, after }) => {
-  if (name == 'setPick') {
-    after(e => {
-      store.suppliesToPick.forEach(element => {
-        pick.push(element)
-      });
-      watch(chosenCard, (first, second) => {
-          console.log('CCC');
-          if (second != null) {
-            if (first != null) console.log('error: picked card wasn\'t used but was discarded');
-            mainStore.pickSupply(second.name);
-            chosenCard = null;
-        }
-      })
-    })
-  }
-})*/
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
 onBeforeMount(() => {

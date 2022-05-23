@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { Game, Player, Supply } from '../interfaces/game'
+import Card from './Card.vue';
 import { PropType } from 'vue';
 
 export const useGameStore = defineStore("gameStoreID", {
@@ -7,10 +8,17 @@ export const useGameStore = defineStore("gameStoreID", {
         game: undefined as Game | undefined,
         playerSelf: undefined as Player | undefined,
         suppliesToPick: [] as Supply[],
+        highlightedCard: '',
     }),
     getters: {
     },
     actions: {
+        changeHighlight(newUUID: string) {
+            this.highlightedCard = newUUID;
+        },
+        clearHighlight() {
+            this.highlightedCard = '';
+        },
         setPick(supplies: Supply[]) {
             this.suppliesToPick = supplies;
             console.log('picking supply', this.suppliesToPick);

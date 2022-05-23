@@ -1,6 +1,6 @@
 <template>
     <div class=" grid grid-rows-3 grid-flow-col auto-rows-fr justify-center items-center">
-        <CharacterCard class=" row-start-2 text-center border-highlight" v-for="item in sortedCharacters" :character="item.character" />
+        <CharacterCard class=" row-start-2 text-center border-highlight" v-for="item in sortedCharacters" :character="item.character" @char:targeted="TargetChar" />
     </div>
 </template>
 
@@ -15,6 +15,11 @@ const props = defineProps({
         required: true
     }
 });
+
+const emit = defineEmits(['char:targeted'])
+const TargetChar = (charName: string) => {
+  emit('char:targeted', charName)
+}
 const sortedCharacters = computed(() => {
     return props.characters.sort((a, b) => a.order - b.order);
 });

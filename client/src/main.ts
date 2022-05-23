@@ -12,8 +12,8 @@ const app = createApp(App);
 app
     .use(router)
     .use(createPinia())
-//ADD: check for token here
 const mainStore = useMainStore();
+
 getLoginData().then(data => {
     const { token, id } = data;
     mainStore.selfId = id;

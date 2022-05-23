@@ -7,6 +7,7 @@
       :supply=supply 
       :w="cardW"
       :h="cardH"
+      :playable="false"
       @click="cardChosen(supply.name)"
       >
       </Card>
