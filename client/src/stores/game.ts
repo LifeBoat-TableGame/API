@@ -11,19 +11,23 @@ export const useGameStore = defineStore("gameStoreID", {
         highlightedCardID: '',
         highlightedCardName: '',
         highlightedCardType: '',
+        highlightedCardOwner: '',
     }),
     getters: {
     },
     actions: {
-        changeHighlight(newUUID: string, type:string, name:string) {
+        changeHighlight(newUUID: string, type:string, name:string, owner:string) {
             this.highlightedCardName = name;
             this.highlightedCardID = newUUID;
             this.highlightedCardType = type;
+            this.highlightedCardOwner = owner;
+            console.log(this.highlightedCardName, this.highlightedCardType, this.highlightedCardOwner);
         },
         clearHighlight() {
             this.highlightedCardName = '';
             this.highlightedCardType = '';
             this.highlightedCardID = '';
+            this.highlightedCardOwner = '';
         },
         setPick(supplies: Supply[]) {
             this.suppliesToPick = supplies;

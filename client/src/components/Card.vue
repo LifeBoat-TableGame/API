@@ -5,11 +5,12 @@
     :class="['card', 'vertical-container', 'noselect', 'border-highlight', 'game-element', 
       tilted ? tilts[6 + props.posFromMiddle] : '', 
       tilted ? shifts[6 + props.posFromMiddle ] : '', 
-      playable && gameStore.highlightedCardID == uuid ? 'outline-double outline-4 outline-olive-400' : '']" 
+      gameStore.highlightedCardID == uuid ? 'outline-double outline-4 outline-olive-400' : '']" 
 
     :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/16 + 'rem', lineHeight:props.h/12, borderRadius:props.h/16+'rem'}]"
     @click="useCard()">
-    <img :src="'../assets/cards/'+props.supply.name+'.jpg'">
+    <div>{{props.supply.name}}</div>
+    <!--img :src="'../assets/cards/'+props.supply.name+'.jpg'"-->
   </div>
 </template>
 
@@ -71,7 +72,7 @@ const emit = defineEmits(['card:clicked'])
 const startIndex = 7 + props.posFromMiddle
 const useCard = () => {
   if(props.playable) {
-    emit('card:clicked', uuid, props.supply.name);
+    emit('card:clicked', props.supply.name, uuid);
   }
 }
 </script>

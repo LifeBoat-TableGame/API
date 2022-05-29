@@ -8,11 +8,11 @@ export type SubscriptionArguments =  {
     [Events.GameStarted]: any,
     [Events.UserUpdated]: string,
     [Events.RoomsUpdated]: Room[],
-    [Events.UserJoined]: [
+    [Events.UserJoined]: {
         id: number, 
         username: string, 
         lobby: number
-    ],
+    },
     [Events.ChooseNavigation]: any,
     [Events.CardsToChoose]: Supply[],
     [Events.ShowChosenNavigation]: any,

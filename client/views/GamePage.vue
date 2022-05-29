@@ -2,7 +2,7 @@
     <div class=" fixed bg-main-blue w-full">game page</div>
     <div class="game-grid">
       <div class="players-field top-row bg-olive-400">
-        <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :openSupplies="player.openCards" :closedSuppliesAmount="player.closedAmount"/>
+        <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :openSupplies="player.openCards" :closedSuppliesAmount="player.closedAmount" @card:demand="DemandCard"/>
       </div>
       <div class="seagull-field top-row bg-main-blue">
         <SeagullsBoard :amount="seagulls" />
@@ -16,18 +16,17 @@
         </p>
       </div>
       <div class="self-open bg-olive-100">
-        <Hand :supplies="gameStore.playerSelf.openCards" :type="'open'" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" :playable="true" class="m-1" @card:clicked="selectSupplyToUse"/>
+        <Hand :supplies="gameStore.playerSelf.openCards" :type="'open'" :owner="gameStore.playerSelf.character.name" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" :playable="true" class="m-1"/>
       </div>
       <div class="self-hand bg-light-red">
-        <Hand :supplies="gameStore.playerSelf.closedCards" :type="'closed'" :cardH="9" :cardW="6" :handW="30" :tilted="true" :playable="true" class="m-1" @card:clicked="OpenSupply"/>
+        <Hand :supplies="gameStore.playerSelf.closedCards" :type="'closed'" :owner="gameStore.playerSelf.character.name" :cardH="9" :cardW="6" :handW="30" :tilted="true" :playable="true" class="m-1" @card:selected="OpenSupply"/>
       </div>
       <div class="self-icon bg-grey-bg">
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
-      <div class="boat-field bg-deep-red game-element" @click="SelectTarget('board')">
-        <ActionPopup :options="popupOptions" v-if=(!popupOptions.length) @option:chosen="PickPopupOption" />
+      <div class="boat-field bg-deep-red">
         <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" />
-        <Boat :characters="queue" @char:targeted="SelectTarget" @char:selected="SelectCharacter"/>
+        <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap"/>
       </div>
     </div>
 </template>
@@ -62,35 +61,20 @@ const supplySelectorActive = computed(() => {
 });
 
 let chosenToPickCard = null;
-let popupOptions = [] as PopupOption[];
 let supplyToUse = null;
-const OpenSupply = (supplyName:string) => {
+const OpenSupply = (supplyName:string, uuid:string) => {
   console.log('opening supply', supplyName);
   socket.sendMessage(MessageType.OpenSupply, supplyName);
   gameStore.clearHighlight();
 }
-const SelectCharacter = () => {
-  if(supplyToUse!='' && gameStore.highlightedCardType == 'char') {
-    popupOptions=[{name:'swap', text:'Поменяться', id:null}, {name:'hit', text:'Ударить', id:null}];
-  }
-}
 const SelectTarget = (targetName:string) => {
-  if(supplyToUse!='') {
-    const data = {
-      supplyName: supplyToUse as string,
-      target: targetName as string,
-    } 
-    console.log('using', supplyToUse, 'on', targetName);
-    socket.sendMessage(MessageType.UseSupply, data)
-    supplyToUse='';
+  const data = {
+    supplyName: gameStore.highlightedCardName as string,
+    target: targetName as string,
   }
-}
-const selectSupplyToUse = (supplyName:string) => {
-  supplyToUse=supplyName;
-}
-const PickPopupOption = (pickedOption:string) => {
-  console.log('option picked', pickedOption);
-  popupOptions = [];
+  console.log('using', gameStore.highlightedCardName, 'on', targetName);
+  socket.sendMessage(MessageType.UseSupply, data)
+  gameStore.clearHighlight();
 }
 const PickSupply = (selectedCard) => {
   chosenToPickCard=selectedCard;
@@ -98,6 +82,17 @@ const PickSupply = (selectedCard) => {
   socket.sendMessage(MessageType.PickSupply, selectedCard.name);
   gameStore.clearPick();
 }
+const CharSwap = () => {
+  console.log('swap with', gameStore.highlightedCardName);
+  socket.sendMessage(MessageType.SwapPlaces, gameStore.highlightedCardName);
+  gameStore.clearHighlight();
+}
+const DemandCard = () => {
+  console.log('demand card', gameStore.highlightedCardName, 'from', gameStore.highlightedCardOwner);
+  socket.sendMessage(MessageType.DemandSupply,  {targetName: gameStore.highlightedCardOwner, supplyName: gameStore.highlightedCardName});
+  gameStore.clearHighlight();
+}
+
 const supplies = [] as Supply[];
 for (var i = 1; i<=13; i++) {
  supplies.push({

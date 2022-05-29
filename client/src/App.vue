@@ -41,12 +41,12 @@ onMounted(() => {
     console.log(rooms);
     useRoomStore().updateRooms(rooms)
   });
-  socket.subscribeToEvent(Events.UserJoined, ([id, username, lobby]) => {
-    if (id == mainStore.selfId) {
-      mainStore.activeRoomId = lobby;
-      localStorage.setItem('room', lobby.toString());
+  socket.subscribeToEvent(Events.UserJoined, (res) => {
+    if (res.id == mainStore.selfId) {
+      mainStore.activeRoomId = res.lobby;
+      localStorage.setItem('room', res.lobby.toString());
     }
-      console.log(`User ${username} has joined room ${mainStore.activeRoomId}`);
+      console.log(`User ${res.username} has joined room ${mainStore.activeRoomId}`);
   });
   socket.subscribeToEvent(Events.ChooseNavigation, (navs: any) => {
     console.log(navs);

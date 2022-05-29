@@ -36,17 +36,19 @@ const props = defineProps<{
   cardW: number,
   handW: number,
   type:string,
+  owner:string,
   playable: boolean,
   tilted: boolean
 }>();
-const emit = defineEmits(['card:clicked'])
-const selectSupply = (uuid:string, name:string) => {
+const emit = defineEmits(['card:selected','card:deselected'])
+const selectSupply = (name:string, uuid:string) => {
     if(gameStore.highlightedCardID == uuid) {
       gameStore.clearHighlight();
+      emit('card:deselected', name, uuid);
     } 
     else {
-      gameStore.changeHighlight(uuid, props.type, name);
-      emit('card:clicked', uuid, name);
+      gameStore.changeHighlight(uuid, props.type, name, props.owner);
+      emit('card:selected', name, uuid);
     }
 };
 
