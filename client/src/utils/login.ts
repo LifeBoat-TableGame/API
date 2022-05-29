@@ -1,4 +1,5 @@
 export async function getLoginData() {
+    localStorage.clear();
     const token = localStorage.getItem('token');
     const id = localStorage.getItem('id');
     if (id == null || token == null) {
@@ -10,11 +11,4 @@ export async function getLoginData() {
     }
     else
         return { token: token, id: +id };
-    /*
-   const response = await fetch('http://localhost:3000/api/token');
-   const loginData: {token: string, id: number} = await response.json();
-   localStorage.setItem('token', loginData.token);
-   localStorage.setItem('id', loginData.id.toString());
-   return loginData;
-   */
 }
