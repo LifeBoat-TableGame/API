@@ -9,7 +9,7 @@
       :w="cardW"
       :h="cardH"
       :playable="playable"
-      @card:clicked="useSupply"
+      @card:clicked="selectSupply"
       >
       </Card>
   </div>
@@ -35,13 +35,21 @@ const props = defineProps<{
   cardH: number,
   cardW: number,
   handW: number,
+  type:string,
   playable: boolean,
   tilted: boolean
 }>();
-const useSupply = (cardName: string) => {
-  emit('card:clicked', cardName)
-}
 const emit = defineEmits(['card:clicked'])
+const selectSupply = (uuid:string, name:string) => {
+    if(gameStore.highlightedCardID == uuid) {
+      gameStore.clearHighlight();
+    } 
+    else {
+      gameStore.changeHighlight(uuid, props.type, name);
+      emit('card:clicked', uuid, name);
+    }
+};
+
 const overlapVal = computed(() => {
   return -props.cardW+(props.handW-props.cardW)/(props.supplies.length-1)
 });

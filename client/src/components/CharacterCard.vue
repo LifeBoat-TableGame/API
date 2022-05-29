@@ -1,31 +1,38 @@
 <template>
-<div class=" w-32 h-72 border-2 border-x-main-blue rounded-md bg-main-bg flex flex-col noselect game-element">
-    <img class=" mx-auto rounded-full border-2 border-main-blue w-20 h-20"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
-    <h3 class=" text-xl">{{props.character.name}}</h3>
-    <p>{{props.character.description}}</p>
-    <div class=" w-full flex flex-row justify-between mt-auto ">
-        <h1 class="strength">{{props.character.strength}}</h1>
-        <h1 class="survival">{{props.character.survival}}</h1>
-    </div>
+<div class=" w-32 h-72 border-2 border-x-main-blue rounded-md bg-main-bg flex flex-col noselect game-element" @click="characterCardPlayed">
+    <img :src="'../assets/cards/'+props.character.name+'.jpg'">
 </div>
 </template>
 
 <script lang="ts" setup>
 import {PropType} from 'vue'
 import { useGameStore } from '../stores/game';
+import { useMainStore } from '../stores/main';
 import {Character} from '../interfaces/game'
 
 const gameStore = useGameStore();
-const emit = defineEmits(['char:targeted']);
+const mainStore = useMainStore();
+const uuid = mainStore.getUUID();
+const emit = defineEmits(['char:targeted', 'char:selected']);
 const props = defineProps({
     character: {
         type: Object as PropType<Character>,
         required: true
     }
 });
+
 const characterCardPlayed = () => {
-    if (gameStore.highlightedCard!='')
+    if (gameStore.highlightedCardID!='')
         emit('char:targeted', props.character.name);
+    else {
+        if(gameStore.highlightedCardID == uuid) {
+            gameStore.clearHighlight();
+        } 
+        else {
+            gameStore.changeHighlight(uuid, 'char', props.character.name)
+            emit('char:selected');
+        }
+    }
 }
 </script>
 

@@ -16,17 +16,18 @@
         </p>
       </div>
       <div class="self-open bg-olive-100">
-        <Hand :supplies="gameStore.playerSelf.openCards" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" :playable="true" class="m-1" @card:clicked="selectSupplyToUse"/>
+        <Hand :supplies="gameStore.playerSelf.openCards" :type="'open'" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" :playable="true" class="m-1" @card:clicked="selectSupplyToUse"/>
       </div>
       <div class="self-hand bg-light-red">
-        <Hand :supplies="gameStore.playerSelf.closedCards" :cardH="9" :cardW="6" :handW="30" :tilted="true" :playable="true" class="m-1" @card:clicked="OpenSupply"/>
+        <Hand :supplies="gameStore.playerSelf.closedCards" :type="'closed'" :cardH="9" :cardW="6" :handW="30" :tilted="true" :playable="true" class="m-1" @card:clicked="OpenSupply"/>
       </div>
       <div class="self-icon bg-grey-bg">
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
       <div class="boat-field bg-deep-red game-element" @click="SelectTarget('board')">
-        <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(cardSelectorActive) @card:selected="selectedCard => ChooseCard(selectedCard)" />
-        <Boat :characters="queue" @char:targeted="SelectTarget"/>
+        <ActionPopup :options="popupOptions" v-if=(!popupOptions.length) @option:chosen="PickPopupOption" />
+        <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" />
+        <Boat :characters="queue" @char:targeted="SelectTarget" @char:selected="SelectCharacter"/>
       </div>
     </div>
 </template>
@@ -47,23 +48,31 @@ import { useGameStore } from '../src/stores/game';
 import { inject, onBeforeMount, watch } from 'vue';
 import { MessageType } from '../src/interfaces/message';
 import { Events } from '../src/interfaces/subscription';
+import { PopupOption } from '../src/interfaces/game';
 import { SocketKey } from '../src/utils/socket.extension';
+import ActionPopup from '../src/components/ActionPopup.vue';
 
 const gameStore = useGameStore();
 const mainStore = useMainStore();
 const socket = inject(SocketKey);
 if(socket == undefined)
   throw new Error("Connection dropped");
-const cardSelectorActive = computed(() => {
+const supplySelectorActive = computed(() => {
   return gameStore.suppliesToPick.length>0;
 });
 
 let chosenToPickCard = null;
+let popupOptions = [] as PopupOption[];
 let supplyToUse = null;
 const OpenSupply = (supplyName:string) => {
   console.log('opening supply', supplyName);
   socket.sendMessage(MessageType.OpenSupply, supplyName);
   gameStore.clearHighlight();
+}
+const SelectCharacter = () => {
+  if(supplyToUse!='' && gameStore.highlightedCardType == 'char') {
+    popupOptions=[{name:'swap', text:'Поменяться', id:null}, {name:'hit', text:'Ударить', id:null}];
+  }
 }
 const SelectTarget = (targetName:string) => {
   if(supplyToUse!='') {
@@ -79,7 +88,11 @@ const SelectTarget = (targetName:string) => {
 const selectSupplyToUse = (supplyName:string) => {
   supplyToUse=supplyName;
 }
-const ChooseCard = (selectedCard) => {
+const PickPopupOption = (pickedOption:string) => {
+  console.log('option picked', pickedOption);
+  popupOptions = [];
+}
+const PickSupply = (selectedCard) => {
   chosenToPickCard=selectedCard;
   console.log('card selected', selectedCard);
   socket.sendMessage(MessageType.PickSupply, selectedCard.name);

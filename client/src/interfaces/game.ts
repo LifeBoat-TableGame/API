@@ -19,6 +19,11 @@ export interface Character {
     description: string;
     defaultOrder: number;
 };
+export interface PopupOption {
+    name: string;
+    text: string;
+    id: number | null;
+};
 export interface Supply {
     name: string;
     strength: number | null;

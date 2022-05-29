@@ -5,16 +5,11 @@
     :class="['card', 'vertical-container', 'noselect', 'border-highlight', 'game-element', 
       tilted ? tilts[6 + props.posFromMiddle] : '', 
       tilted ? shifts[6 + props.posFromMiddle ] : '', 
-      playable && gameStore.highlightedCard == uuid ? 'outline-double outline-4 outline-olive-400' : '']" 
+      playable && gameStore.highlightedCardID == uuid ? 'outline-double outline-4 outline-olive-400' : '']" 
 
     :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/16 + 'rem', lineHeight:props.h/12, borderRadius:props.h/16+'rem'}]"
     @click="useCard()">
-    <div>{{ supply.name }}
-    </div>
-    <div>{{ supply.description }}
-    </div>
-    <div>{{ supply.strength }} {{ props.posFromMiddle }}
-    </div>
+    <img :src="'../assets/cards/'+props.supply.name+'.jpg'">
   </div>
 </template>
 
@@ -24,7 +19,6 @@ import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
 import { Supply } from '../interfaces/game';
 import { useGameStore } from '../stores/game';
-import { propsToAttrMap } from '@vue/shared';
 const title = 'ActiveRoomMenu';
 const gameStore = useGameStore();
 const mainStore = useMainStore();
@@ -77,15 +71,7 @@ const emit = defineEmits(['card:clicked'])
 const startIndex = 7 + props.posFromMiddle
 const useCard = () => {
   if(props.playable) {
-    if(gameStore.highlightedCard == uuid) {
-      console.log('deselecting card');
-      gameStore.clearHighlight()
-    } 
-    else {
-      console.log('selecting card', uuid);
-      gameStore.changeHighlight(uuid)
-      emit('card:clicked', props.supply.name);
-    }
+    emit('card:clicked', uuid, props.supply.name);
   }
 }
 </script>
