@@ -86,7 +86,11 @@ export class ActionsGateway {
       const game = await req2;
       if(supplyName) await this.actionsService.requestOpenSupply(player, game, targetName, supplyName);
       else await this.actionsService.requestClosedSupply(player, game,  targetName);
-      this.wss.to(user.lobby.id.toString()).emit('demandDispute', player.character.name, targetName, supplyName);
+      this.wss.to(user.lobby.id.toString()).emit('demandDispute', { 
+          aggressorName: player.character.name, 
+          victimName: targetName, 
+          supply: supplyName
+        });
   }
   
   @UseGuards(WsGuard)
