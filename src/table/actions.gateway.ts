@@ -66,7 +66,10 @@ export class ActionsGateway {
       const player = await this.userService.getPlayerRelations(user.player.id);
       const game = await this.gameService.getGameWithrelations(user.player.game.id);
       await this.actionsService.requestSwap(player, game,  targetName);
-      this.wss.to(user.lobby.id.toString()).emit('swapDispute', player.character.name, targetName);
+      this.wss.to(user.lobby.id.toString()).emit('swapDispute', {
+        aggressorName: player.character.name, 
+        victimName: targetName
+      });
   }
 
   @UseGuards(WsGuard)
