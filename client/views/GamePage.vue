@@ -29,9 +29,16 @@
         <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap"/>
       </div>
     </div>
+    <ModalPopup 
+      v-show="isModalVisible"
+      :modalMessage="modalMessage"
+      @popup:confirmed="ConfirmRequest"
+      @popup:declined="DeclineRequest"/>
+    <button type="submit" @click="CreateRequest('123')" class="btn">req</button>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import CardSelector from '../src/components/CardSelector.vue';
 import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
@@ -49,7 +56,7 @@ import { MessageType } from '../src/interfaces/message';
 import { Events } from '../src/interfaces/subscription';
 import { PopupOption } from '../src/interfaces/game';
 import { SocketKey } from '../src/utils/socket.extension';
-import ActionPopup from '../src/components/ActionPopup.vue';
+import ModalPopup from '../src/components/ModalPopup.vue';
 
 const gameStore = useGameStore();
 const mainStore = useMainStore();
@@ -68,6 +75,7 @@ const OpenSupply = (supplyName:string, uuid:string) => {
   gameStore.clearHighlight();
 }
 const SelectTarget = (targetName:string) => {
+  //if phase
   const data = {
     supplyName: gameStore.highlightedCardName as string,
     target: targetName as string,
@@ -77,22 +85,39 @@ const SelectTarget = (targetName:string) => {
   gameStore.clearHighlight();
 }
 const PickSupply = (selectedCard) => {
+  //if phase
   chosenToPickCard=selectedCard;
   console.log('card selected', selectedCard);
   socket.sendMessage(MessageType.PickSupply, selectedCard.name);
   gameStore.clearPick();
 }
 const CharSwap = () => {
+  //if phase
   console.log('swap with', gameStore.highlightedCardName);
   socket.sendMessage(MessageType.SwapPlaces, gameStore.highlightedCardName);
   gameStore.clearHighlight();
 }
 const DemandCard = () => {
+  //if phase
   console.log('demand card', gameStore.highlightedCardName, 'from', gameStore.highlightedCardOwner);
   socket.sendMessage(MessageType.DemandSupply,  {targetName: gameStore.highlightedCardOwner, supplyName: gameStore.highlightedCardName});
   gameStore.clearHighlight();
 }
-
+const modalMessage = ref('')
+const isModalVisible = ref(false);
+const CreateRequest = (requetsText: string) => {
+  modalMessage.value = requetsText;
+  isModalVisible.value = true;
+  console.log(modalMessage.value, isModalVisible.value);
+}
+const ConfirmRequest = () => {
+  console.log('request confirmed');
+  isModalVisible.value = false;
+}
+const DeclineRequest = () => {
+  console.log('request denied');
+  isModalVisible.value = false;
+}
 const supplies = [] as Supply[];
 for (var i = 1; i<=13; i++) {
  supplies.push({

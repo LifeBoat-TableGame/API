@@ -1,9 +1,9 @@
 <template>
     <div class=" grid grid-rows-3 grid-flow-col auto-rows-fr justify-center items-center">
+        <ActionPopup v-show=popupActive :options="options" @option:chosen="doAction" class="pb-[-1rem]"></ActionPopup>
         <CharacterCard class=" row-start-2 text-center border-highlight" v-for="item in sortedCharacters" :character="item.character"  
         @char:targeted="TargetChar">
         </CharacterCard>
-        <ActionPopup v-show=popupActive :options="options" @option:chosen="doAction"></ActionPopup>
     </div>
 </template>
 

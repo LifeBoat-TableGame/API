@@ -43,8 +43,9 @@ emit('card:selected', cardName)
   absolute
   flex
   flex-nowrap
-  overflow-scroll
   rounded-sm
+  justify-center
+  items-center
 }
 </style>
 
