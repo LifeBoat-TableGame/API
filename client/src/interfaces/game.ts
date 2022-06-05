@@ -7,6 +7,7 @@ export interface Player {
     closedAmount: number;
     closedCards: Supply[];
     openCards: Supply[];
+    fighter: FightRole,
     damage: number;
     rowed: boolean;
     fought: boolean;
@@ -40,6 +41,11 @@ export interface CharacterQueue {
 enum GameState {
     Supplies = 1,
     Regular = 2
+};
+enum FightRole {
+    Atacker = 'Atacker',
+    Defender = 'Defender',
+    Neutral = 'Neutral'
 };
 export interface Game {
     players: Player[];

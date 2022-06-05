@@ -13,6 +13,15 @@ export type SubscriptionArguments =  {
         username: string, 
         lobby: number
     },
+    [Events.SwapDispute]: {
+        aggressorName: string, 
+        victimName: string
+    },
+    [Events.DemandDispute]: {
+        aggressorName: string, 
+        victimName: string,
+        supply: string
+    },
     [Events.ChooseNavigation]: any,
     [Events.CardsToChoose]: Supply[],
     [Events.ShowChosenNavigation]: any,
@@ -30,4 +39,6 @@ export enum Events {
     ChooseNavigation = "chooseNavigation",
     CardsToChoose = "toChoose",
     ShowChosenNavigation = "shownChosenNavigation",
+    SwapDispute = "swapDispute",
+    DemandDispute = "demandDispute",
 }

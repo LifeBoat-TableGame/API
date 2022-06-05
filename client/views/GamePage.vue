@@ -103,21 +103,34 @@ const DemandCard = () => {
   socket.sendMessage(MessageType.DemandSupply,  {targetName: gameStore.highlightedCardOwner, supplyName: gameStore.highlightedCardName});
   gameStore.clearHighlight();
 }
+
 const modalMessage = ref('')
 const isModalVisible = ref(false);
 const CreateRequest = (requetsText: string) => {
   modalMessage.value = requetsText;
   isModalVisible.value = true;
-  console.log(modalMessage.value, isModalVisible.value);
 }
 const ConfirmRequest = () => {
-  console.log('request confirmed');
+  console.log('request accepted');
+  socket.sendMessage(MessageType.AcceptDispute);
   isModalVisible.value = false;
 }
 const DeclineRequest = () => {
   console.log('request denied');
+  socket.sendMessage(MessageType.DeclineDispute);
   isModalVisible.value = false;
 }
+socket.subscribeToEvent(Events.SwapDispute, (res) => {
+  if (res.victimName == gameStore.playerSelf.character.name) {
+    CreateRequest(res.aggressorName + ' требует поменяться с вами местами! Согласиться?')
+  }
+});
+socket.subscribeToEvent(Events.DemandDispute, (res) => {
+  if (res.victimName == gameStore.playerSelf.character.name) {
+    CreateRequest(res.aggressorName + ' требует от вас ' + res.supply + '! Согласиться?')
+  }
+});
+
 const supplies = [] as Supply[];
 for (var i = 1; i<=13; i++) {
  supplies.push({
