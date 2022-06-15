@@ -275,11 +275,34 @@ export class ActionsService {
         if(game.seagulls >= 4){
             //game ended
         }
-        nav.charactersOverboard.forEach(character => {
+        for (const character of nav.charactersOverboard){
             let overBoard = game.players.find(player => player.character.name == character.name);
-            if (overBoard.openCards.find(supply => supply.name == "Спасательный круг")){
+            let lifebuoy = overBoard.openCards.find(supply => supply.name == "Спасательный круг")
+            if (lifebuoy){
                 overBoard.openCards.splice(0, overBoard.openCards.length);
+                overBoard.openCards.push(lifebuoy);
+            } else {
+                overBoard.openCards.splice(0, overBoard.openCards.length);
+                overBoard.damage++;
             }
-        });
+            await this.playerRepository.save(overBoard);
+        }
+        for (const character of nav.charactersThirst){
+            let affected = game.players.find(player => player.character.name == character.name);
+            affected.thirst++;
+            await this.playerRepository.save(affected);
+        }
+        if (nav.fight || nav.oar){
+            for(const player of game.players){
+                if (player.fought && nav.fight){
+                    player.thirst++;
+                }
+                if (player.rowed && nav.oar){
+                    player.thirst++;
+                }
+                await this.playerRepository.save(player);
+            }
+        }
+        await this.gameService.updateGameState(game, GameState.NavigationPicked);
     }
 }

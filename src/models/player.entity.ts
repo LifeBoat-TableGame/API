@@ -61,4 +61,7 @@ export class Player {
     @Column({default: 0})
     thirst: number;
 
+    @Column({default: 0})
+    score: number;
+
 }
