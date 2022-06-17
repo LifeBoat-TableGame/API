@@ -168,6 +168,11 @@ export class ActionsGateway {
     }
     const player = await this.userService.getPlayerRelations(user.player.id);
     const game = await this.gameService.getGameWithrelations(player.game.id);
+    const nav = game.chosenNavigationDeck.find(nav => nav.navigationId == navigationId);
+    if (!nav){
+        throw new WsException('No such navigation in chosen navigation deck');
+    };
+    await this.actionsService.resolveNavigation(game, navigationId);
     
 
   }
