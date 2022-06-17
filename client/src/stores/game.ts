@@ -38,10 +38,14 @@ export const useGameStore = defineStore("gameStoreID", {
         },
         setGame(game: Game) {
             this.game = game;
+            this.game.players.forEach(player => {
+                player.character.fighter = player.fighter;
+            });
             console.log('Game Object', game);  
         },
         setPlayer(player: Player) {
             this.playerSelf = player;
+            this.playerSelf.character.fighter = this.playerSelf.fighter;
             console.log('Player Object', player);
         }
     }

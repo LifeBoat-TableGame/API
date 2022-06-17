@@ -18,6 +18,7 @@ export interface Character {
     strength: number;
     survival: number;
     description: string;
+    fighter: FightRole,
     defaultOrder: number;
 };
 export interface PopupOption {
