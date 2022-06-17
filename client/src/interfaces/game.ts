@@ -38,11 +38,15 @@ export interface CharacterQueue {
     order: number;
     character: Character;
 };
-enum GameState {
+export enum GameState {
     Supplies = 1,
-    Regular = 2
+    Regular = 2,
+    Dispute = 3,
+    Fight = 4,
+    Picking = 5,
+    NavigationPicked = 6
 };
-enum FightRole {
+export enum FightRole {
     Atacker = 'Atacker',
     Defender = 'Defender',
     Neutral = 'Neutral'

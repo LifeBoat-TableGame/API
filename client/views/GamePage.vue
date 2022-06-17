@@ -26,7 +26,7 @@
       </div>
       <div class="boat-field bg-deep-red">
         <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" />
-        <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap"/>
+        <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap" @takeSide="TakeSide"/>
       </div>
     </div>
     <ModalPopup 
@@ -101,6 +101,11 @@ const DemandCard = () => {
   //if phase
   console.log('demand card', gameStore.highlightedCardName, 'from', gameStore.highlightedCardOwner);
   socket.sendMessage(MessageType.DemandSupply,  {targetName: gameStore.highlightedCardOwner, supplyName: gameStore.highlightedCardName});
+  gameStore.clearHighlight();
+}
+const TakeSide = (side) => {
+  console.log('fighting as', side);
+  socket.sendMessage(MessageType.TakeSide, side);
   gameStore.clearHighlight();
 }
 
