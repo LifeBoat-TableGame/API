@@ -9,8 +9,8 @@
 
     :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/16 + 'rem', lineHeight:props.h/12, borderRadius:props.h/16+'rem'}]"
     @click="useCard()">
-    <div>{{props.supply.name}}</div>
-    <!--img :src="'../assets/cards/'+props.supply.name+'.jpg'"-->
+    <div>{{props.item.name}}</div>
+    <!--img :src="'../assets/cards/'+props.item.name+'.jpg'"-->
   </div>
 </template>
 
@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
-import { Supply } from '../interfaces/game';
+import { Supply, Nav } from '../interfaces/game';
 import { useGameStore } from '../stores/game';
 const title = 'ActiveRoomMenu';
 const gameStore = useGameStore();
@@ -59,7 +59,7 @@ const shifts = [
 
 const uuid = mainStore.getUUID();
 const props = defineProps<{
-  supply: Supply,
+  item: Supply | Nav,
   tilted: boolean,
   playable: boolean,
   posFromMiddle: number,
@@ -72,7 +72,7 @@ const emit = defineEmits(['card:clicked'])
 const startIndex = 7 + props.posFromMiddle
 const useCard = () => {
   if(props.playable) {
-    emit('card:clicked', props.supply.name, uuid);
+    emit('card:clicked', props.item.name, uuid);
   }
 }
 </script>

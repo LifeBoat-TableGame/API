@@ -1,12 +1,17 @@
 <template>
     <div class=" grid grid-rows-3 grid-flow-col auto-rows-fr justify-center items-center">
         <ActionPopup v-show=popupActive :options="options" @option:chosen="doAction" class="pb-[-1rem]"></ActionPopup>
-        <div>
+        <div class="row-start-2 vertical-container" v-if="gameStore.game?.state==GameState.Fight">
             <button type="submit" @click="TakeSide(FightRole.Atacker)" class="btn bg-main-red">Встать на сторону</button>
-            <button type="submit" @click="TakeSide(FightRole.Neutral)" class="btn bg-main-blue">Не Встревать</button>
+            <button type="submit" @click="TakeSide(FightRole.Neutral)" class="btn bg-light-blue">Не Встревать</button>
             <button type="submit" @click="TakeSide(FightRole.Defender)" class="btn bg-olive-400">Встать на сторону</button>
         </div>
-        <CharacterCard class=" row-start-2 text-center border-highlight" :class="['row-start-2', 'text-center', 'border-highlight']" v-for="item in sortedCharacters" :character="item.character"  
+        <CharacterCard :class="['row-start-2', 'text-center', 'border-highlight', 
+        gameStore.getFightRoleByChar(item.character.name) == FightRole.Atacker ? 'outline-y-5 outline outline-main-red':'', 
+        gameStore.getFightRoleByChar(item.character.name) == FightRole.Defender ? 'outline-y-5 outline outline-olive-400':'',
+        ]"
+        v-for="item in sortedCharacters"
+        :character="item.character"
         @char:targeted="TargetChar">
         </CharacterCard>
     </div>
@@ -26,7 +31,6 @@ const props = defineProps({
     }
 });
 
-
 const gameStore = useGameStore();
 const emit = defineEmits(['char:targeted', 'char:swap', 'takeSide'])
 const TargetChar = (charName: string) => {
@@ -40,6 +44,7 @@ const doAction = (optionName:string) => {
     if(optionName='swap') {
         emit('char:swap');
     }
+
 }
 const TakeSide = (side:FightRole) => {
     emit('takeSide', side);

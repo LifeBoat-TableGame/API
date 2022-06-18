@@ -3,7 +3,7 @@
       <Card v-for="(supply, index) in supplies" 
       :key="supply.name" 
       :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 
-      :supply=supply 
+      :item=supply 
       :tilted="tilted"
       :style="[index!=0 ? {marginLeft: overlapVal + 'rem' } : {marginLeft: -1.2 + 'rem' }]"
       :w="cardW"
@@ -23,7 +23,6 @@ import { useGameStore } from '../stores/game';
 import { Supply } from '../interfaces/game';
 import Card from './Card.vue';
 import { computed } from '@vue/reactivity';
-import { placeholder } from '@babel/types';
 const title = 'ActiveRoomMenu';
 const mainStore = useMainStore();
 const roomStore = useRoomStore();

@@ -18,7 +18,6 @@ export interface Character {
     strength: number;
     survival: number;
     description: string;
-    fighter: FightRole,
     defaultOrder: number;
 };
 export interface PopupOption {
@@ -32,6 +31,10 @@ export interface Supply {
     bonus: number | null;
     description: string;
     amount: number;
+};
+export interface Nav {
+    name: string;
+    description: string;
 };
 export interface CharacterQueue {
     gameId: number;

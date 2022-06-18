@@ -23,6 +23,7 @@ const props = defineProps({
         required: true
     }
 });
+
 const characterCardPlayed = () => {
     if (gameStore.highlightedCardType=='open'){
         emit('char:targeted', props.character.name);

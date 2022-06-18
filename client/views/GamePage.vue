@@ -26,7 +26,9 @@
       </div>
       <div class="boat-field bg-deep-red">
         <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" />
+        <NavSelector :navs="gameStore.navsToPick" :cardH="15" :cardW="10" v-if=(navSelectorActive) @card:selected="PickNav" />
         <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap" @takeSide="TakeSide"/>
+        <button class="btn" @click="AddNav">Грести</button>
       </div>
     </div>
     <ModalPopup 
@@ -39,6 +41,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import NavSelector from '../src/components/NavSelector.vue';
 import CardSelector from '../src/components/CardSelector.vue';
 import { useMainStore } from '../src/stores/main';
 import router from '../src/router';
@@ -46,36 +49,35 @@ import Timer from '../src/components/Timer.vue';
 import SeagullsBoard from '../src/components/SeagullsBoard.vue';
 import PlayerProfile from '../src/components/PlayerProfile.vue';
 import Hand from '../src/components/Hand.vue'
-import { Supply } from '../src/interfaces/game';
+import { Supply, FightRole } from '../src/interfaces/game';
 import Boat from '../src/components/Boat.vue';
-import { CharacterQueue } from '../src/interfaces/game';
 import { computed } from '@vue/reactivity';
 import { useGameStore } from '../src/stores/game';
 import { inject, onBeforeMount, watch } from 'vue';
 import { MessageType } from '../src/interfaces/message';
 import { Events } from '../src/interfaces/subscription';
-import { PopupOption } from '../src/interfaces/game';
 import { SocketKey } from '../src/utils/socket.extension';
 import ModalPopup from '../src/components/ModalPopup.vue';
 
 const gameStore = useGameStore();
 const mainStore = useMainStore();
 const socket = inject(SocketKey);
+let chosenToPickCard = null;
+
 if(socket == undefined)
   throw new Error("Connection dropped");
 const supplySelectorActive = computed(() => {
   return gameStore.suppliesToPick.length>0;
 });
-
-let chosenToPickCard = null;
-let supplyToUse = null;
+const navSelectorActive = computed(() => {
+  return gameStore.navsToPick.length>0;
+});
 const OpenSupply = (supplyName:string, uuid:string) => {
   console.log('opening supply', supplyName);
   socket.sendMessage(MessageType.OpenSupply, supplyName);
   gameStore.clearHighlight();
 }
 const SelectTarget = (targetName:string) => {
-  //if phase
   const data = {
     supplyName: gameStore.highlightedCardName as string,
     target: targetName as string,
@@ -91,6 +93,20 @@ const PickSupply = (selectedCard) => {
   socket.sendMessage(MessageType.PickSupply, selectedCard.name);
   gameStore.clearPick();
 }
+const PickNav = (selectedCard) => {
+  //if phase
+  chosenToPickCard=selectedCard;
+  console.log('nav selected', selectedCard);
+  socket.sendMessage(MessageType.PickNavigation, selectedCard.name);
+  gameStore.clearNavPick();
+}
+// const AddNav = () => {
+//   //if phase
+//   console.log('adding nav');
+//   socket.sendMessage(MessageType.nav, selectedCard.name);
+//   gameStore.clearNavPick();
+// }
+
 const CharSwap = () => {
   //if phase
   console.log('swap with', gameStore.highlightedCardName);
@@ -126,12 +142,12 @@ const DeclineRequest = () => {
   isModalVisible.value = false;
 }
 socket.subscribeToEvent(Events.SwapDispute, (res) => {
-  if (res.victimName == gameStore.playerSelf.character.name) {
+  if (res.victimName == gameStore.playerSelf?.character.name) {
     CreateRequest(res.aggressorName + ' требует поменяться с вами местами! Согласиться?')
   }
 });
 socket.subscribeToEvent(Events.DemandDispute, (res) => {
-  if (res.victimName == gameStore.playerSelf.character.name) {
+  if (res.victimName == gameStore.playerSelf?.character.name) {
     CreateRequest(res.aggressorName + ' требует от вас ' + res.supply + '! Согласиться?')
   }
 });
@@ -155,18 +171,42 @@ const components = {
   PlayerProfile
 };
 const otherPlayers = computed(() => {
+  if (!gameStore.game) return []
   return gameStore.game.players.filter(function (u) {
-    return u.id != gameStore.playerSelf.id;
+    return u.id != gameStore.playerSelf?.id;
   })
 });
 const queue = computed(() => {
   return gameStore.game.queue;
 });
 const seagulls = computed(() => {
+  if (!gameStore.game) return 0
   return gameStore.game.seagulls;
 });
 const phase = computed(() => {
-  return gameStore.game.state;
+  switch(gameStore.game?.state) {
+    case 1: { 
+        return 'Supplies';
+    } 
+    case 2: { 
+        return 'Regular';
+    } 
+    case 3: { 
+        return 'Dispute';
+    } 
+    case 4: { 
+        return 'Fight';
+    } 
+    case 5: { 
+        return 'Picking';
+    } 
+    case 6: { 
+        return 'NavigationPicked';
+    } 
+    default: { 
+        return 'State_Error'
+    }
+  }
 });
 
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')

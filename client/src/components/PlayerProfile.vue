@@ -12,7 +12,6 @@
 
 <script lang="ts" setup>
     import ClosedHand from './ClosedHand.vue';
-    import Card from './Card.vue';
     import { PropType } from 'vue';
     import { Supply } from '../interfaces/game';
     import { ref, computed } from 'vue'

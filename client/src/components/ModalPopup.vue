@@ -39,14 +39,14 @@
               @click="confirm"
               class="btn"
             >
-              Нет
+              Да
             </button>
             <button
               type="button"
               @click="close"
               class="btn"
               >
-              Да
+              Нет
             </button>
           </div>
         </div>
@@ -60,9 +60,9 @@ const props = defineProps<{
   modalMessage: string,
 }>();
 const emit = defineEmits(['popup:confirmed', 'popup:declined'])
-const confirm = () => {emit("popup:declined");
+const confirm = () => {emit("popup:confirmed");
 } 
 const close = () => {
-    emit("popup:confirmed");
+    emit("popup:declined");
 };
 </script>

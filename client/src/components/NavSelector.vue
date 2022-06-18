@@ -1,14 +1,14 @@
 <template>
   <div class="card-selector">
-      <Card v-for="(supply, index) in supplies" 
+      <Card v-for="(nav, index) in navs" 
       :tilted="false"
-      :key="supply.name" 
-      :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 
-      :item=supply 
+      :key="nav.name" 
+      :posFromMiddle="index-Math.ceil(navs.length/2)+1" 
+      :item=nav 
       :w="cardW"
       :h="cardH"
       :playable="false"
-      @click="cardChosen(supply.name)"
+      @click="cardChosen(nav.name)"
       >
       </Card>
   </div>
@@ -18,7 +18,7 @@
 <script lang="ts" setup>
 import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
-import { Supply } from '../interfaces/game';
+import { Nav } from '../interfaces/game';
 import Card from './Card.vue';
 const title = 'CardSelector';
 const mainStore = useMainStore();
@@ -26,7 +26,7 @@ const roomStore = useRoomStore();
 
 
 const props = defineProps<{
-  supplies: Supply[],
+  navs: Nav[],
   cardH: number,
   cardW: number,
 }>();

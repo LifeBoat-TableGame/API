@@ -1,19 +1,22 @@
+import { randomBytes } from 'crypto';
 import { defineStore } from 'pinia';
-import { Game, Player, Supply } from '../interfaces/game'
-import Card from './Card.vue';
-import { PropType } from 'vue';
+import { Game, Player, Supply, Nav, FightRole } from '../interfaces/game';
 
 export const useGameStore = defineStore("gameStoreID", {
     state: () => ({
         game: undefined as Game | undefined,
         playerSelf: undefined as Player | undefined,
         suppliesToPick: [] as Supply[],
+        navsToPick: [] as Nav[],
         highlightedCardID: '',
         highlightedCardName: '',
         highlightedCardType: '',
         highlightedCardOwner: '',
     }),
     getters: {
+        getFightRoleByChar: (state) => {
+            return (charName: string) => state.game?.players.find((player) => player.character.name == charName)?.fighter
+        },
     },
     actions: {
         changeHighlight(newUUID: string, type:string, name:string, owner:string) {
@@ -33,19 +36,22 @@ export const useGameStore = defineStore("gameStoreID", {
             this.suppliesToPick = supplies;
             console.log('picking supply', this.suppliesToPick);
         },
+        setNavPick(navs: Supply[]) {
+            this.navsToPick = navs;
+            console.log('picking supply', this.navsToPick);
+        },
         clearPick() {
+            this.suppliesToPick = [];
+        },
+        clearNavPick() {
             this.suppliesToPick = [];
         },
         setGame(game: Game) {
             this.game = game;
-            this.game.players.forEach(player => {
-                player.character.fighter = player.fighter;
-            });
             console.log('Game Object', game);  
         },
         setPlayer(player: Player) {
             this.playerSelf = player;
-            this.playerSelf.character.fighter = this.playerSelf.fighter;
             console.log('Player Object', player);
         }
     }

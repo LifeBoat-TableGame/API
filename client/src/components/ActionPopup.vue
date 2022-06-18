@@ -1,7 +1,7 @@
 
 <template>
-  <div class="bg-light-blue vertical-container ">
-        <li v-for="option of props.options" :key="option.name" v-on:click="emitOption(option.name)" class="horisontal-container game-element">
+  <div class="vertical-container bg-light-light-blue rounded-md text-lg noselect">
+        <li v-for="option of props.options" :key="option.name" v-on:click="emitOption(option.name)" class="horisontal-container game-element rounded-md ">
             <div class="p-3">{{ option.text }}</div>
         </li>
   </div>

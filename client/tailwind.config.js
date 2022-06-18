@@ -5,6 +5,9 @@ module.exports = {
         'outline-double',
         'outline-4',
         'outline-olive-400',
+        'outline-y-5',
+        'outline-main-red',
+        'outline-olive-400'
     ],
     theme: {
         colors: {
