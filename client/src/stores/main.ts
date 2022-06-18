@@ -83,6 +83,9 @@ export const useMainStore: any = defineStore("mainStoreID", {
     showChosenNavigation(){
       this.socket.emit('showChosenNavigation');
     },
+    pickChosenNavigation(navigationId: number){
+      this.socket.emit('pickChosenNavigation', navigationId);
+    },
     swapWith(target: string) {
       this.socket.emit('swap', target);
     },
