@@ -24,7 +24,6 @@ export const useGameStore = defineStore("gameStoreID", {
             this.highlightedCardID = newUUID;
             this.highlightedCardType = type;
             this.highlightedCardOwner = owner;
-            console.log(this.highlightedCardName, this.highlightedCardType, this.highlightedCardOwner);
         },
         clearHighlight() {
             this.highlightedCardName = '';
@@ -38,7 +37,7 @@ export const useGameStore = defineStore("gameStoreID", {
         },
         setNavPick(navs: Supply[]) {
             this.navsToPick = navs;
-            console.log('picking supply', this.navsToPick);
+            console.log('picking nav', this.navsToPick);
         },
         clearPick() {
             this.suppliesToPick = [];
@@ -48,11 +47,11 @@ export const useGameStore = defineStore("gameStoreID", {
         },
         setGame(game: Game) {
             this.game = game;
-            console.log('Game Object', game);  
+            console.log('New Game Object:', game);  
         },
         setPlayer(player: Player) {
             this.playerSelf = player;
-            console.log('Player Object', player);
+            console.log('New Player Object:', player);
         }
     }
 });
