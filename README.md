@@ -39,46 +39,46 @@ $ npm run test:cov
 
 ```
 # get token
-socket.emit('register');
+'register';
 
 # change username
-socket.emit('rename', newName);
+'rename', newName: string
 
 # create new room
-socket.emit('createRoom', name: string);
+'createRoom', name: string
 
 # join existing room
-socket.emit('joinRoom', roomId, password);
-socket.emit('joinRoom', roomId);
+'joinRoom', roomId: number
 
 # leave room
-socket.emit('leaveRoom', roomId);
+'leaveRoom', roomId: number;
 
 # get room list
-socket.emit('getRooms');
+'getRooms';
 
 # start a game
-socket.emit('create');
+'create';
 
 # get game object of current game
-socket.emit('getGameInfo');
+'getGameInfo';
 
 # get player object of yourself
-socket.emit('getPlayerInfo');
+'getPlayerInfo';
 ```
 
 ## Websocket client events
 
 ```
 # token registered
-socket.on('registered', (token: string) => {});
+'registered', token: string;
 
 # username changed
-socket.on('UserUpdated', () => {});
+'UserUpdated';
 
 # room list updated
-socket.on('updateRooms', (rooms: Room[]) => {});
-
+'updateRooms', rooms: Room[];
+# room list info
+'Rooms', rooms: Room[];
 Room {
   id: number;
   name: string;
@@ -86,15 +86,11 @@ Room {
   limit: number;
 }
 
-# room list info
-socket.on('Rooms', (rooms: Room[]) => {});
-
 # game started
-socket.on('gameStarted', () => {});
+'gameStarted';
 
 # game information
-socket.on('gameInfo', (game: Game) => {});
-
+'gameInfo', game: Game;
 Game {
   players: Player[];
   queue: CharacterQueue[];
@@ -103,7 +99,6 @@ Game {
   currentCharacterIndex: number;
   seagulls: number;
 }
-
 CharacterQueue {
   gameId: number;
   characterName: string;
@@ -118,8 +113,7 @@ GameState {
 }
 
 # player information
-socket.on('playerInfo', (player: Player) => {});
-
+'playerInfo', player: Player;
 #self
 Player {
   id: number;
@@ -144,7 +138,6 @@ Player {
   fought: boolean;
   thirst: boolean;
 }
-
 Character {
   name: string;
   strengh: number;
@@ -152,7 +145,6 @@ Character {
   description: string;
   defaultOrder: number;
 }
-
 Supply {
   name: string;
   strength: number | null;
@@ -161,6 +153,6 @@ Supply {
   amount: number;
 }
 # supplies to pick one from
-socket.on('toChoose', (supplies: Supply[]) => {});
+'toChoose', supplies: Supply[];
 ```
 
