@@ -1,8 +1,8 @@
 <template>
-  <div class="box vertical-container bg-light-blue mr-4 basis-1/4">
+  <div class="box vertical-container bg-light-blue mr-4 basis-1/4 noselect">
     <h1 >{{ title }}</h1>
-    <ul class="bg-light-blue overflow-auto w-full h-72">
-      <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)" class="horisontal-container">
+    <ul class="bg-light-blue overflow-auto w-full h-72  divide-y divide-main-blue">
+      <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)" class="ineractive-box horisontal-container">
         <div class="pr-3">{{ room.name }}</div>
         <div class="pl-3">{{ room.usersCount }}/{{ room.limit }}</div>
       </li>

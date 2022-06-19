@@ -26,7 +26,13 @@
         @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
     }
     .btn:hover {
-        @apply bg-olive-200 m-1 mt-3 rounded-md p-1 text-lg
+        @apply bg-olive-200
+    }
+    .ineractive-box {
+        @apply bg-light-blue text-lg
+    }
+    .ineractive-box:hover {
+        @apply bg-light-light-blue
     }
     .vertical-container {
         @apply flex flex-col items-center justify-center

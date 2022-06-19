@@ -1,6 +1,6 @@
 <template>
   <div class="bg-light-blue box vertical-container">
-    <h1>{{ title }}</h1>
+    <h1 class="noselect">{{ title }}</h1>
     <input v-model="roomData.roomName" type="text" class="small-field"/> <br>
     <input v-model="roomData.password" type="text" class="small-field"/> <br>
     <button type="submit" @click="createRoom" class="btn">Создать</button>

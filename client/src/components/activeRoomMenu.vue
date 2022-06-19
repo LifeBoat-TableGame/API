@@ -1,6 +1,6 @@
 
 <template>
-  <div class="bg-light-blue vertical-container ">
+  <div class="bg-light-blue vertical-container noselect">
     <div>{{ roomStore.rooms.find(x => x.id == mainStore.activeRoomId)?.name }}</div>
     <div>
       {{ roomStore.rooms.find(x => x.id == mainStore.activeRoomId)?.usersCount }}
