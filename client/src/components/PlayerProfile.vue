@@ -1,7 +1,11 @@
 <template>
     <h1>{{ name }}</h1>
     <div class="flex flex-row gap-2">
-        <img class=" rounded-full border-highlight w-20 h-20"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
+        <img :class="['rounded-full', 'border-highlight', 'w-20', 'h-20', 
+        gameStore.playerSelf?.friendship.name == props.name ? 'ring-2 ring-olive-900' : '',
+        gameStore.playerSelf?.enemy.name == props.name ? 'ring-2 ring-deep-red' : '',
+        ]"  
+        src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
         <ClosedHand :amount="closedSuppliesAmount" />
         <Hand :supplies="openSupplies" :owner="props.name" :type="'others'" :cardH="4.2" :cardW="2.8" :tilted="false" :playable="true" :handW="12" 
         @card:selected=""

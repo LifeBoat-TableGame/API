@@ -1,21 +1,33 @@
 import { randomBytes } from 'crypto';
 import { defineStore } from 'pinia';
-import { Game, Player, Supply, Nav, FightRole } from '../interfaces/game';
+import { Game, Player, Supply, Navigation, FightRole, GameState } from '../interfaces/game';
 
 export const useGameStore = defineStore("gameStoreID", {
     state: () => ({
-        game: undefined as Game | undefined,
-        playerSelf: undefined as Player | undefined,
+        game: {} as Game,
+        playerSelf: {} as Player,
         suppliesToPick: [] as Supply[],
-        navsToPick: [] as Nav[],
+        navsToPick: [] as Navigation[],
         highlightedCardID: '',
         highlightedCardName: '',
         highlightedCardType: '',
         highlightedCardOwner: '',
+        sideChosen: false,
     }),
     getters: {
         getFightRoleByChar: (state) => {
             return (charName: string) => state.game?.players.find((player) => player.character.name == charName)?.fighter
+        },
+        getCurrentChar: (state) => {
+            try {
+                const name = state.game.queue[state.game.currentCharacterIndex].character.name;
+                return name;
+              } catch (e) {
+                return 'nooneIG'
+              }
+        },
+        getPlayerByChar: (state) => {
+            return (charName: string) => state.game?.players.find((player) => player.character.name == charName)
         },
     },
     actions: {
@@ -35,7 +47,7 @@ export const useGameStore = defineStore("gameStoreID", {
             this.suppliesToPick = supplies;
             console.log('picking supply', this.suppliesToPick);
         },
-        setNavPick(navs: Supply[]) {
+        setNavPick(navs: Navigation[]) {
             this.navsToPick = navs;
             console.log('picking nav', this.navsToPick);
         },
@@ -43,15 +55,17 @@ export const useGameStore = defineStore("gameStoreID", {
             this.suppliesToPick = [];
         },
         clearNavPick() {
-            this.suppliesToPick = [];
+            this.navsToPick = [];
         },
-        setGame(game: Game) {
-            this.game = game;
-            console.log('New Game Object:', game);  
+        setGame(game: any) {
+            if (this.game != game)
+                this.game = game;
+            if (game.state != GameState.Fight) this.sideChosen = false;
         },
         setPlayer(player: Player) {
-            this.playerSelf = player;
-            console.log('New Player Object:', player);
+            if (this.playerSelf != player)
+                this.playerSelf = player;
+            if (player.fighter!=FightRole.Neutral) this.sideChosen = true;
         }
     }
 });

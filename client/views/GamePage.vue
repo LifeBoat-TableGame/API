@@ -1,5 +1,5 @@
 <template>
-    <div class=" fixed bg-main-blue w-full">game page</div>
+    <!--div class=" fixed bg-main-blue w-full">game page</div-->
     <div class="game-grid">
       <div class="players-field top-row bg-olive-400">
         <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :openSupplies="player.openCards" :closedSuppliesAmount="player.closedAmount" @card:demand="DemandCard"/>
@@ -21,14 +21,14 @@
       <div class="self-hand bg-light-red">
         <Hand :supplies="gameStore.playerSelf.closedCards" :type="'closed'" :owner="gameStore.playerSelf.character.name" :cardH="9" :cardW="6" :handW="30" :tilted="true" :playable="true" class="m-1" @card:selected="OpenSupply"/>
       </div>
-      <div class="self-icon bg-grey-bg">
+      <div class="self-icon bg-grey-bg vertical-container">
+        <div class="text-lg">{{gameStore.playerSelf?.character.name}}</div>
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
       <div class="boat-field bg-deep-red">
         <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" />
         <NavSelector :navs="gameStore.navsToPick" :cardH="15" :cardW="10" v-if=(navSelectorActive) @card:selected="PickNav" />
-        <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap" @takeSide="TakeSide"/>
-        <button class="btn" @click="AddNav">Грести</button>
+        <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap" @takeSide="TakeSide" @nav:clicked="AddNav"/>
       </div>
     </div>
     <ModalPopup 
@@ -36,11 +36,11 @@
       :modalMessage="modalMessage"
       @popup:confirmed="ConfirmRequest"
       @popup:declined="DeclineRequest"/>
-    <button type="submit" @click="CreateRequest('123')" class="btn">req</button>
+      <button class="btn" @click="PrintData">data</button>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onBeforeUnmount, ref } from 'vue';
 import NavSelector from '../src/components/NavSelector.vue';
 import CardSelector from '../src/components/CardSelector.vue';
 import { useMainStore } from '../src/stores/main';
@@ -49,7 +49,7 @@ import Timer from '../src/components/Timer.vue';
 import SeagullsBoard from '../src/components/SeagullsBoard.vue';
 import PlayerProfile from '../src/components/PlayerProfile.vue';
 import Hand from '../src/components/Hand.vue'
-import { Supply, FightRole } from '../src/interfaces/game';
+import { Supply } from '../src/interfaces/game';
 import Boat from '../src/components/Boat.vue';
 import { computed } from '@vue/reactivity';
 import { useGameStore } from '../src/stores/game';
@@ -62,7 +62,6 @@ import ModalPopup from '../src/components/ModalPopup.vue';
 const gameStore = useGameStore();
 const mainStore = useMainStore();
 const socket = inject(SocketKey);
-let chosenToPickCard = null;
 
 if(socket == undefined)
   throw new Error("Connection dropped");
@@ -74,8 +73,17 @@ const navSelectorActive = computed(() => {
 });
 const OpenSupply = (supplyName:string, uuid:string) => {
   console.log('opening supply', supplyName);
-  socket.sendMessage(MessageType.OpenSupply, supplyName);
-  gameStore.clearHighlight();
+  if(supplyName == "Зонтик") {
+    const data = {
+      supplyName: gameStore.highlightedCardName as string,
+      target: gameStore.playerSelf?.character.name as string,
+    }
+    socket.sendMessage(MessageType.UseSupply, data)
+  }
+  else {
+    socket.sendMessage(MessageType.OpenSupply, supplyName);
+    gameStore.clearHighlight();
+  }
 }
 const SelectTarget = (targetName:string) => {
   const data = {
@@ -88,25 +96,23 @@ const SelectTarget = (targetName:string) => {
 }
 const PickSupply = (selectedCard) => {
   //if phase
-  chosenToPickCard=selectedCard;
   console.log('card selected', selectedCard);
-  socket.sendMessage(MessageType.PickSupply, selectedCard.name);
+  socket.sendMessage(MessageType.PickSupply, selectedCard);
   gameStore.clearPick();
 }
 const PickNav = (selectedCard) => {
   //if phase
-  chosenToPickCard=selectedCard;
   console.log('nav selected', selectedCard);
-  socket.sendMessage(MessageType.PickNavigation, selectedCard.name);
+  socket.sendMessage(MessageType.PickNavigation, selectedCard);
   gameStore.clearNavPick();
 }
-// const AddNav = () => {
-//   //if phase
-//   console.log('adding nav');
-//   socket.sendMessage(MessageType.nav, selectedCard.name);
-//   gameStore.clearNavPick();
-// }
 
+const AddNav = () => {
+  //if phase
+  console.log('adding nav');
+  socket.sendMessage(MessageType.Row);
+  gameStore.clearNavPick();
+}
 const CharSwap = () => {
   //if phase
   console.log('swap with', gameStore.highlightedCardName);
@@ -122,6 +128,7 @@ const DemandCard = () => {
 const TakeSide = (side) => {
   console.log('fighting as', side);
   socket.sendMessage(MessageType.TakeSide, side);
+  gameStore.sideChosen = true;
   gameStore.clearHighlight();
 }
 
@@ -209,7 +216,16 @@ const phase = computed(() => {
   }
 });
 
+
+const gameclock = setInterval(() => {
+  socket.sendMessage(MessageType.GetGameInfo);
+  socket.sendMessage(MessageType.GetPlayerInfo);
+}, 500);
+
 console.log('loading ', name, ' with token \'' + mainStore.token + '\'')
+onBeforeUnmount(() => {
+    clearInterval(gameclock);
+});
 onBeforeMount(() => {
   socket.sendMessage(MessageType.GetGameInfo);
   socket.sendMessage(MessageType.GetPlayerInfo);
@@ -217,6 +233,9 @@ onBeforeMount(() => {
 if (mainStore.activeRoomId == 0) {
   console.log('game does not exists, redirecting to main');
   router.push('/');
+}
+const PrintData = () => {
+  console.log(gameStore.game, gameStore.playerSelf);
 }
 </script>
 

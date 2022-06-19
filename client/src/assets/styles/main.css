@@ -20,7 +20,7 @@
                                         supported by Chrome, Edge, Opera and Firefox */
     }
     .game-element {
-        @apply hover:outline-double hover:outline-2 hover:outline-olive-200
+        @apply hover:ring-2 hover:ring-offset-1 hover:ring-olive-200
     }
     .btn {
         @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg

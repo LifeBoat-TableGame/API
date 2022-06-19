@@ -32,14 +32,19 @@ export interface Supply {
     description: string;
     amount: number;
 };
-export interface Nav {
-    name: string;
-    description: string;
+export interface Navigation {
+    id: number
+    charactersOverboard: Character[]
+    seagul: number
+    charactersThirst: Character[]
+    fight: boolean
+    oar: boolean
 };
 export interface CharacterQueue {
     gameId: number;
     characterName: string;
     order: number;
+    newOrder: number;
     character: Character;
 };
 export enum GameState {
@@ -51,8 +56,8 @@ export enum GameState {
     NavigationPicked = 6
 };
 export enum FightRole {
-    Atacker = 'Atacker',
-    Defender = 'Defender',
+    Atacker = 'Atack',
+    Defender = 'Defend',
     Neutral = 'Neutral'
 };
 export interface Game {

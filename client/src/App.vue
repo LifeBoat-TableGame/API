@@ -50,18 +50,16 @@ onMounted(() => {
   });
   socket.subscribeToEvent(Events.ChooseNavigation, (navs: any) => {
     console.log(navs);
+    useGameStore().setNavPick(navs);
   });
   socket.subscribeToEvent(Events.CardsToChoose, (supplies: Supply[]) => {
     console.log(supplies);
     useGameStore().setPick(supplies);
-    console.log(supplies);
   });
   socket.subscribeToEvent(Events.GameInfo, (game: Game) => {
-    console.log('setting game');
     useGameStore().setGame(game);
   });
   socket.subscribeToEvent(Events.PlayerInfo, (player: Player) => {
-    console.log('setting player');
     useGameStore().setPlayer(player);
   });
   socket.subscribeToEvent(Events.ShowChosenNavigation, (navs: any) => {

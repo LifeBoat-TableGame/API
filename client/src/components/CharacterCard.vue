@@ -1,14 +1,20 @@
 <template>
-<div class=" w-32 h-72 border-2 border-x-main-blue rounded-md bg-main-bg flex flex-col noselect game-element" 
-:class="[gameStore.highlightedCardID == uuid ? 'outline-double outline-4 outline-olive-400' : '']"
+<div class=" w-32 h-72 border-2 border-x-main-blue rounded-md flex flex-col noselect game-element" 
+:class="[gameStore.highlightedCardID == uuid ? 'ring-2 ring-olive-200' : '']"
 @click="characterCardPlayed">
     <div>{{props.character.name}}</div>
+    <div class="text-sm text-left">
+        <div>Сила: {{props.character.strength}}</div>
+        <div>Бонус за выживание: {{props.character.survival}}</div>
+        <div class="leading-4"> {{props.character.description}}</div>
+        <div v-for="line of lines" class="text-deep-red"> {{line}} </div>
+    </div>
     <!--img :src="'../assets/cards/'+props.character.name+'.jpg'"-->
 </div>
 </template>
 
 <script lang="ts" setup>
-import {PropType, watch} from 'vue'
+import {PropType, computed} from 'vue'
 import { useGameStore } from '../stores/game';
 import { useMainStore } from '../stores/main';
 import {Character} from '../interfaces/game'
@@ -39,6 +45,39 @@ const characterCardPlayed = () => {
         }
     }
 }
+
+const lines = computed(() => {
+    const lines = [] as string [];
+    if(gameStore.getPlayerByChar(props.character.name)?.fought)
+        lines.push('Дрался')
+    if(gameStore.getPlayerByChar(props.character.name)?.Thirst)
+        lines.push('Жажда')
+    switch(gameStore.getPlayerByChar(props.character.name)?.damage) {
+        case 1: { 
+            lines.push(gameStore.getPlayerByChar(props.character.name)?.damage+'рана');
+            break;
+        } 
+        case 2:
+        case 3:
+        case 4: { 
+            lines.push(gameStore.getPlayerByChar(props.character.name)?.damage+'раны');
+            break;
+        } 
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10: { 
+            lines.push(gameStore.getPlayerByChar(props.character.name)?.damage+'ран');
+            break;
+        } 
+        default: { 
+            break;
+        }
+    }
+    return lines;
+});
 </script>
 
 <style lang="postcss" scoped>

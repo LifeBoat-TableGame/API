@@ -2,12 +2,14 @@ module.exports = {
     purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}', './views/*.{vue,js,ts,jsx,tsx}'],
     darkMode: false, // or 'media' or 'class'
     safelist: [
-        'outline-double',
+        'outline',
         'outline-4',
-        'outline-olive-400',
-        'outline-y-5',
         'outline-main-red',
-        'outline-olive-400'
+        'outline-olive-400',
+        'ring-2',
+        'ring-olive-900',
+        'ring-deep-red',
+        'ring-olive-200',
     ],
     theme: {
         colors: {

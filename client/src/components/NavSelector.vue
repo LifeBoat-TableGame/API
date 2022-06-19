@@ -1,16 +1,16 @@
 <template>
   <div class="card-selector">
-      <Card v-for="(nav, index) in navs" 
+      <NavCard v-for="(nav, index) in navs" 
       :tilted="false"
-      :key="nav.name" 
+      :key="nav.id" 
       :posFromMiddle="index-Math.ceil(navs.length/2)+1" 
       :item=nav 
       :w="cardW"
       :h="cardH"
       :playable="false"
-      @click="cardChosen(nav.name)"
+      @click="navChosen(nav.id)"
       >
-      </Card>
+      </NavCard>
   </div>
 </template>
 
@@ -18,21 +18,21 @@
 <script lang="ts" setup>
 import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
-import { Nav } from '../interfaces/game';
-import Card from './Card.vue';
+import { Navigation } from '../interfaces/game';
+import NavCard from './NavCard.vue';
 const title = 'CardSelector';
 const mainStore = useMainStore();
 const roomStore = useRoomStore();
 
 
 const props = defineProps<{
-  navs: Nav[],
+  navs: Navigation[],
   cardH: number,
   cardW: number,
 }>();
 const emit = defineEmits(['card:selected'])
-const cardChosen = (cardName:string) => {
-emit('card:selected', cardName)
+const navChosen = (id:number) => {
+emit('card:selected', id)
 }
 </script>
 
