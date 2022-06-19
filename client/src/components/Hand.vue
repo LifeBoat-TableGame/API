@@ -1,5 +1,5 @@
 <template>
-  <div :class="['hand', !tilted ? 'p-2' : '', playable && !tilted ? 'game-element' : '']">
+  <div :class="['hand', !tilted ? 'p-2' : '']">
       <Card v-for="(supply, index) in supplies" 
       :key="supply.name" 
       :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 

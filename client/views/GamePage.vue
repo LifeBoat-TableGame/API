@@ -25,7 +25,7 @@
         <div class="text-lg">{{gameStore.playerSelf?.character.name}}</div>
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
-      <div class="boat-field bg-light-blue">
+      <div class="boat-field bg-light-blue rounded-[5rem] mr-16 m-4">
         <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" />
         <NavSelector :navs="gameStore.navsToPick" :cardH="15" :cardW="10" v-if=(navSelectorActive) @card:selected="PickNav" />
         <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap" @takeSide="TakeSide" @nav:clicked="AddNav"/>
