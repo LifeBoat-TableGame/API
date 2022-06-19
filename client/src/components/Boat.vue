@@ -14,7 +14,7 @@
         :character="item.character"
         @char:targeted="TargetChar">
         </CharacterCard>
-        <button class="btn row-start-2 justify-self-center" @click="emit('nav:clicked')">Грести</button>
+        <button class="btn row-start-2 justify-self-center bg-main-bg" @click="emit('nav:clicked')">Грести</button>
     </div>
 </template>
 

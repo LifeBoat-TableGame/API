@@ -1,16 +1,16 @@
 <template>
     <!--div class=" fixed bg-main-blue w-full">game page</div-->
     <div class="game-grid">
-      <div class="players-field top-row bg-olive-400">
+      <div class="players-field top-row border-1">
         <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :openSupplies="player.openCards" :closedSuppliesAmount="player.closedAmount" @card:demand="DemandCard"/>
       </div>
-      <div class="seagull-field top-row bg-main-blue">
+      <div class="seagull-field top-row">
         <SeagullsBoard :amount="seagulls" />
       </div>
-      <div class="timer-field top-row bg-dark-blue">
+      <div class="timer-field top-row noselect">
         <Timer :time="new Date()" />
       </div>
-      <div class="phase-field top-row bg-grey-bg">
+      <div class="phase-field top-row">
         <p class="phase">
           {{ phase }}
         </p>
@@ -18,14 +18,14 @@
       <div class="self-open bg-olive-100">
         <Hand :supplies="gameStore.playerSelf.openCards" :type="'open'" :owner="gameStore.playerSelf.character.name" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" :playable="true" class="m-1"/>
       </div>
-      <div class="self-hand bg-light-red">
+      <div class="self-hand ">
         <Hand :supplies="gameStore.playerSelf.closedCards" :type="'closed'" :owner="gameStore.playerSelf.character.name" :cardH="9" :cardW="6" :handW="30" :tilted="true" :playable="true" class="m-1" @card:selected="OpenSupply"/>
       </div>
-      <div class="self-icon bg-grey-bg vertical-container">
+      <div class="self-icon border-1 vertical-container">
         <div class="text-lg">{{gameStore.playerSelf?.character.name}}</div>
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
-      <div class="boat-field bg-deep-red">
+      <div class="boat-field bg-light-blue">
         <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" />
         <NavSelector :navs="gameStore.navsToPick" :cardH="15" :cardW="10" v-if=(navSelectorActive) @card:selected="PickNav" />
         <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap" @takeSide="TakeSide" @nav:clicked="AddNav"/>
@@ -259,7 +259,7 @@ const PrintData = () => {
   @apply row-end-7 row-span-1 col-span-1 col-end-10;
 }
 .boat-field {
-  @apply col-start-3 col-span-full row-start-2 row-end-6;
+  @apply col-start-3 col-span-full row-start-2 row-end-6 m-1;
 }
 .seagull-field {
   @apply col-start-3 col-span-2 row-start-1 row-span-1;
