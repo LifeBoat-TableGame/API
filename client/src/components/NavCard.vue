@@ -6,8 +6,7 @@
       tilted ? tilts[6 + props.posFromMiddle] : '', 
       tilted ? shifts[6 + props.posFromMiddle ] : '', 
       gameStore.highlightedCardID == uuid ? 'outline-double outline-4 outline-olive-400' : '']" 
-
-    :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/16 + 'rem', lineHeight:props.h/12, borderRadius:props.h/16+'rem'}]"
+    :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/16 + 'rem', lineHeight:props.h/14 + 'rem', borderRadius:props.h/16 + 'rem'}]"
     @click="useCard()">
     <p v-for="line of lines"> {{line}} </p>
     <!--img :src="'../assets/cards/'+props.item.name+'.jpg'"-->

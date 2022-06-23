@@ -1,42 +1,47 @@
 <template>
     <!--div class=" fixed bg-main-blue w-full">game page</div-->
-    <div class="game-grid">
-      <div class="players-field top-row border-1">
+    <div class="game-grid overflow-hidden px-4">
+      <div class="players-field top-row border-1 z-30">
         <PlayerProfile v-for="player of otherPlayers" :key="player.id" :name="player.character.name" :openSupplies="player.openCards" :closedSuppliesAmount="player.closedAmount" @card:demand="DemandCard"/>
       </div>
-      <div class="seagull-field top-row">
+      <div class="seagull-field top-row z-30">
         <SeagullsBoard :amount="seagulls" />
       </div>
-      <div class="timer-field top-row noselect">
+      <div class="timer-field top-row noselect z-30">
         <Timer :time="new Date()" />
       </div>
-      <div class="phase-field top-row">
+      <div class="phase-field top-row z-30">
         <p class="phase">
-          {{ phase }}
+          <a class="text-deep-red hover:text-dark-red text-2xl" href="https://hobbygames.ru/download/rules/za_bortom_2_rulebook.pdf" target="_blank">Правила</a>
+          <p class="noselect">{{ phase }}</p>          
         </p>
       </div>
       <div class="self-open bg-olive-100">
-        <Hand :supplies="gameStore.playerSelf.openCards" :type="'open'" :owner="gameStore.playerSelf.character.name" :cardH="10.2" :cardW="6.8" :handW="30" :tilted="false" :playable="true" class="m-1"/>
+        <Hand :supplies="gameStore.playerSelf.openCards" :type="'open'" :owner="gameStore.playerSelf.character.name" :cardH="12" :cardW="8" :handW="30" :tilted="false" :playable="true" class="m-1"/>
       </div>
-      <div class="self-hand ">
-        <Hand :supplies="gameStore.playerSelf.closedCards" :type="'closed'" :owner="gameStore.playerSelf.character.name" :cardH="9" :cardW="6" :handW="30" :tilted="true" :playable="true" class="m-1" @card:selected="OpenSupply"/>
+      <div class="self-hand">
+        <Hand :supplies="gameStore.playerSelf.closedCards" :type="'closed'" :owner="gameStore.playerSelf.character.name" :cardH="12" :cardW="8" :handW="30" :tilted="true" :playable="true" class="m-1" @card:selected="OpenSupply"/>
       </div>
-      <div class="self-icon border-1 vertical-container">
-        <div class="text-lg">{{gameStore.playerSelf?.character.name}}</div>
+      <div class="self-icon border-1 vertical-container p-4 pr-16">
+        <h1>{{gameStore.playerSelf?.character.name}}</h1>
         <img class=" rounded-full border-3 border-main-blue w-40 h-40 border-highlight"  src="https://eitrawmaterials.eu/wp-content/uploads/2016/09/person-icon.png" />
       </div>
-      <div class="boat-field bg-light-blue rounded-[5rem] mr-16 m-4">
-        <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" />
-        <NavSelector :navs="gameStore.navsToPick" :cardH="15" :cardW="10" v-if=(navSelectorActive) @card:selected="PickNav" />
+      <div class="boat-field bg-light-blue rounded-[5rem]">
+        <CardSelector :supplies="gameStore.suppliesToPick" :cardH="15" :cardW="10" v-if=(supplySelectorActive) @card:selected="PickSupply" class="justify-self-center" />
+        <NavSelector :navs="gameStore.navsToPick" :cardH="15" :cardW="10" v-if=(navSelectorActive) @card:selected="PickNav" class="justify-self-center"/>
         <Boat :characters="queue" @char:targeted="SelectTarget" @char:swap="CharSwap" @takeSide="TakeSide" @nav:clicked="AddNav"/>
       </div>
+      <div v-show="isModalVisible">
+        <ModalPopup class="z-40"
+          :modalMessage="modalMessage"
+          @popup:confirmed="ConfirmRequest"
+          @popup:declined="DeclineRequest"/>
+        <div class="w-screen h-screen absolute top-0 left-0 z-10" style="
+          background:rgba(0, 0, 0, .05);
+          backdrop-filter: blur(2px);">
+        </div>
+      </div>
     </div>
-    <ModalPopup 
-      v-show="isModalVisible"
-      :modalMessage="modalMessage"
-      @popup:confirmed="ConfirmRequest"
-      @popup:declined="DeclineRequest"/>
-      <button class="btn" @click="PrintData">data</button>
 </template>
 
 <script setup lang="ts">
@@ -62,7 +67,6 @@ import ModalPopup from '../src/components/ModalPopup.vue';
 const gameStore = useGameStore();
 const mainStore = useMainStore();
 const socket = inject(SocketKey);
-
 if(socket == undefined)
   throw new Error("Connection dropped");
 const supplySelectorActive = computed(() => {
@@ -259,7 +263,7 @@ const PrintData = () => {
   @apply row-end-7 row-span-1 col-span-1 col-end-10;
 }
 .boat-field {
-  @apply col-start-3 col-span-full row-start-2 row-end-6 m-1;
+  @apply col-start-3 col-span-full row-start-2 row-end-6 m-4 mr-16;
 }
 .seagull-field {
   @apply col-start-3 col-span-2 row-start-1 row-span-1;
@@ -268,7 +272,7 @@ const PrintData = () => {
   @apply col-span-2 row-span-1 row-start-1;
 }
 .timer-field {
-  @apply col-start-5 col-span-2 row-start-1 row-span-1;
+  @apply col-start-5 col-span-2 row-start-1 row-span-1 p-2;
 }
 
 .phase {

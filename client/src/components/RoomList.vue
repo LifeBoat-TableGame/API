@@ -1,12 +1,21 @@
 <template>
-  <div class="box vertical-container bg-light-blue mr-4 basis-1/4 noselect">
-    <h1 >{{ title }}</h1>
-    <ul class="bg-light-blue overflow-auto w-full h-72  divide-y divide-main-blue">
-      <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)" class="ineractive-box horisontal-container">
-        <div class="pr-3">{{ room.name }}</div>
-        <div class="pl-3">{{ room.usersCount }}/{{ room.limit }}</div>
+  <div class="box vertical-container bg-deep-blue mr-4 basis-1/4 noselect">
+    <elemment-header class="negative">
+      <h1 class="p-4">{{ title }}</h1>
+    </elemment-header>
+      <div class="bg-deep-blue text-light-light-blue horisontal-container justify-evenly w-full">
+        <div class="w-full text-center">ID</div>
+        <div class="w-full text-center">Имя</div>
+        <div  class="w-full text-center">Игроков</div>
+      </div>
+    <ul class="bg-light-blue overflow-auto w-full h-72  divide-y divide-main-blue m-1">
+      <li v-for="room of roomStore.rooms" :key="room.id" v-on:click="joinRoom(room.id)" class="ineractive-box horisontal-container justify-evenly">
+        <div class="w-full text-center">{{ room.id }}</div>
+        <div class="w-full text-center">{{ room.name }}</div>
+        <div class="w-full text-center">{{ room.usersCount }}/{{ room.limit }}</div>
       </li>
     </ul>
+    <element-footer class="negative"/>
   </div>
 </template>
 

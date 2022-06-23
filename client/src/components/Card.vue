@@ -5,11 +5,12 @@
     :class="['card', 'vertical-container', 'noselect', 'border-highlight', 'game-element', 
       tilted ? tilts[6 + props.posFromMiddle] : '', 
       tilted ? shifts[6 + props.posFromMiddle ] : '', 
+      props.h>9 ? 'hover:scale-[1.4]' : 'hover:scale-[2.5]',
       gameStore.highlightedCardID == uuid ? 'ring-2 outline-olive-200' : '']" 
-
-    :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/16 + 'rem', lineHeight:props.h/12, borderRadius:props.h/16+'rem'}]"
+    :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/8 + 'rem', lineHeight:props.h/12 + 'rem', borderRadius:props.h/12 + 'rem'}]"
     @click="useCard()">
-    <div>{{props.item.name}}</div>
+    <div class="text-deep-red" :style="[{fontSize: props.h/6 + 'rem', lineHeight:props.h/10 + 'rem', borderRadius:props.h/12 + 'rem'}]">{{props.item.name}} </div>
+    <div>{{props.item.description}}</div>
     <!--img :src="'../assets/cards/'+props.item.name+'.jpg'"-->
   </div>
 </template>
@@ -88,7 +89,6 @@ const useCard = () => {
 .card:hover{
   @apply
   hover:rotate-0 
-  hover:scale-[1.2]
   hover:z-10
 }
 </style>

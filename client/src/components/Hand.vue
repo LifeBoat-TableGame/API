@@ -62,6 +62,8 @@ const overlapVal = computed(() => {
   @apply
   flex 
   rounded-sm
+  h-fit
+  mt-[-2rem]
 }
 </style>
 

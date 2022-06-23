@@ -1,12 +1,12 @@
 <template>
-    <div class=" grid grid-rows-3 grid-flow-col auto-rows-fr justify-center items-center">
+    <div class=" grid grid-rows-5 grid-flow-col auto-rows-fr justify-center items-center">
         <ActionPopup v-show=popupActive :options="options" @option:chosen="doAction" class="pb-[-1rem] justify-self-center"></ActionPopup>
-        <div class="row-start-2 vertical-container" v-if="gameStore.game?.state==GameState.Fight && !gameStore.sideChosen">
+        <div class="row-start-3 vertical-container" v-if="gameStore.game?.state==GameState.Fight && !gameStore.sideChosen">
             <button type="submit" @click="TakeSide(FightRole.Atacker)" class="btn bg-main-red">Встать на сторону</button>
             <button type="submit" @click="TakeSide(FightRole.Neutral)" class="btn bg-light-blue">Не Встревать</button>
             <button type="submit" @click="TakeSide(FightRole.Defender)" class="btn bg-olive-400">Встать на сторону</button>
         </div>
-        <CharacterCard :class="['row-start-2', 'text-center', 'border-highlight', 
+        <CharacterCard :class="['row-start-2', 'row-end-5', 'text-center', 'border-highlight', 'mb-10',
         fighterClass[item.character.name],
         gameStore.game?.state!=GameState.Fight && gameStore.getCurrentChar == item.character.name ? 'bg-light-bg' : 'bg-main-bg',
         ]"
@@ -14,7 +14,7 @@
         :character="item.character"
         @char:targeted="TargetChar">
         </CharacterCard>
-        <button class="btn row-start-2 justify-self-center bg-light-bg" @click="emit('nav:clicked')">Грести</button>
+        <button class="btn col-end-13 row-start-3 justify-self-end self-center bg-light-bg hover:bg-olive-900 noselect text-3xl ml-[20] rounded-xl" @click="emit('nav:clicked')">Грести</button>
     </div>
 </template>
 

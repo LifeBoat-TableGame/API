@@ -70,3 +70,11 @@ onMounted(() => {
   });
 });
 </script>
+
+<style>
+@font-face {
+  font-family: "Dokdo";
+  src: local("Dokdo"),
+   url(./assets/3172-font.otf) format("truetype");
+}
+</style>

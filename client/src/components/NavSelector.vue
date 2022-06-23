@@ -1,17 +1,23 @@
 <template>
-  <div class="card-selector">
-      <NavCard v-for="(nav, index) in navs" 
-      :tilted="false"
-      :key="nav.id" 
-      :posFromMiddle="index-Math.ceil(navs.length/2)+1" 
-      :item=nav 
-      :w="cardW"
-      :h="cardH"
-      :playable="false"
-      @click="navChosen(nav.id)"
-      >
-      </NavCard>
-  </div>
+  <div>
+    <div class="card-selector z-40">
+        <NavCard v-for="(nav, index) in navs" 
+        :tilted="false"
+        :key="nav.id" 
+        :posFromMiddle="index-Math.ceil(navs.length/2)+1" 
+        :item=nav 
+        :w="cardW"
+        :h="cardH"
+        :playable="false"
+        @click="navChosen(nav.id)"
+        >
+        </NavCard>
+    </div>
+    <div class="w-screen h-screen absolute top-0 left-0 z-20" style="
+      background:rgba(0, 0, 0, .3);
+      backdrop-filter: blur(3px);">
+    </div>  
+    </div>
 </template>
 
 

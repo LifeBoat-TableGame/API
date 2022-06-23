@@ -10,6 +10,8 @@ module.exports = {
         'ring-olive-900',
         'ring-deep-red',
         'ring-olive-200',
+        'hover:scale-[2.5]',
+        'hover:scale-[1.4]'
     ],
     theme: {
         colors: {
@@ -36,7 +38,23 @@ module.exports = {
             'light-red': '#FAB7BA',
             'light-light-red': '#FAE3E4',
         },
-        extend: {},
+        fontSize: {
+            'xs': ['24px', '16px'],
+            'sm': ['28px', '20px'],
+            'base': ['32px', '24px'],
+            'lg': ['38px', '30px'],
+            'xl': ['40px', '32px'],
+            '2xl': ['48px', '36px'],
+            '3xl': ['60px', '42px'],
+            '4xl': ['72px', '56px'],
+            '5xl': ['96px', 1],
+            '6xl': ['120px', 1],
+        },
+        extend: {
+            fontFamily: {
+                'dokdo': ['Dokdo'],
+            },
+        },
     },
     variants: {
         extend: {},
