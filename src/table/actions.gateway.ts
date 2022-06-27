@@ -140,7 +140,7 @@ export class ActionsGateway {
   @UseGuards(WsGuard)
   @SubscribeMessage('showChosenNavigation')
   async handleShowChosenNavigation(
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket 
   ){
     const token = client.handshake.headers.authorization;
     const user = await this.userService.getWithRelations(token);
