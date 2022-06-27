@@ -147,31 +147,39 @@ export class ActionsGateway {
     if(!user.player) {
         throw new WsException('You must be in game');
     }
+    if(user.player.game.state != GameState.Picking) {
+        throw new WsException('Activity is not available during current phase');
+    }
     const player = await this.userService.getPlayerRelations(user.player.id);
     const game = await this.gameService.getGameWithrelations(player.game.id);
     const chosenNavigation = game.chosenNavigationDeck;
-    
+
+    console.log('Chosen navigation:');
+    console.log(chosenNavigation);
     client.emit('shownChosenNavigation', chosenNavigation);
 
   }
 
   @UseGuards(WsGuard)
   @SubscribeMessage('pickChosenNavigation')
-  async handlePickChosenNavigation(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('navigationId') navigationId: number
-  ){
+  async handlePickChosenNavigation(client: Socket, navigationId: number) {
     const token = client.handshake.headers.authorization;
     const user = await this.userService.getWithRelations(token);
     if(!user.player) {
         throw new WsException('You must be in game');
     }
+    if(user.player.game.state != GameState.Picking) {
+        throw new WsException('Activity is not available during current phase');
+    }
     const player = await this.userService.getPlayerRelations(user.player.id);
     const game = await this.gameService.getGameWithrelations(player.game.id);
     const nav = game.chosenNavigationDeck.find(nav => nav.navigationId == navigationId);
     if (!nav){
+        console.log(navigationId);
         throw new WsException('No such navigation in chosen navigation deck');
     };
+    //
+    //navigationId = 3;
     await this.actionsService.resolveNavigation(game, navigationId);
     
 

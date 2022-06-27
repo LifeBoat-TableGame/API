@@ -277,6 +277,10 @@ export class ActionsService {
         }
         for (const character of nav.charactersOverboard){
             let overBoard = game.players.find(player => player.character.name == character.name);
+            if (!overBoard){
+                continue;
+            }
+            overBoard = await this.userService.getPlayerRelations(overBoard.id);
             let lifebuoy = overBoard.openCards.find(supply => supply.name == "Спасательный круг")
             if (lifebuoy){
                 overBoard.openCards.splice(0, overBoard.openCards.length);
@@ -289,6 +293,10 @@ export class ActionsService {
         }
         for (const character of nav.charactersThirst){
             let affected = game.players.find(player => player.character.name == character.name);
+            if (!affected){
+                continue;
+            }
+            affected = await this.userService.getPlayerRelations(affected.id);
             affected.thirst++;
             await this.playerRepository.save(affected);
         }
