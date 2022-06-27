@@ -66,7 +66,10 @@ export class ActionsGateway {
       const player = await this.userService.getPlayerRelations(user.player.id);
       const game = await this.gameService.getGameWithrelations(user.player.game.id);
       await this.actionsService.requestSwap(player, game,  targetName);
-      this.wss.to(user.lobby.id.toString()).emit('swapDispute', player.character.name, targetName);
+      this.wss.to(user.lobby.id.toString()).emit('swapDispute', {
+        aggressorName: player.character.name, 
+        victimName: targetName
+      });
   }
 
   @UseGuards(WsGuard)
@@ -86,7 +89,11 @@ export class ActionsGateway {
       const game = await req2;
       if(supplyName) await this.actionsService.requestOpenSupply(player, game, targetName, supplyName);
       else await this.actionsService.requestClosedSupply(player, game,  targetName);
-      this.wss.to(user.lobby.id.toString()).emit('demandDispute', player.character.name, targetName, supplyName);
+      this.wss.to(user.lobby.id.toString()).emit('demandDispute', { 
+          aggressorName: player.character.name, 
+          victimName: targetName, 
+          supply: supplyName
+        });
   }
   
   @UseGuards(WsGuard)

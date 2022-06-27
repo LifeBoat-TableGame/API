@@ -15,7 +15,8 @@
     });
 </script>
 
-<style scoped>
+<style
+lang="postcss" scoped>
 .card {
   @apply 
   bg-dark-bg 
