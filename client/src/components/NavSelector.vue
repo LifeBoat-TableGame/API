@@ -1,58 +1,56 @@
 <template>
   <div>
-    <div class="card-selector">
-        <Card v-for="(supply, index) in supplies" 
+    <div class="card-selector z-40">
+        <NavCard v-for="(nav, index) in navs" 
         :tilted="false"
-        :key="supply.name" 
-        :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 
-        :item=supply 
+        :key="nav.id" 
+        :posFromMiddle="index-Math.ceil(navs.length/2)+1" 
+        :item=nav 
         :w="cardW"
         :h="cardH"
         :playable="false"
-        @click="cardChosen(supply.name)"
+        @click="navChosen(nav.id)"
         >
-        </Card>
+        </NavCard>
     </div>
     <div class="w-screen h-screen absolute top-0 left-0 z-20" style="
-    background:rgba(0, 0, 0, .3);
-    backdrop-filter: blur(3px);">
+      background:rgba(0, 0, 0, .3);
+      backdrop-filter: blur(3px);">
     </div>  
-  </div>
+    </div>
 </template>
 
 
 <script lang="ts" setup>
 import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
-import { Supply } from '../interfaces/game';
-import Card from './Card.vue';
+import { Navigation } from '../interfaces/game';
+import NavCard from './NavCard.vue';
 const title = 'CardSelector';
 const mainStore = useMainStore();
 const roomStore = useRoomStore();
 
 
 const props = defineProps<{
-  supplies: Supply[],
+  navs: Navigation[],
   cardH: number,
   cardW: number,
 }>();
 const emit = defineEmits(['card:selected'])
-const cardChosen = (cardName:string) => {
-emit('card:selected', cardName)
+const navChosen = (id:number) => {
+emit('card:selected', id)
 }
 </script>
 
 <style lang="postcss" scoped>
 .card-selector {
   @apply
-  z-40
   w-[70%]
   absolute
   flex
   flex-nowrap
   rounded-sm
   justify-center
-  self-center
   items-center
 }
 </style>

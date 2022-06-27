@@ -5,12 +5,10 @@
     :class="['card', 'vertical-container', 'noselect', 'border-highlight', 'game-element', 
       tilted ? tilts[6 + props.posFromMiddle] : '', 
       tilted ? shifts[6 + props.posFromMiddle ] : '', 
-      props.h>9 ? 'hover:scale-[1.4]' : 'hover:scale-[2.5]',
-      gameStore.highlightedCardID == uuid ? 'ring-2 outline-olive-200' : '']" 
-    :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/8 + 'rem', lineHeight:props.h/12 + 'rem', borderRadius:props.h/12 + 'rem'}]"
+      gameStore.highlightedCardID == uuid ? 'outline-double outline-4 outline-olive-400' : '']" 
+    :style="[{width: props.w + 'rem', height: props.h + 'rem',  fontSize: props.h/16 + 'rem', lineHeight:props.h/14 + 'rem', borderRadius:props.h/16 + 'rem'}]"
     @click="useCard()">
-    <div class="text-deep-red" :style="[{fontSize: props.h/6 + 'rem', lineHeight:props.h/10 + 'rem', borderRadius:props.h/12 + 'rem'}]">{{props.item.name}} </div>
-    <div>{{props.item.description}}</div>
+    <p v-for="line of lines"> {{line}} </p>
     <!--img :src="'../assets/cards/'+props.item.name+'.jpg'"-->
   </div>
 </template>
@@ -19,8 +17,9 @@
 <script lang="ts" setup>
 import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
-import { Supply } from '../interfaces/game';
+import { Navigation } from '../interfaces/game';
 import { useGameStore } from '../stores/game';
+import { computed } from '@vue/reactivity';
 const title = 'ActiveRoomMenu';
 const gameStore = useGameStore();
 const mainStore = useMainStore();
@@ -60,7 +59,7 @@ const shifts = [
 
 const uuid = mainStore.getUUID();
 const props = defineProps<{
-  item: Supply,
+  item: Navigation,
   tilted: boolean,
   playable: boolean,
   posFromMiddle: number,
@@ -69,13 +68,41 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['card:clicked'])
 
-const type = props.item;
 const startIndex = 7 + props.posFromMiddle
 const useCard = () => {
   if(props.playable) {
-    emit('card:clicked', props.item.name, uuid);
+    emit('card:clicked', props.item.id, uuid);
   }
 }
+
+
+const lines = computed(() => {
+  const lines = [] as string []
+  lines.push(props.item.id+'');
+  if (props.item.charactersOverboard.length > 0) {
+    let text = 'За борт выпадут:';
+    props.item.charactersOverboard.forEach(char => {
+      text+=' '+char.name;
+    });
+    lines.push(text)
+  }
+  if (props.item.charactersThirst.length > 0) {
+    let text = 'Получат жажду:';
+    props.item.charactersThirst.forEach(char => {
+      text+=' '+char.name;
+    });
+    lines.push(text)
+  }
+  if (props.item.fight)
+    lines.push('Драка!');
+  if (props.item.oar)
+    lines.push('Гребущие получают жажду');
+  if (props.item.seagul) {
+    const ghoul = ['1 чайка','2 чайки','3 чайки','4 чайки']
+    lines.push(ghoul[props.item.seagul])
+  }
+  return lines;
+});
 </script>
 
 <style lang="postcss" scoped>
@@ -89,6 +116,7 @@ const useCard = () => {
 .card:hover{
   @apply
   hover:rotate-0 
+  hover:scale-[1.2]
   hover:z-10
 }
 </style>

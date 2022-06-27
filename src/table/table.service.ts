@@ -13,6 +13,7 @@ import CreateCharacterQueueDto from './dto/createCharacterQueueDto';
 import { CharacterQueue } from '../models/characterQueue.entity';
 import { Player } from '../models/player.entity';
 import { GameService } from '../game/game.service';
+import { table } from 'console';
 
 @Injectable()
 export class TableService {
@@ -119,5 +120,99 @@ export class TableService {
         player.closedCards.splice(player.closedCards.indexOf(supply), 1);
         player.openCards.push(supply);
         await this.playerRepository.save(player);
+    }
+
+    async calculateScore(gameid: number){
+        const game = await this.gameService.getGameWithrelations(gameid);
+        
+        for (const player of game.players){
+            let char = player.character;
+
+            if (this.userService.isAlive(player)){
+                player.score += char.strength;
+                if(player.enemy == char){
+                    player.score -= char.strength;
+                }
+            }
+
+            let cards = player.closedCards;
+            cards.concat(player.openCards);
+
+            let jewelryCount = 0;
+            for (const card of cards){
+                if(card.name == "Украшения"){
+                    jewelryCount+=1;
+                    continue;
+                }
+
+                if(card.name == "Маленькая картина"){
+                    if(char.name == "Сноб"){
+                        player.score += 2 * card.bonus;
+                    } else {
+                        player.score += card.bonus;
+                    }
+                    continue;
+                }
+
+                if(card.name == "Большая картина"){
+                    if(char.name == "Сноб"){
+                        player.score += 2 * card.bonus;
+                    } else {
+                        player.score += card.bonus;
+                    }
+                    continue;
+                }
+
+                if(card.name == "Пачка денег"){
+                    if(char.name == "Капитан"){
+                        player.score += 2 * card.bonus;
+                    } else {
+                        player.score += card.bonus;
+                    }
+                    continue;
+                }
+            }
+
+            if (char.name == "Миледи"){
+                if(jewelryCount == 1){
+                    player.score += 2;
+                } else if (jewelryCount == 2){
+                    player.score += 8;
+                } else if (jewelryCount == 3){
+                    player.score += 16;
+                }
+            } else {
+                if(jewelryCount == 1){
+                    player.score += 1;
+                } else if (jewelryCount == 2){
+                    player.score += 4;
+                } else if (jewelryCount == 3){
+                    player.score += 8;
+                }
+            }
+            
+            let fplayer = game.players.find(fplayer => fplayer.character == player.friendship)
+            if(this.userService.isAlive(fplayer)){
+                player.score += fplayer.character.survival;
+            }
+
+            if (player.enemy == char){
+                let dead = 0;
+                for (const p of game.players){
+                    if (p.character != char && p.character != player.friendship){
+                        dead++;
+                    }
+                }
+                player.score += dead * 3;
+            } else {
+                let eplayer =  game.players.find(eplayer => eplayer.character == player.enemy)
+                if(!this.userService.isAlive(eplayer)){
+                    player.score += eplayer.character.strength;
+                }
+            }
+            
+            await this.playerRepository.save(player);
+
+        }
     }
 }

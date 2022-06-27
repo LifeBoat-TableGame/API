@@ -3,7 +3,22 @@
 @tailwind utilities;
 @layer base {
     body {
-        @apply bg-main-bg
+        @apply bg-main-bg font-dokdo
+    }
+    h1 {
+        @apply text-3xl
+    }
+    h2 {
+        @apply text-2xl
+    }
+    h2 {
+        @apply text-xl
+    }
+    element-footer {
+        @apply min-h-[0.8rem] rounded-b-md w-full
+    }
+    element-header {
+        @apply min-h-[0.8rem] rounded-t-md w-full
     }
     #app {
         @apply text-deep-blue min-h-screen text-lg
@@ -19,11 +34,23 @@
                   user-select: none; /* Non-prefixed version, currently
                                         supported by Chrome, Edge, Opera and Firefox */
     }
+    .game-element {
+        @apply hover:ring-2 hover:ring-offset-1 hover:ring-olive-200
+    }
     .btn {
-        @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg
+        @apply bg-light-light-blue m-1 mt-3 rounded-md p-1 text-lg shadow border-main-blue border-[1px]
     }
     .btn:hover {
-        @apply bg-olive-200 m-1 mt-3 rounded-md p-1 text-lg
+        @apply bg-olive-200 scale-110 duration-200
+    }
+    .negative {
+        @apply bg-deep-blue text-light-light-blue
+    }
+    .ineractive-box {
+        @apply bg-light-blue text-lg duration-100
+    }
+    .ineractive-box:hover {
+        @apply bg-light-light-blue
     }
     .vertical-container {
         @apply flex flex-col items-center justify-center
