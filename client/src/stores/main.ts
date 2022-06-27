@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia';
 import { io } from 'socket.io-client';
+import { Events, Subscription } from '../interfaces/subscription';
 import router from '../router';
 import { useRoomStore } from './rooms';
+import { useGameStore } from './game';
+import { Message } from '../interfaces/message';
 
-const defaultSocket = io();
+
 export const useMainStore: any = defineStore("mainStoreID", {
   state: () => ({
     activeRoomId: 0,
@@ -109,6 +112,12 @@ export const useMainStore: any = defineStore("mainStoreID", {
     decline() {
       this.socket.emit('declineDispute');
     },
+    sendMessage(msg: Message) {
+      this.socket.emit(msg.type, msg.data);
+    },
+    subscribeToEvent(sub: Subscription) {
+      this.socket.on(sub.event, sub.callback);
+    },
     takeSide(side: 'Atack' | 'Defend' | 'Neutral') {
       this.socket.emit('chooseConflictSide', side);
     },
@@ -154,19 +163,28 @@ export const useMainStore: any = defineStore("mainStoreID", {
         console.log(navs);
       });
       this.socket.on('gameInfo', (game) => {
-        console.log(game);
+        console.log('setting game');
+        useGameStore().setGame(game);
+        //console.log(game);
       });
       
       this.socket.on('playerInfo', (player) => {
-        console.log(player);
+        console.log('setting player');
+        useGameStore().setPlayer(player);
+        //console.log(player);
       });
 
       this.socket.on('toChoose', (supplies) => {
         console.log(supplies);
+        useGameStore().setPick(supplies);
       });
-      this.socket.on('exception', (obj) => {
-        console.log('!!!', obj);
-      });
+      //example of usage
+      this.subscribeToEvent({
+        event: Events.Error, 
+        callback:(description) => {
+          console.log(description);
+        }
+      })
       this.socket.on('shownChosenNavigation', (navs) => {
         console.log(navs);
       });

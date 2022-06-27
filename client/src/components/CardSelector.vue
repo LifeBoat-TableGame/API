@@ -1,13 +1,13 @@
 <template>
-  <div :class="['hand', !tilted ? 'bg-dark-bg p-2' : '']">
+  <div class="card-selector">
       <Card v-for="(supply, index) in supplies" 
+      :tilted="false"
       :key="supply.name" 
       :posFromMiddle="index-Math.ceil(supplies.length/2)+1" 
       :supply=supply 
-      :tilted="tilted"
-      :style="[index!=0 ? {marginLeft: overlapVal + 'rem' } : {marginLeft: -1.2 + 'rem' }]"
       :w="cardW"
       :h="cardH"
+      @click="cardChosen(supply.name)"
       >
       </Card>
   </div>
@@ -19,8 +19,7 @@ import { useMainStore } from '../stores/main';
 import { useRoomStore } from '../stores/rooms';
 import { Supply } from '../interfaces/game';
 import Card from './Card.vue';
-import { computed } from '@vue/reactivity';
-const title = 'ActiveRoomMenu';
+const title = 'CardSelector';
 const mainStore = useMainStore();
 const roomStore = useRoomStore();
 
@@ -29,20 +28,21 @@ const props = defineProps<{
   supplies: Supply[],
   cardH: number,
   cardW: number,
-  handW: number,
-  tilted: boolean
 }>();
-const emit = defineEmits(['card:clicked'])
-const overlapVal = computed(() => {
-  return -props.cardW+(props.handW-props.cardW)/(props.supplies.length-1)
-});
+const emit = defineEmits(['card:selected'])
+const cardChosen = (cardName:string) => {
+emit('card:selected', cardName)
+}
 </script>
+
 <style scoped>
-
-
-.hand {
+.card-selector {
   @apply
-  flex 
+  w-[70%]
+  absolute
+  flex
+  flex-nowrap
+  overflow-scroll
   rounded-sm
 }
 </style>
